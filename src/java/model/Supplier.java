@@ -4,12 +4,12 @@
  */
 package model;
 
-
 /**
  *
  * @author MinHeee
  */
 public class Supplier {
+
     private int supplierId;
     private String name;
     private String address;

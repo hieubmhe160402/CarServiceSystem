@@ -11,6 +11,7 @@ import java.math.BigDecimal;
  * @author MinHeee
  */
 public class ServiceDetail {
+
     private int serviceDetailId;
     private CarMaintenance maintenance;
     private Product product;
@@ -92,5 +93,5 @@ public class ServiceDetail {
     public String toString() {
         return "ServiceDetail{" + "serviceDetailId=" + serviceDetailId + ", maintenance=" + maintenance + ", product=" + product + ", quantity=" + quantity + ", unitPrice=" + unitPrice + ", totalPrice=" + totalPrice + ", notes=" + notes + '}';
     }
-    
+
 }

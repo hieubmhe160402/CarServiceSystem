@@ -4,14 +4,14 @@
  */
 package model;
 
-
 /**
  *
  * @author MinHeee
  */
 public class TransferOrder {
-     private int transferOrderId;
-    private int type; 
+
+    private int transferOrderId;
+    private int type;
     private int status;
     private String note;
     private String date;

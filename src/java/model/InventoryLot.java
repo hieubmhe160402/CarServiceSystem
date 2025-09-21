@@ -5,11 +5,13 @@
 package model;
 
 import java.math.BigDecimal;
+
 /**
  *
  * @author MinHeee
  */
 public class InventoryLot {
+
     private TransferOrder transferOrder;
     private Product product;
     private int quantityDoc;
@@ -102,7 +104,4 @@ public class InventoryLot {
         return "InventoryLot{" + "transferOrder=" + transferOrder + ", product=" + product + ", quantityDoc=" + quantityDoc + ", quantityAct=" + quantityAct + ", price=" + price + ", status=" + status + ", lotNumber=" + lotNumber + ", expiryDate=" + expiryDate + '}';
     }
 
-  
-    
-    
 }

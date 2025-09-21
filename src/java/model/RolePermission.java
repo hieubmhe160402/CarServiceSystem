@@ -9,6 +9,7 @@ package model;
  * @author MinHeee
  */
 public class RolePermission {
+
     private Role role;
     private Permission permission;
 
@@ -41,5 +42,4 @@ public class RolePermission {
         return "RolePermission{" + "role=" + role + ", permission=" + permission + '}';
     }
 
-   
 }

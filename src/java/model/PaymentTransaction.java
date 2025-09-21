@@ -11,6 +11,7 @@ import java.math.BigDecimal;
  * @author MinHeee
  */
 public class PaymentTransaction {
+
     private int transactionId;
     private CarMaintenance maintenance;
     private String paymentMethod;
@@ -113,5 +114,4 @@ public class PaymentTransaction {
         return "PaymentTransaction{" + "transactionId=" + transactionId + ", maintenance=" + maintenance + ", paymentMethod=" + paymentMethod + ", amount=" + amount + ", paymentDate=" + paymentDate + ", status=" + status + ", transactionReference=" + transactionReference + ", notes=" + notes + ", processedBy=" + processedBy + '}';
     }
 
-  
 }

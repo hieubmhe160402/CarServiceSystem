@@ -11,10 +11,11 @@ import java.math.BigDecimal;
  * @author MinHeee
  */
 public class Product {
+
     private int productId;
     private String code;
     private String name;
-    private String type; 
+    private String type;
     private BigDecimal price;
     private String description;
     private String image;
@@ -163,6 +164,4 @@ public class Product {
         return "Product{" + "productId=" + productId + ", code=" + code + ", name=" + name + ", type=" + type + ", price=" + price + ", description=" + description + ", image=" + image + ", unit=" + unit + ", category=" + category + ", warrantyPeriodMonths=" + warrantyPeriodMonths + ", minStockLevel=" + minStockLevel + ", estimatedDurationHours=" + estimatedDurationHours + ", isActive=" + isActive + ", createdDate=" + createdDate + '}';
     }
 
- 
-    
 }

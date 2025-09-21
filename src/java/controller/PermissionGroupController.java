@@ -54,9 +54,4 @@ public class PermissionGroupController extends HttpServlet {
         // sau khi insert, gọi lại doGet để load lại danh sách và forward Test.jsp
         doGet(request, response);
     }
-    
-    
-    
-    
-    ////Test 
 }

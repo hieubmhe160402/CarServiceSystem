@@ -9,7 +9,8 @@ package model;
  * @author MinHeee
  */
 public class Car {
-     private int carId;
+
+    private int carId;
     private String licensePlate;
     private String brand;
     private String model;
@@ -151,7 +152,4 @@ public class Car {
         return "Car{" + "carId=" + carId + ", licensePlate=" + licensePlate + ", brand=" + brand + ", model=" + model + ", year=" + year + ", color=" + color + ", engineNumber=" + engineNumber + ", chassisNumber=" + chassisNumber + ", owner=" + owner + ", purchaseDate=" + purchaseDate + ", lastMaintenanceDate=" + lastMaintenanceDate + ", nextMaintenanceDate=" + nextMaintenanceDate + ", createdDate=" + createdDate + '}';
     }
 
-    
-    
-    
 }

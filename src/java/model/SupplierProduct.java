@@ -11,6 +11,7 @@ import java.math.BigDecimal;
  * @author MinHeee
  */
 public class SupplierProduct {
+
     private Supplier supplier;
     private Product product;
     private int deliveryDuration;

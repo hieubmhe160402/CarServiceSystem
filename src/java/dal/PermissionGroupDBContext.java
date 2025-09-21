@@ -1,5 +1,6 @@
 package dal;
 
+import Context.DBContext;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,8 @@ public class PermissionGroupDBContext extends DBContext {
         }
         return list;
     }
-     public void insert(PermissionGroup pg) {
+
+    public void insert(PermissionGroup pg) {
         try {
             String sql = "INSERT INTO PermissionGroup (GroupName, Description) VALUES (?, ?)";
             PreparedStatement stm = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -44,8 +46,5 @@ public class PermissionGroupDBContext extends DBContext {
             Logger.getLogger(PermissionGroupDBContext.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-     
-     
-     
-     //test
+
 }

@@ -5,11 +5,13 @@
 package model;
 
 import java.math.BigDecimal;
+
 /**
  *
  * @author MinHeee
  */
 public class CarMaintenance {
+
     private int maintenanceId;
     private Car car;
     private Appointment appointment;
@@ -124,6 +126,4 @@ public class CarMaintenance {
         return "CarMaintenance{" + "maintenanceId=" + maintenanceId + ", car=" + car + ", appointment=" + appointment + ", maintenanceDate=" + maintenanceDate + ", odometer=" + odometer + ", status=" + status + ", totalAmount=" + totalAmount + ", notes=" + notes + ", createdBy=" + createdBy + ", assignedTechnician=" + assignedTechnician + ", createdDate=" + createdDate + ", completedDate=" + completedDate + '}';
     }
 
-   
-    
 }

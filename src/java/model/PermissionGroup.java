@@ -11,13 +11,13 @@ import java.util.List;
  * @author MinHeee
  */
 public class PermissionGroup {
+
     private int groupID;
     private String groupName;
     private String description;
     private List<Permission> listPermissions;
 
     // Constructors
-
     public PermissionGroup() {
     }
 
@@ -64,5 +64,5 @@ public class PermissionGroup {
     public String toString() {
         return "PermissionGroup{" + "groupID=" + groupID + ", groupName=" + groupName + ", description=" + description + ", listPermissions=" + listPermissions + '}';
     }
-   
+
 }

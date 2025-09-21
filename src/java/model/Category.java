@@ -9,9 +9,10 @@ package model;
  * @author MinHeee
  */
 public class Category {
+
     private int categoryId;
     private String name;
-    private String type; // PART / SERVICE
+    private String type;
     private String description;
 
     public Category() {
@@ -60,5 +61,5 @@ public class Category {
     public String toString() {
         return "Category{" + "categoryId=" + categoryId + ", name=" + name + ", type=" + type + ", description=" + description + '}';
     }
-    
+
 }

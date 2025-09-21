@@ -3,11 +3,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package model;
+
 /**
  *
  * @author MinHeee
  */
 public class Appointment {
+
     private int appointmentId;
     private Car car;
     private String appointmentDate;
@@ -120,6 +122,4 @@ public class Appointment {
         return "Appointment{" + "appointmentId=" + appointmentId + ", car=" + car + ", appointmentDate=" + appointmentDate + ", requestedServices=" + requestedServices + ", status=" + status + ", notes=" + notes + ", createdBy=" + createdBy + ", createdDate=" + createdDate + ", confirmedBy=" + confirmedBy + ", confirmedDate=" + confirmedDate + '}';
     }
 
-   
-    
 }
