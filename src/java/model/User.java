@@ -4,13 +4,12 @@
  */
 package model;
 
-import java.time.LocalDate;
-
 /**
  *
  * @author MinHeee
  */
 public class User {
+
     private int userId;
     private String userCode;
     private String fullName;

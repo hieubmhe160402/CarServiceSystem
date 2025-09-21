@@ -9,7 +9,8 @@ package model;
  * @author MinHeee
  */
 public class Unit {
-     private int unitId;
+
+    private int unitId;
     private String name;
     private String type;
     private String description;
@@ -61,6 +62,4 @@ public class Unit {
         return "Unit{" + "unitId=" + unitId + ", name=" + name + ", type=" + type + ", description=" + description + '}';
     }
 
-   
-     
 }
