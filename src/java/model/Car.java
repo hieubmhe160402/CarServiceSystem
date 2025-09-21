@@ -4,9 +4,6 @@
  */
 package model;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 /**
  *
  * @author MinHeee
@@ -21,15 +18,15 @@ public class Car {
     private String engineNumber;
     private String chassisNumber;
     private User owner;
-    private LocalDate purchaseDate;
-    private LocalDate lastMaintenanceDate;
-    private LocalDate nextMaintenanceDate;
-    private LocalDateTime createdDate;
+    private String purchaseDate;
+    private String lastMaintenanceDate;
+    private String nextMaintenanceDate;
+    private String createdDate;
 
     public Car() {
     }
 
-    public Car(int carId, String licensePlate, String brand, String model, int year, String color, String engineNumber, String chassisNumber, User owner, LocalDate purchaseDate, LocalDate lastMaintenanceDate, LocalDate nextMaintenanceDate, LocalDateTime createdDate) {
+    public Car(int carId, String licensePlate, String brand, String model, int year, String color, String engineNumber, String chassisNumber, User owner, String purchaseDate, String lastMaintenanceDate, String nextMaintenanceDate, String createdDate) {
         this.carId = carId;
         this.licensePlate = licensePlate;
         this.brand = brand;
@@ -117,35 +114,35 @@ public class Car {
         this.owner = owner;
     }
 
-    public LocalDate getPurchaseDate() {
+    public String getPurchaseDate() {
         return purchaseDate;
     }
 
-    public void setPurchaseDate(LocalDate purchaseDate) {
+    public void setPurchaseDate(String purchaseDate) {
         this.purchaseDate = purchaseDate;
     }
 
-    public LocalDate getLastMaintenanceDate() {
+    public String getLastMaintenanceDate() {
         return lastMaintenanceDate;
     }
 
-    public void setLastMaintenanceDate(LocalDate lastMaintenanceDate) {
+    public void setLastMaintenanceDate(String lastMaintenanceDate) {
         this.lastMaintenanceDate = lastMaintenanceDate;
     }
 
-    public LocalDate getNextMaintenanceDate() {
+    public String getNextMaintenanceDate() {
         return nextMaintenanceDate;
     }
 
-    public void setNextMaintenanceDate(LocalDate nextMaintenanceDate) {
+    public void setNextMaintenanceDate(String nextMaintenanceDate) {
         this.nextMaintenanceDate = nextMaintenanceDate;
     }
 
-    public LocalDateTime getCreatedDate() {
+    public String getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(LocalDateTime createdDate) {
+    public void setCreatedDate(String createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -153,6 +150,8 @@ public class Car {
     public String toString() {
         return "Car{" + "carId=" + carId + ", licensePlate=" + licensePlate + ", brand=" + brand + ", model=" + model + ", year=" + year + ", color=" + color + ", engineNumber=" + engineNumber + ", chassisNumber=" + chassisNumber + ", owner=" + owner + ", purchaseDate=" + purchaseDate + ", lastMaintenanceDate=" + lastMaintenanceDate + ", nextMaintenanceDate=" + nextMaintenanceDate + ", createdDate=" + createdDate + '}';
     }
+
+    
     
     
 }

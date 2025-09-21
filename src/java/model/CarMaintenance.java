@@ -5,8 +5,6 @@
 package model;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
 /**
  *
  * @author MinHeee
@@ -15,33 +13,15 @@ public class CarMaintenance {
     private int maintenanceId;
     private Car car;
     private Appointment appointment;
-    private LocalDateTime maintenanceDate;
+    private String maintenanceDate;
     private int odometer;
     private String status;
     private BigDecimal totalAmount;
     private String notes;
     private User createdBy;
     private User assignedTechnician;
-    private LocalDateTime createdDate;
-    private LocalDateTime completedDate;
-
-    public CarMaintenance() {
-    }
-
-    public CarMaintenance(int maintenanceId, Car car, Appointment appointment, LocalDateTime maintenanceDate, int odometer, String status, BigDecimal totalAmount, String notes, User createdBy, User assignedTechnician, LocalDateTime createdDate, LocalDateTime completedDate) {
-        this.maintenanceId = maintenanceId;
-        this.car = car;
-        this.appointment = appointment;
-        this.maintenanceDate = maintenanceDate;
-        this.odometer = odometer;
-        this.status = status;
-        this.totalAmount = totalAmount;
-        this.notes = notes;
-        this.createdBy = createdBy;
-        this.assignedTechnician = assignedTechnician;
-        this.createdDate = createdDate;
-        this.completedDate = completedDate;
-    }
+    private String createdDate;
+    private String completedDate;
 
     public int getMaintenanceId() {
         return maintenanceId;
@@ -67,11 +47,11 @@ public class CarMaintenance {
         this.appointment = appointment;
     }
 
-    public LocalDateTime getMaintenanceDate() {
+    public String getMaintenanceDate() {
         return maintenanceDate;
     }
 
-    public void setMaintenanceDate(LocalDateTime maintenanceDate) {
+    public void setMaintenanceDate(String maintenanceDate) {
         this.maintenanceDate = maintenanceDate;
     }
 
@@ -123,21 +103,27 @@ public class CarMaintenance {
         this.assignedTechnician = assignedTechnician;
     }
 
-    public LocalDateTime getCreatedDate() {
+    public String getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(LocalDateTime createdDate) {
+    public void setCreatedDate(String createdDate) {
         this.createdDate = createdDate;
     }
 
-    public LocalDateTime getCompletedDate() {
+    public String getCompletedDate() {
         return completedDate;
     }
 
-    public void setCompletedDate(LocalDateTime completedDate) {
+    public void setCompletedDate(String completedDate) {
         this.completedDate = completedDate;
     }
-    
+
+    @Override
+    public String toString() {
+        return "CarMaintenance{" + "maintenanceId=" + maintenanceId + ", car=" + car + ", appointment=" + appointment + ", maintenanceDate=" + maintenanceDate + ", odometer=" + odometer + ", status=" + status + ", totalAmount=" + totalAmount + ", notes=" + notes + ", createdBy=" + createdBy + ", assignedTechnician=" + assignedTechnician + ", createdDate=" + createdDate + ", completedDate=" + completedDate + '}';
+    }
+
+   
     
 }

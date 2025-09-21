@@ -5,8 +5,6 @@
 package model;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-
 /**
  *
  * @author MinHeee
@@ -19,12 +17,12 @@ public class InventoryLot {
     private BigDecimal price;
     private int status;
     private String lotNumber;
-    private LocalDate expiryDate;
+    private String expiryDate;
 
     public InventoryLot() {
     }
 
-    public InventoryLot(TransferOrder transferOrder, Product product, int quantityDoc, Integer quantityAct, BigDecimal price, int status, String lotNumber, LocalDate expiryDate) {
+    public InventoryLot(TransferOrder transferOrder, Product product, int quantityDoc, Integer quantityAct, BigDecimal price, int status, String lotNumber, String expiryDate) {
         this.transferOrder = transferOrder;
         this.product = product;
         this.quantityDoc = quantityDoc;
@@ -91,12 +89,20 @@ public class InventoryLot {
         this.lotNumber = lotNumber;
     }
 
-    public LocalDate getExpiryDate() {
+    public String getExpiryDate() {
         return expiryDate;
     }
 
-    public void setExpiryDate(LocalDate expiryDate) {
+    public void setExpiryDate(String expiryDate) {
         this.expiryDate = expiryDate;
     }
+
+    @Override
+    public String toString() {
+        return "InventoryLot{" + "transferOrder=" + transferOrder + ", product=" + product + ", quantityDoc=" + quantityDoc + ", quantityAct=" + quantityAct + ", price=" + price + ", status=" + status + ", lotNumber=" + lotNumber + ", expiryDate=" + expiryDate + '}';
+    }
+
+  
+    
     
 }

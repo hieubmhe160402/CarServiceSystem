@@ -5,8 +5,6 @@
 package model;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  *
@@ -22,16 +20,16 @@ public class User {
     private String phone;
     private String image;
     private Boolean male;
-    private LocalDate dateOfBirth;
+    private String dateOfBirth;
     private Role role;
     private boolean isActive;
-    private LocalDateTime createdDate;
-    private LocalDateTime lastLoginDate;
+    private String createdDate;
+    private String lastLoginDate;
 
     public User() {
     }
 
-    public User(int userId, String userCode, String fullName, String userName, String password, String email, String phone, String image, Boolean male, LocalDate dateOfBirth, Role role, boolean isActive, LocalDateTime createdDate, LocalDateTime lastLoginDate) {
+    public User(int userId, String userCode, String fullName, String userName, String password, String email, String phone, String image, Boolean male, String dateOfBirth, Role role, boolean isActive, String createdDate, String lastLoginDate) {
         this.userId = userId;
         this.userCode = userCode;
         this.fullName = fullName;
@@ -120,11 +118,11 @@ public class User {
         this.male = male;
     }
 
-    public LocalDate getDateOfBirth() {
+    public String getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(LocalDate dateOfBirth) {
+    public void setDateOfBirth(String dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
@@ -144,19 +142,19 @@ public class User {
         this.isActive = isActive;
     }
 
-    public LocalDateTime getCreatedDate() {
+    public String getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(LocalDateTime createdDate) {
+    public void setCreatedDate(String createdDate) {
         this.createdDate = createdDate;
     }
 
-    public LocalDateTime getLastLoginDate() {
+    public String getLastLoginDate() {
         return lastLoginDate;
     }
 
-    public void setLastLoginDate(LocalDateTime lastLoginDate) {
+    public void setLastLoginDate(String lastLoginDate) {
         this.lastLoginDate = lastLoginDate;
     }
 
@@ -164,7 +162,4 @@ public class User {
     public String toString() {
         return "User{" + "userId=" + userId + ", userCode=" + userCode + ", fullName=" + fullName + ", userName=" + userName + ", password=" + password + ", email=" + email + ", phone=" + phone + ", image=" + image + ", male=" + male + ", dateOfBirth=" + dateOfBirth + ", role=" + role + ", isActive=" + isActive + ", createdDate=" + createdDate + ", lastLoginDate=" + lastLoginDate + '}';
     }
-
-    
-    
 }

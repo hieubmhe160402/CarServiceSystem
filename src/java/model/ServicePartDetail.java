@@ -5,28 +5,28 @@
 package model;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 /**
  *
  * @author MinHeee
  */
 public class ServicePartDetail {
+
     private int servicePartDetailId;
     private CarMaintenance maintenance;
     private Product product;
     private int quantity;
     private BigDecimal unitPrice;
     private BigDecimal totalPrice;
-    private LocalDate installationDate;
-    private LocalDate warrantyExpireDate;
+    private String installationDate;
+    private String warrantyExpireDate;
     private String lotNumber;
     private String notes;
 
     public ServicePartDetail() {
     }
 
-    public ServicePartDetail(int servicePartDetailId, CarMaintenance maintenance, Product product, int quantity, BigDecimal unitPrice, BigDecimal totalPrice, LocalDate installationDate, LocalDate warrantyExpireDate, String lotNumber, String notes) {
+    public ServicePartDetail(int servicePartDetailId, CarMaintenance maintenance, Product product, int quantity, BigDecimal unitPrice, BigDecimal totalPrice, String installationDate, String warrantyExpireDate, String lotNumber, String notes) {
         this.servicePartDetailId = servicePartDetailId;
         this.maintenance = maintenance;
         this.product = product;
@@ -87,19 +87,19 @@ public class ServicePartDetail {
         this.totalPrice = totalPrice;
     }
 
-    public LocalDate getInstallationDate() {
+    public String getInstallationDate() {
         return installationDate;
     }
 
-    public void setInstallationDate(LocalDate installationDate) {
+    public void setInstallationDate(String installationDate) {
         this.installationDate = installationDate;
     }
 
-    public LocalDate getWarrantyExpireDate() {
+    public String getWarrantyExpireDate() {
         return warrantyExpireDate;
     }
 
-    public void setWarrantyExpireDate(LocalDate warrantyExpireDate) {
+    public void setWarrantyExpireDate(String warrantyExpireDate) {
         this.warrantyExpireDate = warrantyExpireDate;
     }
 
@@ -123,5 +123,4 @@ public class ServicePartDetail {
     public String toString() {
         return "ServicePartDetail{" + "servicePartDetailId=" + servicePartDetailId + ", maintenance=" + maintenance + ", product=" + product + ", quantity=" + quantity + ", unitPrice=" + unitPrice + ", totalPrice=" + totalPrice + ", installationDate=" + installationDate + ", warrantyExpireDate=" + warrantyExpireDate + ", lotNumber=" + lotNumber + ", notes=" + notes + '}';
     }
-    
 }

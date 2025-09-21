@@ -3,9 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package model;
-
-import java.time.LocalDateTime;
-
 /**
  *
  * @author MinHeee
@@ -13,14 +10,14 @@ import java.time.LocalDateTime;
 public class TokenForgetPassword {
     private int id;
     private String token;
-    private LocalDateTime expiryTime;
+    private String expiryTime;
     private boolean isUsed;
     private User user;
 
     public TokenForgetPassword() {
     }
 
-    public TokenForgetPassword(int id, String token, LocalDateTime expiryTime, boolean isUsed, User user) {
+    public TokenForgetPassword(int id, String token, String expiryTime, boolean isUsed, User user) {
         this.id = id;
         this.token = token;
         this.expiryTime = expiryTime;
@@ -44,11 +41,11 @@ public class TokenForgetPassword {
         this.token = token;
     }
 
-    public LocalDateTime getExpiryTime() {
+    public String getExpiryTime() {
         return expiryTime;
     }
 
-    public void setExpiryTime(LocalDateTime expiryTime) {
+    public void setExpiryTime(String expiryTime) {
         this.expiryTime = expiryTime;
     }
 
@@ -72,5 +69,4 @@ public class TokenForgetPassword {
     public String toString() {
         return "TokenForgetPassword{" + "id=" + id + ", token=" + token + ", expiryTime=" + expiryTime + ", isUsed=" + isUsed + ", user=" + user + '}';
     }
-    
 }

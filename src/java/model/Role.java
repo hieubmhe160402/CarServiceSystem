@@ -15,7 +15,7 @@ public class Role {
     private int roleID;
     private String roleName;
     private String description;
-    private List<Permission> permissions;
+        
  
     public Role() {
     }

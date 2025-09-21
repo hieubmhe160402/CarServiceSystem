@@ -5,7 +5,6 @@
 package model;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 /**
  *
@@ -15,7 +14,7 @@ public class Product {
     private int productId;
     private String code;
     private String name;
-    private String type; // PART / SERVICE
+    private String type; 
     private BigDecimal price;
     private String description;
     private String image;
@@ -25,12 +24,12 @@ public class Product {
     private int minStockLevel;
     private BigDecimal estimatedDurationHours;
     private boolean isActive;
-    private LocalDateTime createdDate;
+    private String createdDate;
 
     public Product() {
     }
 
-    public Product(int productId, String code, String name, String type, BigDecimal price, String description, String image, Unit unit, Category category, int warrantyPeriodMonths, int minStockLevel, BigDecimal estimatedDurationHours, boolean isActive, LocalDateTime createdDate) {
+    public Product(int productId, String code, String name, String type, BigDecimal price, String description, String image, Unit unit, Category category, int warrantyPeriodMonths, int minStockLevel, BigDecimal estimatedDurationHours, boolean isActive, String createdDate) {
         this.productId = productId;
         this.code = code;
         this.name = name;
@@ -151,11 +150,11 @@ public class Product {
         this.isActive = isActive;
     }
 
-    public LocalDateTime getCreatedDate() {
+    public String getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(LocalDateTime createdDate) {
+    public void setCreatedDate(String createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -163,6 +162,7 @@ public class Product {
     public String toString() {
         return "Product{" + "productId=" + productId + ", code=" + code + ", name=" + name + ", type=" + type + ", price=" + price + ", description=" + description + ", image=" + image + ", unit=" + unit + ", category=" + category + ", warrantyPeriodMonths=" + warrantyPeriodMonths + ", minStockLevel=" + minStockLevel + ", estimatedDurationHours=" + estimatedDurationHours + ", isActive=" + isActive + ", createdDate=" + createdDate + '}';
     }
-    
+
+ 
     
 }

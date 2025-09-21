@@ -5,7 +5,6 @@
 package model;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 /**
  *
@@ -16,7 +15,7 @@ public class PaymentTransaction {
     private CarMaintenance maintenance;
     private String paymentMethod;
     private BigDecimal amount;
-    private LocalDateTime paymentDate;
+    private String paymentDate;
     private String status;
     private String transactionReference;
     private String notes;
@@ -25,7 +24,7 @@ public class PaymentTransaction {
     public PaymentTransaction() {
     }
 
-    public PaymentTransaction(int transactionId, CarMaintenance maintenance, String paymentMethod, BigDecimal amount, LocalDateTime paymentDate, String status, String transactionReference, String notes, User processedBy) {
+    public PaymentTransaction(int transactionId, CarMaintenance maintenance, String paymentMethod, BigDecimal amount, String paymentDate, String status, String transactionReference, String notes, User processedBy) {
         this.transactionId = transactionId;
         this.maintenance = maintenance;
         this.paymentMethod = paymentMethod;
@@ -69,11 +68,11 @@ public class PaymentTransaction {
         this.amount = amount;
     }
 
-    public LocalDateTime getPaymentDate() {
+    public String getPaymentDate() {
         return paymentDate;
     }
 
-    public void setPaymentDate(LocalDateTime paymentDate) {
+    public void setPaymentDate(String paymentDate) {
         this.paymentDate = paymentDate;
     }
 
@@ -113,5 +112,6 @@ public class PaymentTransaction {
     public String toString() {
         return "PaymentTransaction{" + "transactionId=" + transactionId + ", maintenance=" + maintenance + ", paymentMethod=" + paymentMethod + ", amount=" + amount + ", paymentDate=" + paymentDate + ", status=" + status + ", transactionReference=" + transactionReference + ", notes=" + notes + ", processedBy=" + processedBy + '}';
     }
-    
+
+  
 }

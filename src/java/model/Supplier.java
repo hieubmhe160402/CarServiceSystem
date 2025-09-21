@@ -4,8 +4,6 @@
  */
 package model;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 /**
  *
@@ -19,12 +17,12 @@ public class Supplier {
     private String email;
     private String description;
     private boolean isActive;
-    private LocalDateTime createdDate;
+    private String createdDate;
 
     public Supplier() {
     }
 
-    public Supplier(int supplierId, String name, String address, String phone, String email, String description, boolean isActive, LocalDateTime createdDate) {
+    public Supplier(int supplierId, String name, String address, String phone, String email, String description, boolean isActive, String createdDate) {
         this.supplierId = supplierId;
         this.name = name;
         this.address = address;
@@ -91,11 +89,11 @@ public class Supplier {
         this.isActive = isActive;
     }
 
-    public LocalDateTime getCreatedDate() {
+    public String getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(LocalDateTime createdDate) {
+    public void setCreatedDate(String createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -103,5 +101,4 @@ public class Supplier {
     public String toString() {
         return "Supplier{" + "supplierId=" + supplierId + ", name=" + name + ", address=" + address + ", phone=" + phone + ", email=" + email + ", description=" + description + ", isActive=" + isActive + ", createdDate=" + createdDate + '}';
     }
-    
 }

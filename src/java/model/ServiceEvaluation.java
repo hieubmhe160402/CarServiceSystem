@@ -4,13 +4,12 @@
  */
 package model;
 
-import java.time.LocalDateTime;
-
 /**
  *
  * @author MinHeee
  */
 public class ServiceEvaluation {
+
     private int evaluationId;
     private CarMaintenance maintenance;
     private User customer;
@@ -19,12 +18,12 @@ public class ServiceEvaluation {
     private int timelinessRating;
     private int overallRating;
     private String comments;
-    private LocalDateTime createdDate;
+    private String createdDate;
 
     public ServiceEvaluation() {
     }
 
-    public ServiceEvaluation(int evaluationId, CarMaintenance maintenance, User customer, int serviceRating, int qualityRating, int timelinessRating, int overallRating, String comments, LocalDateTime createdDate) {
+    public ServiceEvaluation(int evaluationId, CarMaintenance maintenance, User customer, int serviceRating, int qualityRating, int timelinessRating, int overallRating, String comments, String createdDate) {
         this.evaluationId = evaluationId;
         this.maintenance = maintenance;
         this.customer = customer;
@@ -100,14 +99,17 @@ public class ServiceEvaluation {
         this.comments = comments;
     }
 
-    public LocalDateTime getCreatedDate() {
+    public String getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(LocalDateTime createdDate) {
+    public void setCreatedDate(String createdDate) {
         this.createdDate = createdDate;
     }
-    
-    
-    
+
+    @Override
+    public String toString() {
+        return "ServiceEvaluation{" + "evaluationId=" + evaluationId + ", maintenance=" + maintenance + ", customer=" + customer + ", serviceRating=" + serviceRating + ", qualityRating=" + qualityRating + ", timelinessRating=" + timelinessRating + ", overallRating=" + overallRating + ", comments=" + comments + ", createdDate=" + createdDate + '}';
+    }
+
 }

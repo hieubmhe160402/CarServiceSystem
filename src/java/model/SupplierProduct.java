@@ -77,5 +77,9 @@ public class SupplierProduct {
     public void setIsActive(boolean isActive) {
         this.isActive = isActive;
     }
-    
+
+    @Override
+    public String toString() {
+        return "SupplierProduct{" + "supplier=" + supplier + ", product=" + product + ", deliveryDuration=" + deliveryDuration + ", estimatedPrice=" + estimatedPrice + ", policies=" + policies + ", isActive=" + isActive + '}';
+    }
 }

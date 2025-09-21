@@ -3,9 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package model;
-
-import java.time.LocalDateTime;
-
 /**
  *
  * @author MinHeee
@@ -13,19 +10,19 @@ import java.time.LocalDateTime;
 public class Appointment {
     private int appointmentId;
     private Car car;
-    private LocalDateTime appointmentDate;
+    private String appointmentDate;
     private String requestedServices;
     private String status;
     private String notes;
     private User createdBy;
-    private LocalDateTime createdDate;
+    private String createdDate;
     private User confirmedBy;
-    private LocalDateTime confirmedDate;
+    private String confirmedDate;
 
     public Appointment() {
     }
 
-    public Appointment(int appointmentId, Car car, LocalDateTime appointmentDate, String requestedServices, String status, String notes, User createdBy, LocalDateTime createdDate, User confirmedBy, LocalDateTime confirmedDate) {
+    public Appointment(int appointmentId, Car car, String appointmentDate, String requestedServices, String status, String notes, User createdBy, String createdDate, User confirmedBy, String confirmedDate) {
         this.appointmentId = appointmentId;
         this.car = car;
         this.appointmentDate = appointmentDate;
@@ -54,11 +51,11 @@ public class Appointment {
         this.car = car;
     }
 
-    public LocalDateTime getAppointmentDate() {
+    public String getAppointmentDate() {
         return appointmentDate;
     }
 
-    public void setAppointmentDate(LocalDateTime appointmentDate) {
+    public void setAppointmentDate(String appointmentDate) {
         this.appointmentDate = appointmentDate;
     }
 
@@ -94,11 +91,11 @@ public class Appointment {
         this.createdBy = createdBy;
     }
 
-    public LocalDateTime getCreatedDate() {
+    public String getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(LocalDateTime createdDate) {
+    public void setCreatedDate(String createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -110,11 +107,11 @@ public class Appointment {
         this.confirmedBy = confirmedBy;
     }
 
-    public LocalDateTime getConfirmedDate() {
+    public String getConfirmedDate() {
         return confirmedDate;
     }
 
-    public void setConfirmedDate(LocalDateTime confirmedDate) {
+    public void setConfirmedDate(String confirmedDate) {
         this.confirmedDate = confirmedDate;
     }
 
@@ -122,5 +119,7 @@ public class Appointment {
     public String toString() {
         return "Appointment{" + "appointmentId=" + appointmentId + ", car=" + car + ", appointmentDate=" + appointmentDate + ", requestedServices=" + requestedServices + ", status=" + status + ", notes=" + notes + ", createdBy=" + createdBy + ", createdDate=" + createdDate + ", confirmedBy=" + confirmedBy + ", confirmedDate=" + confirmedDate + '}';
     }
+
+   
     
 }

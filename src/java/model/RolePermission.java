@@ -40,4 +40,6 @@ public class RolePermission {
     public String toString() {
         return "RolePermission{" + "role=" + role + ", permission=" + permission + '}';
     }
+
+   
 }

@@ -4,6 +4,8 @@
  */
 package model;
 
+import java.util.List;
+
 /**
  *
  * @author MinHeee
@@ -12,18 +14,20 @@ public class PermissionGroup {
     private int groupID;
     private String groupName;
     private String description;
+    private List<Permission> listPermissions;
 
     // Constructors
+
     public PermissionGroup() {
     }
 
-    public PermissionGroup(int groupID, String groupName, String description) {
+    public PermissionGroup(int groupID, String groupName, String description, List<Permission> listPermissions) {
         this.groupID = groupID;
         this.groupName = groupName;
         this.description = description;
+        this.listPermissions = listPermissions;
     }
 
-    // Getters and Setters
     public int getGroupID() {
         return groupID;
     }
@@ -48,13 +52,17 @@ public class PermissionGroup {
         this.description = description;
     }
 
-    // toString
+    public List<Permission> getListPermissions() {
+        return listPermissions;
+    }
+
+    public void setListPermissions(List<Permission> listPermissions) {
+        this.listPermissions = listPermissions;
+    }
+
     @Override
     public String toString() {
-        return "PermissionGroup{" +
-                "groupID=" + groupID +
-                ", groupName='" + groupName + '\'' +
-                ", description='" + description + '\'' +
-                '}';
+        return "PermissionGroup{" + "groupID=" + groupID + ", groupName=" + groupName + ", description=" + description + ", listPermissions=" + listPermissions + '}';
     }
+   
 }
