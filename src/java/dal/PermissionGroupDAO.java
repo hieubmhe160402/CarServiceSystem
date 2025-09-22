@@ -8,7 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.PermissionGroup;
 
-public class PermissionGroupDBContext extends DBContext {
+public class PermissionGroupDAO extends DBContext {
 
     public List<PermissionGroup> getAll() {
         List<PermissionGroup> list = new ArrayList<>();
@@ -24,7 +24,7 @@ public class PermissionGroupDBContext extends DBContext {
                 list.add(pg);
             }
         } catch (SQLException ex) {
-            Logger.getLogger(PermissionGroupDBContext.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PermissionGroupDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return list;
     }
@@ -43,7 +43,7 @@ public class PermissionGroupDBContext extends DBContext {
                 pg.setGroupID(rs.getInt(1));
             }
         } catch (SQLException ex) {
-            Logger.getLogger(PermissionGroupDBContext.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PermissionGroupDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

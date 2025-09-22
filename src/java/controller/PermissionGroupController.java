@@ -4,7 +4,7 @@
  */
 package controller;
 
-import dal.PermissionGroupDBContext;
+import dal.PermissionGroupDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -25,7 +25,7 @@ public class PermissionGroupController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
 
-        PermissionGroupDBContext db = new PermissionGroupDBContext();
+        PermissionGroupDAO db = new PermissionGroupDAO();
         List<PermissionGroup> groups = db.getAll();
 
         request.setAttribute("groups", groups);
@@ -47,7 +47,7 @@ public class PermissionGroupController extends HttpServlet {
             pg.setGroupName(groupName);
             pg.setDescription(description);
 
-            PermissionGroupDBContext db = new PermissionGroupDBContext();
+            PermissionGroupDAO db = new PermissionGroupDAO();
             db.insert(pg);
         }
 
