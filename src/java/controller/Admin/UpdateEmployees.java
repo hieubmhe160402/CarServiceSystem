@@ -4,7 +4,6 @@
  */
 package controller.Admin;
 
-import dal.RoleDAO;
 import dal.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,7 +11,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
 import model.Role;
 import model.User;
 
@@ -20,7 +18,7 @@ import model.User;
  *
  * @author MinHeee
  */
-public class AddEmployees extends HttpServlet {
+public class UpdateEmployees extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,10 +37,10 @@ public class AddEmployees extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet AddEmployees</title>");
+            out.println("<title>Servlet UpdateEmployees</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet AddEmployees at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet UpdateEmployees at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -60,15 +58,7 @@ public class AddEmployees extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        UserDAO db = new UserDAO();
-        RoleDAO rdb = new RoleDAO();
-        List<User> users = db.getAll();
-        List<Role> roles = rdb.getAllRole();
-        request.setAttribute("users", users);
-        request.setAttribute("roles", roles);
-        request.getRequestDispatcher("/view/Admin/ManageEmployees.jsp").forward(request, response);
-
+        processRequest(request, response);
     }
 
     /**
@@ -82,7 +72,36 @@ public class AddEmployees extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        doGet(request, response);
+        try {
+            request.setCharacterEncoding("UTF-8");
+            int userId = Integer.parseInt(request.getParameter("userId"));
+            String userCode = request.getParameter("userCode");
+            String fullName = request.getParameter("fullName");
+            String email = request.getParameter("email");
+            String phone = request.getParameter("phone");
+            String DOB = request.getParameter("DOB");
+            boolean male = Boolean.parseBoolean(request.getParameter("male"));
+            boolean isActive = Boolean.parseBoolean(request.getParameter("isActive"));
+            int roleID = Integer.parseInt(request.getParameter("roleID"));
+            User u = new User();
+            u.setUserId(userId);
+            u.setUserCode(userCode);
+            u.setFullName(fullName);
+            u.setEmail(email);
+            u.setPhone(phone);
+            u.setMale(male);
+            u.setDateOfBirth(DOB);
+            u.setIsActive(isActive);
+            Role r = new Role();
+            r.setRoleID(roleID);
+            u.setRole(r);
+            UserDAO dao = new UserDAO();
+            dao.UpdateEmployees(u);
+            response.sendRedirect("AddEmployees");
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.getWriter().println("Update failed: " + e.getMessage());
+        }
     }
 
     /**

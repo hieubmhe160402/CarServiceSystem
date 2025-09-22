@@ -8,6 +8,10 @@
         <servlet-name>AddEmployees</servlet-name>
         <servlet-class>controller.Admin.AddEmployees</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>UpdateEmployees</servlet-name>
+        <servlet-class>controller.Admin.UpdateEmployees</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PermissionGroupController</servlet-name>
         <url-pattern>/PermissionGroupController</url-pattern>
@@ -15,5 +19,9 @@
     <servlet-mapping>
         <servlet-name>AddEmployees</servlet-name>
         <url-pattern>/AddEmployees</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateEmployees</servlet-name>
+        <url-pattern>/UpdateEmployees</url-pattern>
     </servlet-mapping>
 </web-app>

@@ -122,6 +122,28 @@
                 background:#007bff;
                 color:white;
             }
+
+
+
+
+            .modal {
+                display: none; /* Luôn ẩn khi load trang */
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                justify-content: center;
+                align-items: center;
+            }
+
+            .modal-content {
+                background: #fff;
+                padding: 20px;
+                border-radius: 8px;
+                width: 400px;
+            }
         </style>
     </head>
     <body>
@@ -154,44 +176,101 @@
                             <th>UserCode</th>
                             <th>FullName</th>
                             <th>Username</th>
-                    
                             <th>Email</th>
                             <th>Male</th>
                             <th>Dob</th>
                             <th>Status</th>
                             <th>Position</th>
-                            
+                            <th>Action</th> 
                         </tr>
                     </thead>
                     <tbody>
-                    <c:forEach var="u" items="${users}">
-                        <tr>
-                            <td>${u.userId}</td>
-                            <td>${u.userCode}</td>
-                            <td>${u.fullName}</td>
-                            <td>${u.email}</td>
-                            <td>${u.phone}</td>
-                            <td>
-                        <c:choose>
-                            <c:when test="${u.male}">Nam</c:when>
-                            <c:otherwise>Nữ</c:otherwise>
-                        </c:choose>
-                        </td>
-                        <td>${u.dateOfBirth}</td>
-                        <td>
-                        <c:choose>
-                            <c:when test="${u.isActive}">Active</c:when>
-                            <c:otherwise>Inactive</c:otherwise>
-                        </c:choose>
-                        </td>
-                        <td>${u.role.roleName}</td>
-                        </tr>
-                    </c:forEach>
+                        <c:forEach var="u" items="${users}">
+                            <tr>
+                                <td>${u.userId}</td>
+                                <td>${u.userCode}</td>
+                                <td>${u.fullName}</td>
+                                <td>${u.email}</td>
+                                <td>${u.phone}</td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${u.male}">Nam</c:when>
+                                        <c:otherwise>Nữ</c:otherwise>
+                                    </c:choose>
+                                </td>
+                                <td>${u.dateOfBirth}</td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${u.isActive}">Active</c:when>
+                                        <c:otherwise>Inactive</c:otherwise>
+                                    </c:choose>
+                                </td>
+                                <td>${u.role.roleName}</td>
+                                <td>
+
+                                    <button class="btn btn-update" 
+                                            onclick="document.getElementById('modal-${u.userId}').style.display = 'flex'">
+                                        Update
+                                    </button>                                    
+                                    <a href="deleteUser?id=${u.userId}" class="btn btn-delete"
+                                       onclick="return confirm('Bạn có chắc muốn xóa nhân viên này?');">Delete</a>
+                                </td>
+                            </tr>
+                        </c:forEach>
                     </tbody>
                 </table>
+                <c:forEach var="u" items="${users}">
+                    <!-- Modal Update cho user -->
+                    <div id="modal-${u.userId}" class="modal">
+                        <div class="modal-content">
+                            <h2>Cập nhật nhân viên</h2>
+
+                            <form action="${pageContext.request.contextPath}/UpdateEmployees" method="post">
+                                <input type="hidden" name="userId" value="${u.userId}" />
+
+                                <label>UserCode:</label>
+                                <input type="text" name="userCode" value="${u.userCode}" /><br/><br/>
+
+                                <label>FullName:</label>
+                                <input type="text" name="fullName" value="${u.fullName}" /><br/><br/>
+
+                                <label>Email:</label>
+                                <input type="email" name="email" value="${u.email}" /><br/><br/>
+
+                                <label>Phone:</label>
+                                <input type="text" name="phone" value="${u.phone}" /><br/><br/>
+                                <label>Gender:</label>
+                                <select name="male">
+                                    <option value="true" ${u.male ? "selected" : ""}>Male</option>
+                                    <option value="false" ${!u.male ? "selected" : ""}>Female</option>
+                                </select><br/><br/>
+                                <label>DOB</label>
+                                <input type="date" name="DOB" value="${u.dateOfBirth}" /><br/><br/>
+                                <label>Gender:</label>
+                                <label>Status:</label>
+                                <select name="isActive">
+                                    <option value="true" ${u.isActive ? "selected" : ""}>Active</option>
+                                    <option value="false" ${!u.isActive ? "selected" : ""}>Inactive</option>
+                                </select><br/><br/>
+
+                                <label>Position</label>
+                                <select name="roleID">
+                                    <c:forEach var="r" items="${roles}">
+                                        <option value="${r.roleID}">${r.roleName}</option>
+                                    </c:forEach>
+                                </select>
+
+                                <button type="submit" class="btn btn-update">Save</button>
+                                <button type="button" class="btn btn-delete"
+                                        onclick="document.getElementById('modal-${u.userId}').style.display = 'none'">
+                                    Cancel
+                                </button>
+
+                            </form>
+                        </div>
+                    </div>
+                </c:forEach>
             </main>
-
-
         </div>
     </body>
 </html>
