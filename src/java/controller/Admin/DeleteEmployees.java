@@ -4,6 +4,8 @@
  */
 package controller.Admin;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import dal.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,14 +13,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.Role;
-import model.User;
 
 /**
  *
  * @author MinHeee
  */
-public class UpdateEmployees extends HttpServlet {
+public class DeleteEmployees extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,10 +37,10 @@ public class UpdateEmployees extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet UpdateEmployees</title>");
+            out.println("<title>Servlet DeleteEmployees</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet UpdateEmployees at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet DeleteEmployees at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -58,7 +58,15 @@ public class UpdateEmployees extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            int userId = Integer.parseInt(request.getParameter("id"));
+            UserDAO udb = new UserDAO();
+            udb.deleteUser(userId);
+            response.sendRedirect("ListEmployees");
+        } catch (Exception ex) {
+            Logger.getLogger(DeleteEmployees.class.getName()).log(Level.SEVERE, null, ex);
+            request.getRequestDispatcher("/view/Admin/error.jsp").forward(request, response);
+        }
     }
 
     /**
@@ -72,36 +80,7 @@ public class UpdateEmployees extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            request.setCharacterEncoding("UTF-8");
-            int userId = Integer.parseInt(request.getParameter("userId"));
-            String userCode = request.getParameter("userCode");
-            String fullName = request.getParameter("fullName");
-            String email = request.getParameter("email");
-            String phone = request.getParameter("phone");
-            String DOB = request.getParameter("DOB");
-            boolean male = Boolean.parseBoolean(request.getParameter("male"));
-            boolean isActive = Boolean.parseBoolean(request.getParameter("isActive"));
-            int roleID = Integer.parseInt(request.getParameter("roleID"));
-            User u = new User();
-            u.setUserId(userId);
-            u.setUserCode(userCode);
-            u.setFullName(fullName);
-            u.setEmail(email);
-            u.setPhone(phone);
-            u.setMale(male);
-            u.setDateOfBirth(DOB);
-            u.setIsActive(isActive);
-            Role r = new Role();
-            r.setRoleID(roleID);
-            u.setRole(r);
-            UserDAO dao = new UserDAO();
-            dao.UpdateEmployees(u);
-            response.sendRedirect("ListEmployees");
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.getWriter().println("Update failed: " + e.getMessage());
-        }
+        processRequest(request, response);
     }
 
     /**

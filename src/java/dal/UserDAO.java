@@ -86,4 +86,16 @@ public class UserDAO extends DBContext {
         return null;
     }
 
+    public void deleteUser(int userId) {
+        try {
+            String sql = "DELETE From Users WHERE UserID= ? ";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setInt(1, userId);
+            stm.executeUpdate();
+        } catch (Exception ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+
+        }
+    }
+
 }

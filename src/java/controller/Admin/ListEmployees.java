@@ -20,7 +20,7 @@ import model.User;
  *
  * @author MinHeee
  */
-public class AddEmployees extends HttpServlet {
+public class ListEmployees extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>

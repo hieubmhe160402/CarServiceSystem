@@ -175,8 +175,8 @@
                             <th>UserID</th>
                             <th>UserCode</th>
                             <th>FullName</th>
-                            <th>Username</th>
                             <th>Email</th>
+                            <th>Phone</th>
                             <th>Male</th>
                             <th>Dob</th>
                             <th>Status</th>
@@ -212,7 +212,7 @@
                                             onclick="document.getElementById('modal-${u.userId}').style.display = 'flex'">
                                         Update
                                     </button>                                    
-                                    <a href="deleteUser?id=${u.userId}" class="btn btn-delete"
+                                    <a href="DeleteEmployees?id=${u.userId}" class="btn btn-delete"
                                        onclick="return confirm('Bạn có chắc muốn xóa nhân viên này?');">Delete</a>
                                 </td>
                             </tr>
