@@ -38,7 +38,8 @@ public class UserDAO extends DBContext {
                 u.setEmail(rs.getString("Email"));
                 u.setPhone(rs.getString("Phone"));
                 u.setMale(rs.getBoolean("Male"));
-                u.setDateOfBirth(rs.getString("DateOfBirth"));
+                Date dob = rs.getDate("dateOfBirth");
+                u.setDateOfBirth(dob != null ? dob.toString() : null);
                 u.setIsActive(rs.getBoolean("IsActive"));
 
                 // Thêm Role
@@ -96,6 +97,69 @@ public class UserDAO extends DBContext {
             Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
 
         }
+    }
+
+    public void insert(User user) {
+        try {
+            String sql = "INSERT INTO [dbo].[Users] "
+                    + "([UserCode], [FullName], [Username], [Password], [Email], "
+                    + "[Phone], [Image], [Male], [DateOfBirth], [RoleID], [IsActive]) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, user.getUserCode());
+            stm.setString(2, user.getFullName());
+            stm.setString(3, user.getUserName());
+            stm.setString(4, user.getPassword());
+            stm.setString(5, user.getEmail());
+            stm.setString(6, user.getPhone());
+            stm.setString(7, user.getImage());
+            stm.setBoolean(8, user.getMale() != null && user.getMale());
+            stm.setString(9, user.getDateOfBirth());
+            stm.setInt(10, user.getRole().getRoleID());
+            stm.setBoolean(11, user.isIsActive());
+            stm.executeUpdate();
+        } catch (Exception e) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+
+    public boolean isEmailExist(String email) {
+        try {
+            String sql = "SELECT 1 FROM Users WHERE Email = ?";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, email);
+            ResultSet rs = stm.executeQuery();
+            return rs.next();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean existsByUserCode(String userCode) {
+        String sql = "SELECT UserCode FROM Users WHERE UserCode = ?";
+        try {
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, userCode);
+            ResultSet rs = stm.executeQuery();
+            return rs.next();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean existsByUsername(String username) {
+        String sql = "SELECT Username FROM Users WHERE Username = ?";
+        try {
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, username);
+            ResultSet rs = stm.executeQuery();
+            return rs.next();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }

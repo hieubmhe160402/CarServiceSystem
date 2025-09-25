@@ -23,7 +23,7 @@ public class RoleDAO extends DBContext {
     public List<Role> getAllRole() {
         List<Role> list = new ArrayList<>();
         try {
-            String sql = "Select * from Role";
+            String sql = "SELECT * FROM Role WHERE RoleName <> 'Admin'";
             PreparedStatement stm = connection.prepareStatement(sql);
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {

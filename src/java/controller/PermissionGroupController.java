@@ -29,7 +29,6 @@ public class PermissionGroupController extends HttpServlet {
         List<PermissionGroup> groups = db.getAll();
 
         request.setAttribute("groups", groups);
-        // forward bằng đường dẫn tuyệt đối (từ context root)
         request.getRequestDispatcher("/view/Test.jsp").forward(request, response);
     }
 
@@ -50,8 +49,6 @@ public class PermissionGroupController extends HttpServlet {
             PermissionGroupDAO db = new PermissionGroupDAO();
             db.insert(pg);
         }
-
-        // sau khi insert, gọi lại doGet để load lại danh sách và forward Test.jsp
         doGet(request, response);
     }
 }

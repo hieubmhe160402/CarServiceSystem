@@ -167,7 +167,11 @@
             <!-- Main content -->
             <main class="main">
                 <h1>Quản lý Nhân viên</h1>
-                <button class="btn btn-add">+ Thêm Nhân viên</button>
+                <form action="AddEmployees" method="get" style="display:inline;">
+                    <button type="submit" class="btn btn-add">+ Thêm Nhân viên</button>
+                </form>
+
+
                 <br/><br/>
                 <table>
                     <thead>
@@ -245,7 +249,7 @@
                                     <option value="false" ${!u.male ? "selected" : ""}>Female</option>
                                 </select><br/><br/>
                                 <label>DOB</label>
-                                <input type="date" name="DOB" value="${u.dateOfBirth}" /><br/><br/>
+                                <input type="date" name="DOB" value="${param.DOB != null ? param.DOB : u.dateOfBirth}" />
                                 <label>Gender:</label>
                                 <label>Status:</label>
                                 <select name="isActive">
