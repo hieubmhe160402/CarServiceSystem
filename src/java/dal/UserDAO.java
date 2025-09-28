@@ -161,5 +161,102 @@ public class UserDAO extends DBContext {
         }
         return false;
     }
+    // for filter in list employeess
+
+    public List<User> getByRole(int roleId) {
+        List<User> list = new ArrayList<>();
+        try {
+            String sql = "SELECT u.UserID, u.UserCode, u.FullName, "
+                    + "u.Email, u.Phone, u.Male, u.DateOfBirth, "
+                    + "u.IsActive, r.RoleID, r.RoleName "
+                    + "FROM Users u "
+                    + "JOIN Role r ON u.RoleID = r.RoleID "
+                    + "WHERE u.RoleID = ?";
+
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setInt(1, roleId);
+            ResultSet rs = stm.executeQuery();
+
+            while (rs.next()) {
+                User u = new User();
+                u.setUserId(rs.getInt("UserID"));
+                u.setUserCode(rs.getString("UserCode"));
+                u.setFullName(rs.getString("FullName"));
+                u.setEmail(rs.getString("Email"));
+                u.setPhone(rs.getString("Phone"));
+                u.setMale(rs.getBoolean("Male"));
+
+                Date dob = rs.getDate("DateOfBirth");
+                u.setDateOfBirth(dob != null ? dob.toString() : null);
+
+                u.setIsActive(rs.getBoolean("IsActive"));
+
+                // Role
+                Role r = new Role();
+                r.setRoleID(rs.getInt("RoleID"));
+                r.setRoleName(rs.getString("RoleName"));
+                u.setRole(r);
+
+                list.add(u);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<User> searchByEmail(String keyword) {
+        List<User> list = new ArrayList<>();
+        String sql = "SELECT u.*, r.RoleID, r.RoleName, r.Description "
+                + "FROM Users u "
+                + "JOIN Role r ON u.RoleID = r.RoleID "
+                + "WHERE u.email LIKE ?";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            String searchValue = "%" + keyword + "%";
+            st.setString(1, searchValue);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                Role role = new Role(
+                        rs.getInt("RoleID"),
+                        rs.getString("RoleName"),
+                        rs.getString("Description")
+                );
+
+                User u = new User(
+                        rs.getInt("UserID"),
+                        rs.getString("UserCode"),
+                        rs.getString("FullName"),
+                        rs.getString("UserName"),
+                        rs.getString("Password"),
+                        rs.getString("Email"),
+                        rs.getString("Phone"),
+                        rs.getString("Image"),
+                        rs.getBoolean("Male"),
+                        rs.getString("DateOfBirth"),
+                        role,
+                        rs.getBoolean("IsActive"),
+                        rs.getString("CreatedDate"),
+                        rs.getString("LastLoginDate")
+                );
+                list.add(u);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public void updateStatus(int userId, boolean isActive) {
+        String sql = "UPDATE Users SET IsActive = ? WHERE UserID = ?";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setBoolean(1, isActive);
+            st.setInt(2, userId);
+            st.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

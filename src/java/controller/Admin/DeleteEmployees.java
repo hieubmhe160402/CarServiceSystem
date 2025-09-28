@@ -60,8 +60,14 @@ public class DeleteEmployees extends HttpServlet {
             throws ServletException, IOException {
         try {
             int userId = Integer.parseInt(request.getParameter("id"));
-            UserDAO udb = new UserDAO();
-            udb.deleteUser(userId);
+            String status = request.getParameter("status"); // 0 = inactive, 1 = active
+
+            if (status != null) {
+                boolean newStatus = "1".equals(status); // true nếu là 1 (Active), false nếu 0 (Inactive)
+                UserDAO udb = new UserDAO();
+                udb.updateStatus(userId, newStatus);   // gọi hàm update thay vì delete
+            }
+
             response.sendRedirect("listEmployees");
         } catch (Exception ex) {
             Logger.getLogger(DeleteEmployees.class.getName()).log(Level.SEVERE, null, ex);

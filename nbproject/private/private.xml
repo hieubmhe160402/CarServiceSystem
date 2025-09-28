@@ -2,6 +2,14 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/C:/Users/MinHeee/Documents/NetBeansProjects/CarCareSystem/src/java/controller/Admin/DeleteEmployees.java</file>
+            <file>file:/C:/Users/MinHeee/Documents/NetBeansProjects/CarCareSystem/web/view/Admin/AddEmployees.jsp</file>
+            <file>file:/C:/Users/MinHeee/Documents/NetBeansProjects/CarCareSystem/src/java/dal/RoleDAO.java</file>
+            <file>file:/C:/Users/MinHeee/Documents/NetBeansProjects/CarCareSystem/src/java/dal/UserDAO.java</file>
+            <file>file:/C:/Users/MinHeee/Documents/NetBeansProjects/CarCareSystem/src/java/controller/Admin/ListEmployees.java</file>
+            <file>file:/C:/Users/MinHeee/Documents/NetBeansProjects/CarCareSystem/src/java/model/User.java</file>
+            <file>file:/C:/Users/MinHeee/Documents/NetBeansProjects/CarCareSystem/web/view/Admin/ManageEmployees.jsp</file>
+        </group>
     </open-files>
 </project-private>

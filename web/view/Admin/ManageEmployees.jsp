@@ -171,6 +171,33 @@
                     <button type="submit" class="btn btn-add">+ Thêm Nhân viên</button>
                 </form>
 
+                <form action="listEmployees" method="get" 
+                      style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+
+
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <label for="roleFilter">Filter by Role:</label>
+                        <select name="roleId" id="roleFilter" onchange="this.form.submit()">
+                            <option value="" ${empty selectedRoleId ? "selected":""}>All Roles</option>
+                            <c:forEach var="r" items="${roles}">
+                                <option value="${r.roleID}" ${param.roleId == r.roleID ? "selected" : ""}>
+                                    ${r.roleName}
+                                </option>
+                            </c:forEach>
+                        </select>
+
+
+                        <input type="text" name="keyword" value="${param.keyword}" placeholder="Search by name/email..." 
+                               style="padding: 5px;" />
+                        <button type="submit">Search</button>
+                    </div>
+
+                    <!-- Right side: Reload button -->
+                    <div>
+                        <button type="button" onclick="window.location.href = 'listEmployees'">Reload</button>
+                    </div>
+                </form>
+
 
                 <br/><br/>
                 <table>
@@ -211,13 +238,22 @@
                                 </td>
                                 <td>${u.role.roleName}</td>
                                 <td>
-
-                                    <button class="btn btn-update" 
-                                            onclick="document.getElementById('modal-${u.userId}').style.display = 'flex'">
-                                        Update
-                                    </button>                                    
-                                    <a href="deleteEmployees?id=${u.userId}" class="btn btn-delete"
-                                       onclick="return confirm('Bạn có chắc muốn xóa nhân viên này?');">Delete</a>
+                                    <c:choose>
+                                        <c:when test="${u.isActive}">
+                                            <button class="btn btn-update" 
+                                                    onclick="document.getElementById('modal-${u.userId}').style.display = 'flex'">
+                                                Update
+                                            </button>                                    
+                                            <a href="deleteEmployees?id=${u.userId}&status=0" class="btn btn-delete">
+                                                Inactive
+                                            </a>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <a href="deleteEmployees?id=${u.userId}&status=1" class="btn btn-add">
+                                                Active
+                                            </a>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </td>
                             </tr>
                         </c:forEach>

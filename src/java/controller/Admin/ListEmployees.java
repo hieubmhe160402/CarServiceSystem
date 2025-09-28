@@ -63,10 +63,28 @@ public class ListEmployees extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         UserDAO db = new UserDAO();
         RoleDAO rdb = new RoleDAO();
-        List<User> users = db.getAll();
+        String roleParam = request.getParameter("roleId");
+        String key = request.getParameter("keyword");
+
+        List<User> users;
+
+        if (key != null && !key.trim().isEmpty()) {
+            users = db.searchByEmail(key.trim());
+        } else if (roleParam != null && !roleParam.isEmpty()) {
+            try {
+                int roleId = Integer.parseInt(roleParam);
+                users = db.getByRole(roleId);
+            } catch (NumberFormatException e) {
+                users = db.getAll();
+            }
+        } else {
+            users = db.getAll();
+        }
         List<Role> roles = rdb.getAllRole();
         request.setAttribute("users", users);
         request.setAttribute("roles", roles);
+        request.setAttribute("selectedRoleId", roleParam);
+
         request.getRequestDispatcher("/view/Admin/ManageEmployees.jsp").forward(request, response);
 
     }
