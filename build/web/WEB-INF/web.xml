@@ -4,8 +4,24 @@
         <servlet-name>PermissionGroupController</servlet-name>
         <servlet-class>controller.PermissionGroupController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>CustomerAndCarDetailController</servlet-name>
+        <servlet-class>controller.CustomerAndCarDetailController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ServiceHistoryController</servlet-name>
+        <servlet-class>controller.ServiceHistoryController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PermissionGroupController</servlet-name>
         <url-pattern>/PermissionGroupController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CustomerAndCarDetailController</servlet-name>
+        <url-pattern>/CustomerAndCarDetailController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ServiceHistoryController</servlet-name>
+        <url-pattern>/ServiceHistoryController</url-pattern>
     </servlet-mapping>
 </web-app>
