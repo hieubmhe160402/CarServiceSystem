@@ -1,107 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="5.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd">
+<web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
     <servlet>
         <servlet-name>PermissionGroupController</servlet-name>
         <servlet-class>controller.PermissionGroupController</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>AddCategory</servlet-name>
-        <servlet-class>Category.AddCategory</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ListCategory</servlet-name>
-        <servlet-class>Category.ListCategory</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>UpdateCategory</servlet-name>
-        <servlet-class>Category.UpdateCategory</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>DeleteCategory</servlet-name>
-        <servlet-class>Category.DeleteCategory</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ListProduct</servlet-name>
-        <servlet-class>ListProduct</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>AddProduct</servlet-name>
-        <servlet-class>controller.Product.AddProduct</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>UpdateProduct</servlet-name>
-        <servlet-class>controller.Product.UpdateProduct</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>DeleteProduct</servlet-name>
-        <servlet-class>controller.Product.DeleteProduct</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ListUnit</servlet-name>
-        <servlet-class>unit.ListUnit</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>AddUnit</servlet-name>
-        <servlet-class>unit.AddUnit</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>UpdateUnit</servlet-name>
-        <servlet-class>unit.UpdateUnit</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>DeleteUnit</servlet-name>
-        <servlet-class>unit.DeleteUnit</servlet-class>
-    </servlet>
     <servlet-mapping>
         <servlet-name>PermissionGroupController</servlet-name>
         <url-pattern>/PermissionGroupController</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AddCategory</servlet-name>
-        <url-pattern>/AddCategory</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ListCategory</servlet-name>
-        <url-pattern>/ListCategory</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UpdateCategory</servlet-name>
-        <url-pattern>/UpdateCategory</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DeleteCategory</servlet-name>
-        <url-pattern>/DeleteCategory</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ListProduct</servlet-name>
-        <url-pattern>/ListProduct</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AddProduct</servlet-name>
-        <url-pattern>/AddProduct</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UpdateProduct</servlet-name>
-        <url-pattern>/UpdateProduct</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DeleteProduct</servlet-name>
-        <url-pattern>/DeleteProduct</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ListUnit</servlet-name>
-        <url-pattern>/ListUnit</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AddUnit</servlet-name>
-        <url-pattern>/AddUnit</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UpdateUnit</servlet-name>
-        <url-pattern>/UpdateUnit</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DeleteUnit</servlet-name>
-        <url-pattern>/DeleteUnit</url-pattern>
     </servlet-mapping>
 </web-app>
