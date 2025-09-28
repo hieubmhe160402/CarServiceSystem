@@ -167,7 +167,7 @@
             <!-- Main content -->
             <main class="main">
                 <h1>Quản lý Nhân viên</h1>
-                <form action="AddEmployees" method="get" style="display:inline;">
+                <form action="addEmployees" method="get" style="display:inline;">
                     <button type="submit" class="btn btn-add">+ Thêm Nhân viên</button>
                 </form>
 
@@ -216,7 +216,7 @@
                                             onclick="document.getElementById('modal-${u.userId}').style.display = 'flex'">
                                         Update
                                     </button>                                    
-                                    <a href="DeleteEmployees?id=${u.userId}" class="btn btn-delete"
+                                    <a href="deleteEmployees?id=${u.userId}" class="btn btn-delete"
                                        onclick="return confirm('Bạn có chắc muốn xóa nhân viên này?');">Delete</a>
                                 </td>
                             </tr>
@@ -229,7 +229,7 @@
                         <div class="modal-content">
                             <h2>Cập nhật nhân viên</h2>
 
-                            <form action="${pageContext.request.contextPath}/UpdateEmployees" method="post">
+                            <form action="${pageContext.request.contextPath}/updateEmployees" method="post">
                                 <input type="hidden" name="userId" value="${u.userId}" />
 
                                 <label>UserCode:</label>

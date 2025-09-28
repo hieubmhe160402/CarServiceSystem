@@ -20,24 +20,26 @@
         <servlet-name>AddEmployees</servlet-name>
         <servlet-class>controller.Admin.AddEmployees</servlet-class>
     </servlet>
+    
     <servlet-mapping>
         <servlet-name>PermissionGroupController</servlet-name>
-        <url-pattern>/PermissionGroupController</url-pattern>
+        <url-pattern>/permissionGroupController</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ListEmployees</servlet-name>
-        <url-pattern>/ListEmployees</url-pattern>
+        <url-pattern>/listEmployees</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>UpdateEmployees</servlet-name>
-        <url-pattern>/UpdateEmployees</url-pattern>
+        <url-pattern>/updateEmployees</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>DeleteEmployees</servlet-name>
-        <url-pattern>/DeleteEmployees</url-pattern>
+        <url-pattern>/deleteEmployees</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AddEmployees</servlet-name>
-        <url-pattern>/AddEmployees</url-pattern>
+        <url-pattern>/addEmployees</url-pattern>
     </servlet-mapping>
+    
 </web-app>

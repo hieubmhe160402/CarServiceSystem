@@ -62,7 +62,7 @@ public class DeleteEmployees extends HttpServlet {
             int userId = Integer.parseInt(request.getParameter("id"));
             UserDAO udb = new UserDAO();
             udb.deleteUser(userId);
-            response.sendRedirect("ListEmployees");
+            response.sendRedirect("listEmployees");
         } catch (Exception ex) {
             Logger.getLogger(DeleteEmployees.class.getName()).log(Level.SEVERE, null, ex);
             request.getRequestDispatcher("/view/Admin/error.jsp").forward(request, response);

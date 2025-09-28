@@ -197,7 +197,7 @@ public class AddEmployees extends HttpServlet {
 
             udb.insert(user);
             // Redirect
-            response.sendRedirect("ListEmployees");
+            response.sendRedirect("listEmployees");
 
         } catch (Exception e) {
             e.printStackTrace();

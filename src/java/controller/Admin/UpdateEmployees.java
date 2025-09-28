@@ -97,7 +97,7 @@ public class UpdateEmployees extends HttpServlet {
             u.setRole(r);
             UserDAO dao = new UserDAO();
             dao.UpdateEmployees(u);
-            response.sendRedirect("ListEmployees");
+            response.sendRedirect("listEmployees");
         } catch (Exception e) {
             e.printStackTrace();
             response.getWriter().println("Update failed: " + e.getMessage());
