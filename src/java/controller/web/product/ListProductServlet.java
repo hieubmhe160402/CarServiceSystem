@@ -10,11 +10,15 @@ import dal.UnitDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
+import java.io.File;
 import java.math.BigDecimal;
+import java.nio.file.Paths;
 import java.util.List;
 import model.Category;
 import model.Product;
@@ -25,6 +29,11 @@ import model.Unit;
  * @author LEGION
  */
 @WebServlet(name = "ListProductServlet", urlPatterns = {"/products"})
+@MultipartConfig(
+        fileSizeThreshold = 1024 * 1024, // 1MB
+        maxFileSize = 5 * 1024 * 1024, // 5MB
+        maxRequestSize = 10 * 1024 * 1024 // 10MB
+)
 public class ListProductServlet extends HttpServlet {
 
     /**
@@ -138,6 +147,7 @@ public class ListProductServlet extends HttpServlet {
 
         try {
             if ("add".equals(action)) {
+                System.out.println("add products");
                 // Thêm mới sản phẩm
                 addProduct(request, response, productDAO);
             } else if ("edit".equals(action)) {
@@ -153,21 +163,38 @@ public class ListProductServlet extends HttpServlet {
 
     private void addProduct(HttpServletRequest request, HttpServletResponse response, ProductDAO productDAO)
             throws ServletException, IOException {
+        // Nhận file ảnh từ form
+        Part filePart = request.getPart("imageFile");
+        String fileName = null;
 
-        // Lấy dữ liệu từ form
+        if (filePart != null && filePart.getSize() > 0) {
+            // Lấy tên file gốc
+            fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+
+            // Đường dẫn lưu file (ví dụ: /images/products)
+            String uploadPath = getServletContext().getRealPath("/assets/image/products");
+            File uploadDir = new File(uploadPath);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdirs();
+            }
+
+            // Lưu file vào thư mục
+            filePart.write(uploadPath + File.separator + fileName);
+        }
+
+        // Lấy các input khác
         String code = request.getParameter("code");
         String name = request.getParameter("name");
-        String type = request.getParameter("type"); // PART
+        String type = request.getParameter("type");
         String priceStr = request.getParameter("price");
         String description = request.getParameter("description");
-        String image = request.getParameter("image");
         String unitIdStr = request.getParameter("unitId");
         String categoryIdStr = request.getParameter("categoryId");
         String warrantyStr = request.getParameter("warrantyPeriodMonths");
         String minStockStr = request.getParameter("minStockLevel");
         String isActiveStr = request.getParameter("isActive");
 
-        // Validate dữ liệu
+        // Validate
         if (code == null || code.trim().isEmpty()
                 || name == null || name.trim().isEmpty()
                 || priceStr == null || unitIdStr == null || categoryIdStr == null) {
@@ -176,7 +203,6 @@ public class ListProductServlet extends HttpServlet {
             return;
         }
 
-        // Kiểm tra mã sản phẩm đã tồn tại chưa
         if (productDAO.isProductCodeExist(code)) {
             request.getSession().setAttribute("error", "Mã sản phẩm đã tồn tại!");
             response.sendRedirect("products");
@@ -184,21 +210,18 @@ public class ListProductServlet extends HttpServlet {
         }
 
         try {
-            // Tạo đối tượng Product
             Product product = new Product();
             product.setCode(code.trim());
             product.setName(name.trim());
             product.setType(type);
             product.setPrice(new BigDecimal(priceStr));
             product.setDescription(description != null ? description.trim() : "");
-            product.setImage(image != null ? image.trim() : "");
+            product.setImage(fileName != null ? "assets/image/products/" + fileName : ""); // Lưu path ảnh
 
-            // Set Unit
             Unit unit = new Unit();
             unit.setUnitId(Integer.parseInt(unitIdStr));
             product.setUnit(unit);
 
-            // Set Category
             Category category = new Category();
             category.setCategoryId(Integer.parseInt(categoryIdStr));
             product.setCategory(category);
@@ -207,7 +230,6 @@ public class ListProductServlet extends HttpServlet {
             product.setMinStockLevel(minStockStr != null ? Integer.parseInt(minStockStr) : 0);
             product.setIsActive("1".equals(isActiveStr));
 
-            // Thêm vào database
             boolean success = productDAO.addProduct(product);
 
             if (success) {
@@ -218,29 +240,45 @@ public class ListProductServlet extends HttpServlet {
 
         } catch (NumberFormatException e) {
             request.getSession().setAttribute("error", "Dữ liệu số không hợp lệ!");
-        } catch (Exception e) {
-            request.getSession().setAttribute("error", "Có lỗi xảy ra: " + e.getMessage());
         }
 
-        response.sendRedirect("product");
+        response.sendRedirect("products");
     }
 
     private void editProduct(HttpServletRequest request, HttpServletResponse response, ProductDAO productDAO)
             throws ServletException, IOException {
-
-        // Lấy dữ liệu từ form
+// Lấy dữ liệu từ form
         String productIdStr = request.getParameter("productID");
         String code = request.getParameter("code");
         String name = request.getParameter("name");
-        String type = request.getParameter("type"); // PART
+        String type = request.getParameter("type");
         String priceStr = request.getParameter("price");
         String description = request.getParameter("description");
-        String image = request.getParameter("image");
         String unitIdStr = request.getParameter("unitId");
         String categoryIdStr = request.getParameter("categoryId");
         String warrantyStr = request.getParameter("warrantyPeriodMonths");
         String minStockStr = request.getParameter("minStockLevel");
         String isActiveStr = request.getParameter("isActive");
+        String oldImage = request.getParameter("oldImage"); // ảnh cũ
+
+        // Xử lý upload ảnh mới
+        Part filePart = request.getPart("imageFile");
+        String fileName = null;
+
+        if (filePart != null && filePart.getSize() > 0) {
+            // Lấy tên file gốc
+            fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+
+            // Đường dẫn lưu file
+            String uploadPath = getServletContext().getRealPath("/assets/image/products");
+            File uploadDir = new File(uploadPath);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdirs();
+            }
+
+            // Lưu file ảnh mới
+            filePart.write(uploadPath + File.separator + fileName);
+        }
 
         // Validate dữ liệu
         if (productIdStr == null || code == null || code.trim().isEmpty()
@@ -254,7 +292,7 @@ public class ListProductServlet extends HttpServlet {
         try {
             int productId = Integer.parseInt(productIdStr);
 
-            // Kiểm tra mã sản phẩm đã tồn tại chưa (trừ chính nó)
+            // Kiểm tra mã sản phẩm trùng
             if (productDAO.isProductCodeExistForUpdate(code, productId)) {
                 request.getSession().setAttribute("error", "Mã sản phẩm đã tồn tại!");
                 response.sendRedirect("products");
@@ -269,7 +307,9 @@ public class ListProductServlet extends HttpServlet {
             product.setType(type);
             product.setPrice(new BigDecimal(priceStr));
             product.setDescription(description != null ? description.trim() : "");
-            product.setImage(image != null ? image.trim() : "");
+
+            // Nếu có ảnh mới → dùng ảnh mới, không thì giữ ảnh cũ
+            product.setImage(fileName != null ? "assets/image/products/" + fileName : oldImage);
 
             // Set Unit
             Unit unit = new Unit();
@@ -285,7 +325,7 @@ public class ListProductServlet extends HttpServlet {
             product.setMinStockLevel(minStockStr != null ? Integer.parseInt(minStockStr) : 0);
             product.setIsActive("1".equals(isActiveStr));
 
-            // Cập nhật vào database
+            // Cập nhật DB
             boolean success = productDAO.updateProduct(product);
 
             if (success) {

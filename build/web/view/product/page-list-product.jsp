@@ -423,7 +423,7 @@
             <div class="pagination">
                 <c:choose>
                     <c:when test="${currentPage > 1}">
-                        <a href="product?page=${currentPage - 1}&category=${filterCategory}&status=${filterStatus}">‹ Previous</a>
+                        <a href="products?page=${currentPage - 1}&category=${filterCategory}&status=${filterStatus}">‹ Previous</a>
                     </c:when>
                     <c:otherwise>
                         <span class="disabled">‹ Previous</span>
@@ -436,14 +436,14 @@
                             <span class="active">${i}</span>
                         </c:when>
                         <c:otherwise>
-                            <a href="product?page=${i}&category=${filterCategory}&status=${filterStatus}">${i}</a>
+                            <a href="products?page=${i}&category=${filterCategory}&status=${filterStatus}">${i}</a>
                         </c:otherwise>
                     </c:choose>
                 </c:forEach>
 
                 <c:choose>
                     <c:when test="${currentPage < totalPages}">
-                        <a href="product?page=${currentPage + 1}&category=${filterCategory}&status=${filterStatus}">Next ›</a>
+                        <a href="products?page=${currentPage + 1}&category=${filterCategory}&status=${filterStatus}">Next ›</a>
                     </c:when>
                     <c:otherwise>
                         <span class="disabled">Next ›</span>
@@ -457,10 +457,11 @@
             <div class="modal-content">
                 <span class="close" onclick="closeModal()">&times;</span>
                 <h3 id="modalTitle">Thêm Sản phẩm mới</h3>
-                <form id="productForm" method="post" action="product" enctype="multipart/form-data">
+                <form id="productForm" method="post" action="products" enctype="multipart/form-data">
                     <input type="hidden" id="productID" name="productID">
                     <input type="hidden" id="action" name="action" value="add">
                     <input type="hidden" name="type" value="PART">
+                    <input type="hidden" name="oldImage" value="${product.image}">
 
                     <div class="form-row">
                         <div class="form-group">
@@ -566,7 +567,7 @@
             function applyFilter() {
                 let category = document.getElementById('filterCategory').value;
                 let status = document.getElementById('filterStatus').value;
-                window.location.href = 'product?page=1&category=' + category + '&status=' + status;
+                window.location.href = 'products?page=1&category=' + category + '&status=' + status;
             }
 
             function openModal() {
