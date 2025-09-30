@@ -62,7 +62,7 @@ public class DeleteProductServlet extends HttpServlet {
 
         if (idStr == null || idStr.isEmpty()) {
             request.getSession().setAttribute("error", "ID sản phẩm không hợp lệ!");
-            response.sendRedirect("product");
+            response.sendRedirect("products");
             return;
         }
 
@@ -84,7 +84,7 @@ public class DeleteProductServlet extends HttpServlet {
             request.getSession().setAttribute("error", "Có lỗi xảy ra: " + e.getMessage());
         }
 
-        response.sendRedirect("product");
+        response.sendRedirect("products");
     }
 
     /**

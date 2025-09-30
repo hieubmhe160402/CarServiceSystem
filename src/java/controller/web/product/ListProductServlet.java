@@ -147,7 +147,7 @@ public class ListProductServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             request.getSession().setAttribute("error", "Có lỗi xảy ra: " + e.getMessage());
-            response.sendRedirect("product");
+            response.sendRedirect("products");
         }
     }
 
@@ -172,14 +172,14 @@ public class ListProductServlet extends HttpServlet {
                 || name == null || name.trim().isEmpty()
                 || priceStr == null || unitIdStr == null || categoryIdStr == null) {
             request.getSession().setAttribute("error", "Vui lòng điền đầy đủ thông tin bắt buộc!");
-            response.sendRedirect("product");
+            response.sendRedirect("products");
             return;
         }
 
         // Kiểm tra mã sản phẩm đã tồn tại chưa
         if (productDAO.isProductCodeExist(code)) {
             request.getSession().setAttribute("error", "Mã sản phẩm đã tồn tại!");
-            response.sendRedirect("product");
+            response.sendRedirect("products");
             return;
         }
 
@@ -247,7 +247,7 @@ public class ListProductServlet extends HttpServlet {
                 || name == null || name.trim().isEmpty()
                 || priceStr == null || unitIdStr == null || categoryIdStr == null) {
             request.getSession().setAttribute("error", "Vui lòng điền đầy đủ thông tin bắt buộc!");
-            response.sendRedirect("product");
+            response.sendRedirect("products");
             return;
         }
 
@@ -257,7 +257,7 @@ public class ListProductServlet extends HttpServlet {
             // Kiểm tra mã sản phẩm đã tồn tại chưa (trừ chính nó)
             if (productDAO.isProductCodeExistForUpdate(code, productId)) {
                 request.getSession().setAttribute("error", "Mã sản phẩm đã tồn tại!");
-                response.sendRedirect("product");
+                response.sendRedirect("products");
                 return;
             }
 
@@ -300,7 +300,7 @@ public class ListProductServlet extends HttpServlet {
             request.getSession().setAttribute("error", "Có lỗi xảy ra: " + e.getMessage());
         }
 
-        response.sendRedirect("product");
+        response.sendRedirect("products");
     }
 
     /**
