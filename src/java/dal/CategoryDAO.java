@@ -139,5 +139,29 @@ public class CategoryDAO extends DBContext {
             return false;
         }
     }
+    
+    public List<Category> getByType(String type) {
+        List<Category> list = new ArrayList<>();
+        String sql = "SELECT * FROM Category WHERE Type = ?";
+
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setString(1, type);
+            ResultSet rs = stm.executeQuery();
+
+            while (rs.next()) {
+                Category cat = new Category();
+                cat.setCategoryId(rs.getInt("CategoryID"));
+                cat.setName(rs.getString("Name"));
+                cat.setType(rs.getString("Type"));
+                cat.setDescription(rs.getString("Description"));
+
+                list.add(cat);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CategoryDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return list;
+    }
 
 }

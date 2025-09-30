@@ -159,6 +159,8 @@ public class Product {
         this.createdDate = createdDate;
     }
 
+    
+    
     @Override
     public String toString() {
         return "Product{" + "productId=" + productId + ", code=" + code + ", name=" + name + ", type=" + type + ", price=" + price + ", description=" + description + ", image=" + image + ", unit=" + unit + ", category=" + category + ", warrantyPeriodMonths=" + warrantyPeriodMonths + ", minStockLevel=" + minStockLevel + ", estimatedDurationHours=" + estimatedDurationHours + ", isActive=" + isActive + ", createdDate=" + createdDate + '}';
