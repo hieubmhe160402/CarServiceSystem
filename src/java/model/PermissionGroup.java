@@ -4,6 +4,7 @@
  */
 package model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,6 +22,14 @@ public class PermissionGroup {
     public PermissionGroup() {
     }
 
+    public PermissionGroup(int groupID, String groupName, String description) {
+        this.groupID = groupID;
+        this.groupName = groupName;
+        this.description = description;
+    }
+    
+    
+    
     public PermissionGroup(int groupID, String groupName, String description, List<Permission> listPermissions) {
         this.groupID = groupID;
         this.groupName = groupName;
@@ -59,6 +68,13 @@ public class PermissionGroup {
     public void setListPermissions(List<Permission> listPermissions) {
         this.listPermissions = listPermissions;
     }
+    
+    public void addPermission(Permission p) {
+    if (this.listPermissions == null) {
+        this.listPermissions = new ArrayList<>();
+    }
+    this.listPermissions.add(p);
+}
 
     @Override
     public String toString() {

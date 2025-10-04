@@ -1,27 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
+    <!-- Permission Group -->
     <servlet>
         <servlet-name>PermissionGroupController</servlet-name>
         <servlet-class>controller.PermissionGroupController</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>RolePermissionController</servlet-name>
+        <servlet-class>controller.RolePermissionController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>RoleListServlet</servlet-name>
+        <servlet-class>controller.RoleListServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PermissionGroupController</servlet-name>
+        <url-pattern>/permissionGroupController</url-pattern>
+    </servlet-mapping>
+    <!-- Customer & Car Detail -->
+    <servlet>
         <servlet-name>CustomerAndCarDetailController</servlet-name>
         <servlet-class>controller.CustomerAndCarDetailController</servlet-class>
     </servlet>
+    <servlet-mapping>
+        <servlet-name>CustomerAndCarDetailController</servlet-name>
+        <url-pattern>/CustomerAndCarDetailController</url-pattern>
+    </servlet-mapping>
+    <!-- Service History -->
     <servlet>
         <servlet-name>ServiceHistoryController</servlet-name>
         <servlet-class>controller.ServiceHistoryController</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>PermissionGroupController</servlet-name>
-        <url-pattern>/PermissionGroupController</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CustomerAndCarDetailController</servlet-name>
-        <url-pattern>/CustomerAndCarDetailController</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>ServiceHistoryController</servlet-name>
         <url-pattern>/ServiceHistoryController</url-pattern>
+    </servlet-mapping>
+    <!-- Employee Management -->
+    <servlet>
+        <servlet-name>ListEmployees</servlet-name>
+        <servlet-class>controller.Admin.ListEmployees</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ListEmployees</servlet-name>
+        <url-pattern>/listEmployees</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>UpdateEmployees</servlet-name>
+        <servlet-class>controller.Admin.UpdateEmployees</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UpdateEmployees</servlet-name>
+        <url-pattern>/updateEmployees</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>DeleteEmployees</servlet-name>
+        <servlet-class>controller.Admin.DeleteEmployees</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DeleteEmployees</servlet-name>
+        <url-pattern>/deleteEmployees</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>AddEmployees</servlet-name>
+        <servlet-class>controller.Admin.AddEmployees</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AddEmployees</servlet-name>
+        <url-pattern>/addEmployees</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RolePermissionController</servlet-name>
+        <url-pattern>/RolePermissionController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RoleListServlet</servlet-name>
+        <url-pattern>/rolelist</url-pattern>
     </servlet-mapping>
 </web-app>

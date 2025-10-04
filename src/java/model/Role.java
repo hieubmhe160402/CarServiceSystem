@@ -4,8 +4,6 @@
  */
 package model;
 
-import java.util.List;
-
 /**
  *
  * @author MinHeee
@@ -15,8 +13,8 @@ public class Role {
     private int roleID;
     private String roleName;
     private String description;
-        
- 
+    private boolean active;
+
     public Role() {
     }
 
@@ -38,6 +36,10 @@ public class Role {
         return roleName;
     }
 
+    public Role(boolean active) {
+        this.active = active;
+    }
+
     public void setRoleName(String roleName) {
         this.roleName = roleName;
     }
@@ -50,6 +52,14 @@ public class Role {
         this.description = description;
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+    
     @Override
     public String toString() {
         return "Role{" + "roleID=" + roleID + ", roleName=" + roleName + ", description=" + description + '}';

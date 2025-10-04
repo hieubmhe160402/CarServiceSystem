@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-@WebServlet("/serviceHistory")
+    @WebServlet("/serviceHistory")
 public class ServiceHistoryController extends HttpServlet {
 
     @Override
