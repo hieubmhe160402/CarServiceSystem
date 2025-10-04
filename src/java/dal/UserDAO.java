@@ -258,5 +258,200 @@ public class UserDAO extends DBContext {
             e.printStackTrace();
         }
     }
+    
+    //============================================================= Part Truong Login =========//
+    public User login(String userName, String password) {
+        String sql = "SELECT u.*, r.RoleID, r.RoleName, r.Description " +
+                    "FROM Users u " +
+                    "LEFT JOIN Role r ON u.RoleID = r.RoleID " +
+                    "WHERE u.Username = ? AND u.Password = ? AND u.IsActive = 1";
+        
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, userName);
+            ps.setString(2, password);
+            
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                User user = new User();
+                user.setUserId(rs.getInt("UserID"));
+                user.setUserCode(rs.getString("UserCode"));
+                user.setFullName(rs.getString("FullName"));
+                user.setUserName(rs.getString("Username"));
+                user.setPassword(rs.getString("Password"));
+                user.setEmail(rs.getString("Email"));
+                user.setPhone(rs.getString("Phone"));
+                user.setImage(rs.getString("Image"));
+                user.setMale(rs.getBoolean("Male"));
+                user.setDateOfBirth(rs.getString("DateOfBirth"));
+                user.setIsActive(rs.getBoolean("IsActive"));
+                user.setCreatedDate(rs.getString("CreatedDate"));
+                user.setLastLoginDate(rs.getString("LastLoginDate"));
+                
+                // Set Role
+                Role role = new Role();
+                role.setRoleID(rs.getInt("RoleID"));
+                role.setRoleName(rs.getString("RoleName"));
+                role.setDescription(rs.getString("Description"));
+                user.setRole(role);
+                
+                return user;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    public boolean changePassword(int userId, String oldPassword, String newPassword) {
+        String sql = "UPDATE Users SET Password = ? WHERE UserID = ? AND Password = ?";
+        
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, newPassword);
+            ps.setInt(2, userId);
+            ps.setString(3, oldPassword);
+            
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    public User getUserByEmail(String email) {
+        String sql = "SELECT u.*, r.RoleID, r.RoleName, r.Description " +
+                    "FROM Users u " +
+                    "LEFT JOIN Role r ON u.RoleID = r.RoleID " +
+                    "WHERE u.Email = ? AND u.IsActive = 1";
+        
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, email);
+            
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                User user = new User();
+                user.setUserId(rs.getInt("UserID"));
+                user.setUserCode(rs.getString("UserCode"));
+                user.setFullName(rs.getString("FullName"));
+                user.setUserName(rs.getString("Username"));
+                user.setPassword(rs.getString("Password"));
+                user.setEmail(rs.getString("Email"));
+                user.setPhone(rs.getString("Phone"));
+                user.setImage(rs.getString("Image"));
+                user.setMale(rs.getBoolean("Male"));
+                user.setDateOfBirth(rs.getString("DateOfBirth"));
+                user.setIsActive(rs.getBoolean("IsActive"));
+                user.setCreatedDate(rs.getString("CreatedDate"));
+                user.setLastLoginDate(rs.getString("LastLoginDate"));
+                
+                // Set Role
+                Role role = new Role();
+                role.setRoleID(rs.getInt("RoleID"));
+                role.setRoleName(rs.getString("RoleName"));
+                role.setDescription(rs.getString("Description"));
+                user.setRole(role);
+                
+                return user;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    public boolean updatePassword(int userId, String newPassword) {
+        String sql = "UPDATE Users SET Password = ? WHERE UserID = ?";
+        
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, newPassword);
+            ps.setInt(2, userId);
+            
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    public void updateLastLogin(int userId) {
+        String sql = "UPDATE Users SET LastLoginDate = GETDATE() WHERE UserID = ?";
+        
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public boolean registerCustomer(String userCode, String fullName, String userName, String password, String email, String phone, Boolean male, String dateOfBirth) {
+        String sql = "INSERT INTO Users (UserCode, FullName, Username, Password, Email, Phone, Male, DateOfBirth, RoleID, IsActive, CreatedDate) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, 3, 1, GETDATE())"; // RoleID = 3 for Customer
+        
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, userCode);
+            ps.setString(2, fullName);
+            ps.setString(3, userName);
+            ps.setString(4, password);
+            ps.setString(5, email);
+            ps.setString(6, phone);
+            ps.setBoolean(7, male);
+            ps.setString(8, dateOfBirth);
+            
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    public boolean checkUsernameExists(String userName) {
+        String sql = "SELECT COUNT(*) FROM Users WHERE Username = ?";
+        
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, userName);
+            
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    public boolean checkEmailExists(String email) {
+        String sql = "SELECT COUNT(*) FROM Users WHERE Email = ?";
+        
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, email);
+            
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    public String generateUserCode() {
+        String sql = "SELECT MAX(CAST(SUBSTRING(UserCode, 2, LEN(UserCode)) AS INT)) FROM Users WHERE UserCode LIKE 'C%'";
+        
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int maxNumber = rs.getInt(1);
+                return "C" + String.format("%03d", maxNumber + 1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "C001"; // Default first customer code
+    }
 
 }
