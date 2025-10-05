@@ -42,6 +42,84 @@
         <url-pattern>/addEmployees</url-pattern>
     </servlet-mapping>
     
+    <!-- SMTP configuration for EmailUtil (change values to your SMTP provider) -->
+    <context-param>
+        <param-name>mail.host</param-name>
+        <param-value>smtp.gmail.com</param-value>
+    </context-param>
+    <context-param>
+        <param-name>mail.port</param-name>
+        <param-value>587</param-value>
+    </context-param>
+    <context-param>
+        <param-name>mail.starttls</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
+        <param-name>mail.ssl</param-name>
+        <param-value>false</param-value>
+    </context-param>
+    <context-param>
+        <param-name>mail.username</param-name>
+        <param-value>your_email@example.com</param-value>
+    </context-param>
+    <context-param>
+        <param-name>mail.password</param-name>
+        <param-value>your_app_password</param-value>
+    </context-param>
+    <context-param>
+        <param-name>mail.from</param-name>
+        <param-value>your_email@example.com</param-value>
+    </context-param>
+    <servlet-mapping>
+        <servlet-name>PermissionGroupController</servlet-name>
+        <url-pattern>/PermissionGroupController</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>AuthController</servlet-name>
+        <servlet-class>controller.Access.AuthController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AuthController</servlet-name>
+        <url-pattern>/AuthController</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>AdminController</servlet-name>
+        <servlet-class>controller.Access.AdminController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminController</servlet-name>
+        <url-pattern>/AdminController</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>TechnicianController</servlet-name>
+        <servlet-class>controller.Access.TechnicianController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>TechnicianController</servlet-name>
+        <url-pattern>/TechnicianController</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>CustomerController</servlet-name>
+        <servlet-class>controller.Access.CustomerController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CustomerController</servlet-name>
+        <url-pattern>/CustomerController</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>RegisterController</servlet-name>
+        <servlet-class>controller.Access.RegisterController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RegisterController</servlet-name>
+        <url-pattern>/RegisterController</url-pattern>
+    </servlet-mapping>
     <!-- Unit Servlets (annotation-based already, this is optional for Jakarta EE 10) -->
     <servlet>
         <servlet-name>ListUnitServlet</servlet-name>
