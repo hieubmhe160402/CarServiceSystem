@@ -103,40 +103,53 @@ public class AddEmployees extends HttpServlet {
             boolean isActive = Boolean.parseBoolean(request.getParameter("isActive"));
             int roleID = Integer.parseInt(request.getParameter("roleID"));
 
+            // Upload ảnh
             Part imagePart = request.getPart("imageFile");
             String fileName = Paths.get(imagePart.getSubmittedFileName()).getFileName().toString();
-
-            String uploadPath = getServletContext().getRealPath("/uploads");
-            File uploadDir = new File(uploadPath);
+            String imagePath = null;
             if (fileName != null && !fileName.isEmpty()) {
+                String uploadPath = getServletContext().getRealPath("/uploads");
+                File uploadDir = new File(uploadPath);
+                if (!uploadDir.exists()) {
+                    uploadDir.mkdirs();
+                }
                 imagePart.write(uploadPath + File.separator + fileName);
+                imagePath = "uploads/" + fileName;
             }
 
             boolean hasError = false;
             UserDAO udb = new UserDAO();
 
-            // Validate dữ liệu
-            if (udb.existsByUserCode(code)) {
-                request.setAttribute("errorUserCode", "User Code đã tồn tại, vui lòng nhập mã khác!");
+            // Validate
+            if (code == null || code.trim().isEmpty()) {
+                // Chưa nhập gì
+                request.setAttribute("errorUserCode", "Vui lòng nhập User Code");
+                hasError = true;
+            } else if (!(code.startsWith("CO") || code.startsWith("ST")
+                    || code.startsWith("AC") || code.startsWith("SE"))) {
+                // Đã nhập nhưng sai format
+                request.setAttribute("errorUserCode",
+                        "❌ UserCode phải bắt đầu bằng CO, ST, AC hoặc SE");
+                hasError = true;
+            } else if (udb.existsByUserCode(code)) {
+                // Đúng format nhưng bị trùng
+                request.setAttribute("errorUserCode", "User Code đã tồn tại!");
                 hasError = true;
             }
 
-            if (udb.existsByUsername(username)) {
-                request.setAttribute("errorUsername", "Username đã tồn tại, vui lòng nhập username khác!");
-                hasError = true;
-            }
-            if (code == null || code.trim().isEmpty()) {
-                request.setAttribute("errorUserCode", "Vui lòng nhập User Code");
-                hasError = true;
-            }
             if (fullName == null || fullName.trim().isEmpty()) {
                 request.setAttribute("errorFullName", "Vui lòng nhập Full Name");
                 hasError = true;
             }
+
             if (username == null || username.trim().isEmpty()) {
                 request.setAttribute("errorUsername", "Vui lòng nhập Username");
                 hasError = true;
+            } else if (udb.existsByUsername(username)) {
+                request.setAttribute("errorUsername", "Username đã tồn tại!");
+                hasError = true;
             }
+
             if (password == null || password.trim().isEmpty()) {
                 request.setAttribute("errorPassword", "Vui lòng nhập Password");
                 hasError = true;
@@ -145,13 +158,18 @@ public class AddEmployees extends HttpServlet {
                         "Mật khẩu phải bắt đầu bằng chữ in hoa, có ít nhất 1 số, 1 ký tự đặc biệt và dài tối thiểu 8 ký tự");
                 hasError = true;
             }
+
             if (email == null || email.trim().isEmpty()) {
                 request.setAttribute("errorEmail", "Vui lòng nhập Email");
                 hasError = true;
             } else if (!email.matches("^[A-Za-z0-9._%+-]+@gmail\\.com$")) {
                 request.setAttribute("errorEmail", "Email phải đúng định dạng và là @gmail.com");
                 hasError = true;
+            } else if (udb.isEmailExist(email)) {
+                request.setAttribute("errorEmail", "Email đã tồn tại!");
+                hasError = true;
             }
+
             if (phone == null || phone.trim().isEmpty()) {
                 request.setAttribute("errorPhone", "Vui lòng nhập SĐT");
                 hasError = true;
@@ -159,26 +177,21 @@ public class AddEmployees extends HttpServlet {
                 request.setAttribute("errorPhone", "SĐT phải gồm đúng 10 chữ số!");
                 hasError = true;
             }
+
             if (DOB == null || DOB.trim().isEmpty()) {
                 request.setAttribute("errorDOB", "Vui lòng nhập Ngày sinh");
                 hasError = true;
             }
 
-            if (udb.isEmailExist(email)) {
-                RoleDAO rdb = new RoleDAO();
-
-                request.setAttribute("errorEmail", "Email đã tồn tại, vui lòng nhập email khác!");
-                request.setAttribute("roles", rdb.getAllRole());
-                request.getRequestDispatcher("/view/Admin/AddEmployees.jsp").forward(request, response);
-                return;
-            }
             if (hasError) {
                 RoleDAO rdb = new RoleDAO();
                 request.setAttribute("roles", rdb.getAllRole());
-                request.getRequestDispatcher("/view/Admin/AddEmployees.jsp").forward(request, response);
+                request.setAttribute("showAddModal", true);
+                request.getRequestDispatcher("listEmployees").forward(request, response);
                 return;
             }
 
+            // Tạo user
             Role role = new Role();
             role.setRoleID(roleID);
 
@@ -193,10 +206,10 @@ public class AddEmployees extends HttpServlet {
             user.setMale(male);
             user.setIsActive(isActive);
             user.setRole(role);
-            user.setImage("uploads/" + fileName); //
+            user.setImage(imagePath);
 
             udb.insert(user);
-            // Redirect
+
             response.sendRedirect("listEmployees");
 
         } catch (Exception e) {

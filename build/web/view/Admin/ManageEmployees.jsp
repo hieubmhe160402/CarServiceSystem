@@ -144,6 +144,36 @@
                 border-radius: 8px;
                 width: 400px;
             }
+
+            .form-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 15px 20px;
+            }
+
+            .form-group {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .form-group label {
+                font-weight: 600;
+                margin-bottom: 5px;
+            }
+
+            .form-group input,
+            .form-group select {
+                padding: 8px 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+
+            .error {
+                color: red;
+                font-size: 12px;
+                margin-top: 3px;
+            }
+
         </style>
     </head>
     <body>
@@ -167,9 +197,11 @@
             <!-- Main content -->
             <main class="main">
                 <h1>Quản lý Nhân viên</h1>
-                <form action="addEmployees" method="get" style="display:inline;">
-                    <button type="submit" class="btn btn-add">+ Thêm Nhân viên</button>
-                </form>
+                <button type="button" class="btn btn-add"
+                        onclick="document.getElementById('addModal').style.display = 'flex'">
+                    ➕ Add Employee
+                </button>
+
 
                 <form action="listEmployees" method="get" 
                       style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
@@ -270,6 +302,8 @@
 
                                 <label>UserCode:</label>
                                 <input type="text" name="userCode" value="${u.userCode}" /><br/><br/>
+                                <span class="error">${errorUserCode}</span>
+
 
                                 <label>FullName:</label>
                                 <input type="text" name="fullName" value="${u.fullName}" /><br/><br/>
@@ -310,7 +344,134 @@
                         </div>
                     </div>
                 </c:forEach>
+
+
+                <!-- Modal Add Employee -->
+                <div id="addModal" class="modal" style="${not empty showAddModal ? 'display:flex' : 'display:none'}">
+                    <div class="modal-content" style="width:800px; max-height:90vh; overflow:auto;">
+
+                        <h2 style="margin-bottom:16px;">Thêm Nhân viên</h2>
+
+                        <div class="avatar-preview" style="text-align:center; margin-bottom:20px;">
+                            <img id="avatarPreview" src="https://via.placeholder.com/150" alt="Preview"
+                                 style="width:120px;height:120px;object-fit:cover;border-radius:50%;border:2px solid #ccc;">
+                            <p style="font-size:13px; color:#6b7280;">Preview Image</p>
+                        </div>
+
+                        <!-- Form duy nhất -->
+                        <form id="addForm" action="addEmployees" method="post" enctype="multipart/form-data" class="form-grid">
+
+                            <!-- User Code -->
+                            <div class="form-group">
+                                <label>User Code</label>
+                                <input type="text" name="userCode" value="${param.userCode}">
+                                <span class="error">${errorUserCode}</span>
+                            </div>
+
+                            <!-- Full Name -->
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input type="text" name="fullName" value="${param.fullName}">
+                                <span class="error">${errorFullName}</span>
+                            </div>
+
+                            <!-- Username -->
+                            <div class="form-group">
+                                <label>Username</label>
+                                <input type="text" name="username" value="${param.username}">
+                                <span class="error">${errorUsername}</span>
+                            </div>
+
+                            <!-- Password -->
+                            <div class="form-group">
+                                <label>Password</label>
+                                <input type="password" name="password">
+                                <span class="error">${errorPassword}</span>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" name="email" value="${param.email}">
+                                <span class="error">${errorEmail}</span>
+                            </div>
+
+                            <!-- Phone -->
+                            <div class="form-group">
+                                <label>Phone</label>
+                                <input type="text" name="phone" value="${param.phone}">
+                                <span class="error">${errorPhone}</span>
+                            </div>
+
+                            <!-- DOB -->
+                            <div class="form-group">
+                                <label>DOB</label>
+                                <input type="date" name="DOB" value="${param.DOB}">
+                                <span class="error">${errorDOB}</span>
+                            </div>
+
+                            <!-- Gender -->
+                            <div class="form-group">
+                                <label>Gender</label>
+                                <select name="male">
+                                    <option value="1" ${param.male=="1"?"selected":""}>Male</option>
+                                    <option value="0" ${param.male=="0"?"selected":""}>Female</option>
+                                </select>
+                            </div>
+
+                            <!-- Upload Image -->
+                            <div class="form-group">
+                                <label>Upload Image</label>
+                                <input type="file" name="imageFile" accept="image/*" onchange="previewImage(event)">
+                            </div>
+
+                            <!-- Position -->
+                            <div class="form-group">
+                                <label>Position</label>
+                                <select name="roleID">
+                                    <c:forEach var="role" items="${roles}">
+                                        <option value="${role.roleID}"
+                                                ${param.roleID == role.roleID ? "selected":""}>
+                                            ${role.roleName}, ${role.description}
+                                        </option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+
+                            <!-- Status -->
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select name="isActive">
+                                    <option value="true" ${param.isActive=="true"?"selected":""}>Active</option>
+                                    <option value="false" ${param.isActive=="false"?"selected":""}>Inactive</option>
+                                </select>
+                            </div>
+
+                            <!-- Buttons -->
+                            <div style="margin-top:20px; display:flex; gap:10px; justify-content:flex-end; grid-column: span 2;">
+                                <button type="submit" class="btn btn-add">Save</button>
+                                <button type="button" class="btn btn-delete"
+                                        onclick="document.getElementById('addModal').style.display = 'none'">
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
             </main>
         </div>
     </body>
 </html>
+<script>
+    function previewImage(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById("avatarPreview").src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
