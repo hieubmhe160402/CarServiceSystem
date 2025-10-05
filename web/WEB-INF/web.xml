@@ -42,4 +42,22 @@
         <url-pattern>/addEmployees</url-pattern>
     </servlet-mapping>
     
+    <!-- Unit Servlets (annotation-based already, this is optional for Jakarta EE 10) -->
+    <servlet>
+        <servlet-name>ListUnitServlet</servlet-name>
+        <servlet-class>controller.web.unit.ListUnitServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DeleteUnitServlet</servlet-name>
+        <servlet-class>controller.web.unit.DeleteUnitServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ListUnitServlet</servlet-name>
+        <url-pattern>/units</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteUnitServlet</servlet-name>
+        <url-pattern>/delete-unit</url-pattern>
+    </servlet-mapping>
+    
 </web-app>
