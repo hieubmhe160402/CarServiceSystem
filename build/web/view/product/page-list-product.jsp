@@ -11,18 +11,62 @@
                 padding: 0;
                 box-sizing: border-box;
             }
+
             body {
                 font-family: Arial, sans-serif;
                 background: #f5f5f5;
+            }
+
+            .app {
+                display: flex;
+                min-height: 100vh;
+            }
+
+            /* Sidebar */
+            .sidebar {
+                width: 240px;
+                background-color: #1e293b;
+                color: #fff;
+                display: flex;
+                flex-direction: column;
                 padding: 20px;
             }
+
+            .sidebar h2 {
+                font-size: 20px;
+                margin-bottom: 20px;
+                text-align: center;
+            }
+
+            .sidebar a {
+                color: #cbd5e1;
+                text-decoration: none;
+                padding: 10px 12px;
+                border-radius: 8px;
+                margin-bottom: 8px;
+                display: block;
+                transition: background 0.2s, color 0.2s;
+            }
+
+            .sidebar a:hover,
+            .sidebar a.active {
+                background: #334155;
+                color: #fff;
+            }
+
+            /* Main content */
+            .main {
+                flex: 1;
+                padding: 20px;
+            }
+
             .container {
-                max-width: 1400px;
-                margin: 0 auto;
                 background: white;
                 padding: 20px;
                 border-radius: 8px;
+                margin: auto;
             }
+
             h2 {
                 margin-bottom: 20px;
                 color: #333;
@@ -33,25 +77,42 @@
                 justify-content: space-between;
                 align-items: center;
                 margin-bottom: 20px;
-                gap: 15px;
                 flex-wrap: wrap;
+                gap: 10px;
             }
 
             .search-filter-group {
                 display: flex;
                 gap: 10px;
-                flex: 1;
                 flex-wrap: wrap;
             }
 
+            .search-box,
+            .filter-select {
+                padding: 8px 12px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                font-size: 14px;
+            }
+
+            .search-box {
+                width: 250px;
+            }
+
+            .filter-select {
+                width: 200px;
+            }
+
+            /* Buttons */
             .btn {
-                padding: 10px 20px;
+                padding: 8px 16px;
                 border: none;
                 border-radius: 4px;
                 cursor: pointer;
                 font-size: 14px;
-                transition: all 0.3s;
+                transition: background 0.3s;
             }
+
             .btn-add {
                 background: #28a745;
                 color: white;
@@ -59,32 +120,28 @@
             .btn-add:hover {
                 background: #218838;
             }
+
             .btn-edit {
                 background: #007bff;
                 color: white;
-                margin-right: 5px;
-                padding: 6px 12px;
                 font-size: 13px;
+                padding: 6px 12px;
+                margin-right: 4px;
             }
             .btn-edit:hover {
                 background: #0056b3;
             }
+
             .btn-delete {
                 background: #dc3545;
                 color: white;
-                padding: 6px 12px;
                 font-size: 13px;
+                padding: 6px 12px;
             }
             .btn-delete:hover {
                 background: #c82333;
             }
-            .btn-save {
-                background: #28a745;
-                color: white;
-            }
-            .btn-save:hover {
-                background: #218838;
-            }
+
             .btn-cancel {
                 background: #6c757d;
                 color: white;
@@ -93,25 +150,34 @@
                 background: #545b62;
             }
 
+            .btn-save {
+                background: #28a745;
+                color: white;
+            }
+            .btn-save:hover {
+                background: #218838;
+            }
+
+            /* Table */
             table {
                 width: 100%;
                 border-collapse: collapse;
                 margin-top: 20px;
             }
+
             th, td {
                 padding: 12px;
                 text-align: left;
                 border-bottom: 1px solid #ddd;
             }
+
             th {
                 background: #f8f9fa;
                 font-weight: 600;
                 color: #333;
                 font-size: 14px;
             }
-            td {
-                font-size: 14px;
-            }
+
             tr:hover {
                 background: #f8f9fa;
             }
@@ -139,7 +205,6 @@
                 background: #d4edda;
                 color: #155724;
             }
-
             .status-inactive {
                 background: #f8d7da;
                 color: #721c24;
@@ -152,7 +217,7 @@
                 white-space: nowrap;
             }
 
-            /* Pagination Styles */
+            /* Pagination */
             .pagination {
                 display: flex;
                 justify-content: center;
@@ -160,6 +225,7 @@
                 margin-top: 30px;
                 gap: 5px;
             }
+
             .pagination a, .pagination span {
                 padding: 10px 15px;
                 text-decoration: none;
@@ -169,17 +235,20 @@
                 transition: all 0.3s;
                 font-size: 14px;
             }
+
             .pagination a:hover {
                 background: #007bff;
                 color: white;
                 border-color: #007bff;
             }
+
             .pagination .active {
                 background: #007bff;
                 color: white;
                 border-color: #007bff;
                 font-weight: bold;
             }
+
             .pagination .disabled {
                 color: #ccc;
                 cursor: not-allowed;
@@ -187,6 +256,7 @@
                 background: #f8f9fa;
             }
 
+            /* Modal */
             .modal {
                 display: none;
                 position: fixed;
@@ -198,6 +268,7 @@
                 background: rgba(0,0,0,0.5);
                 overflow-y: auto;
             }
+
             .modal-content {
                 background: white;
                 margin: 3% auto;
@@ -207,6 +278,7 @@
                 border-radius: 8px;
                 position: relative;
             }
+
             .close {
                 position: absolute;
                 right: 15px;
@@ -215,6 +287,7 @@
                 cursor: pointer;
                 color: #aaa;
             }
+
             .close:hover {
                 color: #000;
             }
@@ -229,27 +302,36 @@
             .form-group {
                 margin-bottom: 15px;
             }
+
             .form-group.full-width {
                 grid-column: 1 / -1;
             }
+
             .form-group label {
                 display: block;
                 margin-bottom: 5px;
                 font-weight: 600;
                 color: #333;
             }
-            .form-group input, .form-group select, .form-group textarea {
+
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
                 width: 100%;
                 padding: 8px;
                 border: 1px solid #ddd;
                 border-radius: 4px;
                 font-size: 14px;
             }
+
             .form-group textarea {
                 resize: vertical;
                 min-height: 80px;
             }
-            .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+
+            .form-group input:focus,
+            .form-group select:focus,
+            .form-group textarea:focus {
                 outline: none;
                 border-color: #007bff;
                 box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
@@ -263,21 +345,8 @@
                 padding-top: 20px;
                 border-top: 1px solid #eee;
             }
-            .search-box {
-                padding: 8px 12px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                width: 250px;
-                font-size: 14px;
-            }
-            .filter-select {
-                padding: 8px 12px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                width: 200px;
-                font-size: 14px;
-            }
 
+            /* Delete modal */
             .modal-delete {
                 background: white;
                 margin: 15% auto;
@@ -285,14 +354,15 @@
                 width: 400px;
                 max-width: 90%;
                 border-radius: 8px;
-                position: relative;
                 text-align: center;
             }
+
             .modal-delete .icon-warning {
                 font-size: 60px;
                 color: #dc3545;
                 margin-bottom: 20px;
             }
+
             .modal-delete h3 {
                 margin-bottom: 15px;
                 color: #333;
@@ -302,12 +372,14 @@
                 color: #666;
                 line-height: 1.5;
             }
+
             .modal-delete .btn-group {
                 display: flex;
                 gap: 10px;
                 justify-content: center;
             }
 
+            /* Misc */
             .required {
                 color: red;
             }
@@ -327,128 +399,135 @@
                 border: 1px solid #ddd;
             }
         </style>
+
     </head>
     <body>
-        <div class="container">
-            <h2>Quản lý Sản phẩm (Phụ tùng)</h2>
+        <div class="app">
+            <!-- 🧩 Sidebar include -->
+            <jsp:include page="/view/layout/sidebar.jsp"/>
+            <div class="main">
+                <div class="container">
+                    <h2>Quản lý Sản phẩm (Phụ tùng)</h2>
 
-            <!-- Thông báo -->
-            <c:if test="${not empty sessionScope.success}">
-                <div style="padding: 15px; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 4px; margin-bottom: 20px;">
-                    ${sessionScope.success}
-                </div>
-                <c:remove var="success" scope="session" />
-            </c:if>
+                    <!-- Thông báo -->
+                    <c:if test="${not empty sessionScope.success}">
+                        <div style="padding: 15px; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 4px; margin-bottom: 20px;">
+                            ${sessionScope.success}
+                        </div>
+                        <c:remove var="success" scope="session" />
+                    </c:if>
 
-            <c:if test="${not empty sessionScope.error}">
-                <div style="padding: 15px; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 4px; margin-bottom: 20px;">
-                    ${sessionScope.error}
-                </div>
-                <c:remove var="error" scope="session" />
-            </c:if>
+                    <c:if test="${not empty sessionScope.error}">
+                        <div style="padding: 15px; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 4px; margin-bottom: 20px;">
+                            ${sessionScope.error}
+                        </div>
+                        <c:remove var="error" scope="session" />
+                    </c:if>
 
-            <div class="top-bar">
-                <div class="search-filter-group">
-                    <input type="text" class="search-box" placeholder="Tìm kiếm theo tên, mã..." id="searchInput">
-                    <select class="filter-select" id="filterCategory" onchange="applyFilter()">
-                        <option value="">-- Tất cả danh mục --</option>
-                        <c:forEach items="${categoryList}" var="cat">
-                            <option value="${cat.categoryId}" ${filterCategory==cat.categoryId ? 'selected' : ''}>${cat.name}</option>
+                    <div class="top-bar">
+                        <div class="search-filter-group">
+                            <input type="text" class="search-box" placeholder="Tìm kiếm theo tên, mã..." id="searchInput">
+                            <select class="filter-select" id="filterCategory" onchange="applyFilter()">
+                                <option value="">-- Tất cả danh mục --</option>
+                                <c:forEach items="${categoryList}" var="cat">
+                                    <option value="${cat.categoryId}" ${filterCategory==cat.categoryId ? 'selected' : ''}>${cat.name}</option>
+                                </c:forEach>
+                            </select>
+                            <select class="filter-select" id="filterStatus" onchange="applyFilter()">
+                                <option value="">-- Tất cả trạng thái --</option>
+                                <option value="1" ${filterStatus=='1' ? 'selected' : ''}>Đang kinh doanh</option>
+                                <option value="0" ${filterStatus=='0' ? 'selected' : ''}>Ngưng kinh doanh</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-add" onclick="openModal()">+ Thêm Sản phẩm</button>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 8%;">Mã SP</th>
+                                <th style="width: 6%;">Ảnh</th>
+                                <th style="width: 18%;">Tên sản phẩm</th>
+                                <th style="width: 12%;">Danh mục</th>
+                                <th style="width: 10%;">Giá (VNĐ)</th>
+                                <th style="width: 8%;">Đơn vị</th>
+                                <th style="width: 8%;">Tồn kho tối thiểu</th>
+                                <th style="width: 8%;">Bảo hành (tháng)</th>
+                                <th style="width: 8%;">Trạng thái</th>
+                                <th style="width: 14%;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach items="${productList}" var="prod">
+                                <tr>
+                                    <td>${prod.code}</td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${not empty prod.image}">
+                                                <img src="${prod.image}" class="product-image" alt="${prod.name}">
+                                            </c:when>
+                                            <c:otherwise>
+                                                <img src="images/no-image.png" class="product-image" alt="No image">
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    <td title="${prod.name}">${prod.name}</td>
+                                    <td>${prod.category.name}</td>
+                                    <td class="price-cell">${prod.price}</td>
+                                    <td>${prod.unit.name}</td>
+                                    <td>${prod.minStockLevel}</td>
+                                    <td>${prod.warrantyPeriodMonths}</td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${prod.isActive}">
+                                                <span class="status-badge status-active">Đang KD</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="status-badge status-inactive">Ngưng KD</span>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-edit" onclick='editProduct(${prod.productId}, "${prod.code}", "${prod.name}", ${prod.price}, "${prod.description}", "${prod.image}", ${prod.unit.unitId}, ${prod.category.categoryId}, ${prod.warrantyPeriodMonths}, ${prod.minStockLevel}, ${prod.isActive})'>Sửa</button>
+                                        <button class="btn btn-delete" onclick="deleteProduct(${prod.productId}, '${prod.name}')">Xóa</button>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+
+                    <!-- Pagination -->
+                    <div class="pagination">
+                        <c:choose>
+                            <c:when test="${currentPage > 1}">
+                                <a href="products?page=${currentPage - 1}&category=${filterCategory}&status=${filterStatus}">‹ Previous</a>
+                            </c:when>
+                            <c:otherwise>
+                                <span class="disabled">‹ Previous</span>
+                            </c:otherwise>
+                        </c:choose>
+
+                        <c:forEach begin="1" end="${totalPages > 5 ? 5 : totalPages}" var="i">
+                            <c:choose>
+                                <c:when test="${currentPage == i}">
+                                    <span class="active">${i}</span>
+                                </c:when>
+                                <c:otherwise>
+                                    <a href="products?page=${i}&category=${filterCategory}&status=${filterStatus}">${i}</a>
+                                </c:otherwise>
+                            </c:choose>
                         </c:forEach>
-                    </select>
-                    <select class="filter-select" id="filterStatus" onchange="applyFilter()">
-                        <option value="">-- Tất cả trạng thái --</option>
-                        <option value="1" ${filterStatus=='1' ? 'selected' : ''}>Đang kinh doanh</option>
-                        <option value="0" ${filterStatus=='0' ? 'selected' : ''}>Ngưng kinh doanh</option>
-                    </select>
+
+                        <c:choose>
+                            <c:when test="${currentPage < totalPages}">
+                                <a href="products?page=${currentPage + 1}&category=${filterCategory}&status=${filterStatus}">Next ›</a>
+                            </c:when>
+                            <c:otherwise>
+                                <span class="disabled">Next ›</span>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
                 </div>
-                <button class="btn btn-add" onclick="openModal()">+ Thêm Sản phẩm</button>
-            </div>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 8%;">Mã SP</th>
-                        <th style="width: 6%;">Ảnh</th>
-                        <th style="width: 18%;">Tên sản phẩm</th>
-                        <th style="width: 12%;">Danh mục</th>
-                        <th style="width: 10%;">Giá (VNĐ)</th>
-                        <th style="width: 8%;">Đơn vị</th>
-                        <th style="width: 8%;">Tồn kho tối thiểu</th>
-                        <th style="width: 8%;">Bảo hành (tháng)</th>
-                        <th style="width: 8%;">Trạng thái</th>
-                        <th style="width: 14%;">Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <c:forEach items="${productList}" var="prod">
-                        <tr>
-                            <td>${prod.code}</td>
-                            <td>
-                                <c:choose>
-                                    <c:when test="${not empty prod.image}">
-                                        <img src="${prod.image}" class="product-image" alt="${prod.name}">
-                                    </c:when>
-                                    <c:otherwise>
-                                        <img src="images/no-image.png" class="product-image" alt="No image">
-                                    </c:otherwise>
-                                </c:choose>
-                            </td>
-                            <td title="${prod.name}">${prod.name}</td>
-                            <td>${prod.category.name}</td>
-                            <td class="price-cell">${prod.price}</td>
-                            <td>${prod.unit.name}</td>
-                            <td>${prod.minStockLevel}</td>
-                            <td>${prod.warrantyPeriodMonths}</td>
-                            <td>
-                                <c:choose>
-                                    <c:when test="${prod.isActive}">
-                                        <span class="status-badge status-active">Đang KD</span>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <span class="status-badge status-inactive">Ngưng KD</span>
-                                    </c:otherwise>
-                                </c:choose>
-                            </td>
-                            <td>
-                                <button class="btn btn-edit" onclick='editProduct(${prod.productId}, "${prod.code}", "${prod.name}", ${prod.price}, "${prod.description}", "${prod.image}", ${prod.unit.unitId}, ${prod.category.categoryId}, ${prod.warrantyPeriodMonths}, ${prod.minStockLevel}, ${prod.isActive})'>Sửa</button>
-                                <button class="btn btn-delete" onclick="deleteProduct(${prod.productId}, '${prod.name}')">Xóa</button>
-                            </td>
-                        </tr>
-                    </c:forEach>
-                </tbody>
-            </table>
-
-            <!-- Pagination -->
-            <div class="pagination">
-                <c:choose>
-                    <c:when test="${currentPage > 1}">
-                        <a href="products?page=${currentPage - 1}&category=${filterCategory}&status=${filterStatus}">‹ Previous</a>
-                    </c:when>
-                    <c:otherwise>
-                        <span class="disabled">‹ Previous</span>
-                    </c:otherwise>
-                </c:choose>
-
-                <c:forEach begin="1" end="${totalPages > 5 ? 5 : totalPages}" var="i">
-                    <c:choose>
-                        <c:when test="${currentPage == i}">
-                            <span class="active">${i}</span>
-                        </c:when>
-                        <c:otherwise>
-                            <a href="products?page=${i}&category=${filterCategory}&status=${filterStatus}">${i}</a>
-                        </c:otherwise>
-                    </c:choose>
-                </c:forEach>
-
-                <c:choose>
-                    <c:when test="${currentPage < totalPages}">
-                        <a href="products?page=${currentPage + 1}&category=${filterCategory}&status=${filterStatus}">Next ›</a>
-                    </c:when>
-                    <c:otherwise>
-                        <span class="disabled">Next ›</span>
-                    </c:otherwise>
-                </c:choose>
             </div>
         </div>
 

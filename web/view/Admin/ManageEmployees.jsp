@@ -20,7 +20,7 @@
             }
             html,body {
                 height: 100%;
-                font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+                font-family: Inter, "See UI", Roboto, Arial, sans-serif;
                 background:#f5f7fb;
                 color:#111827;
             }
@@ -179,24 +179,12 @@
     <body>
         <div class="app">
             <!-- Sidebar đồng bộ -->
-            <aside class="sidebar">
-                <div class="brand">CAR CARE SYSTEM</div>
-                <nav class="nav">
-                    <a href="./HomePageForAdmin.jsp"><span class="ico"></span> Dashboard</a>
-                    <a class="active" href="./ManageEmployees.jsp"><span class="ico"></span> Quản lý nhân viên</a>
-                    <a href="#"><span class="ico"></span> Quản lý dịch vụ</a>
-                    <a href="#"><span class="ico"></span> Quản lý phụ tùng</a>
-                    <a href="#"><span class="ico"></span> Quản lý Service Centre</a>
-                    <a href="#"><span class="ico"></span> Log hệ thống</a>
-                    <a href="#"><span class="ico"></span> Báo cáo</a>
-                </nav>
-                <div style="flex:1"></div>
-                <div style="font-size:12px; color:rgba(255,255,255,0.6);">© 2025 CarCare</div>
-            </aside>
+            <jsp:include page="/view/layout/sidebar.jsp"/>
+
 
             <!-- Main content -->
             <main class="main">
-                <h1>Quản lý Nhân viên</h1>
+                <h2 style="margin-bottom: 20px">Quản lý Nhân viên</h2>
                 <button type="button" class="btn btn-add"
                         onclick="document.getElementById('addModal').style.display = 'flex'">
                     ➕ Add Employee
@@ -204,7 +192,7 @@
 
 
                 <form action="listEmployees" method="get" 
-                      style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                      style=" display: flex; justify-content: space-between; align-items: center;">
 
 
                     <div style="display: flex; gap: 10px; align-items: center;">

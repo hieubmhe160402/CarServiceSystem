@@ -3,30 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/DUC_CODE_DAY/CarServiceSystem/src/java/controller/Admin/DeleteEmployees.java</file>
-            <file>file:/D:/DUC_CODE_DAY/CarServiceSystem/src/java/dal/PermissionGroupDAO.java</file>
-            <file>file:/D:/DUC_CODE_DAY/CarServiceSystem/src/java/model/Appointment.java</file>
-            <file>file:/D:/DUC_CODE_DAY/CarServiceSystem/src/java/model/PaymentTransaction.java</file>
-            <file>file:/D:/DUC_CODE_DAY/CarServiceSystem/web/view/product/page-list-product.jsp</file>
-            <file>file:/D:/DUC_CODE_DAY/CarServiceSystem/src/java/controller/web/product/ListProductServlet.java</file>
-            <file>file:/D:/DUC_CODE_DAY/CarServiceSystem/web/META-INF/context.xml</file>
-            <file>file:/D:/DUC_CODE_DAY/CarServiceSystem/src/java/model/Car.java</file>
-            <file>file:/D:/DUC_CODE_DAY/CarServiceSystem/src/java/model/InventoryLot.java</file>
-            <file>file:/D:/DUC_CODE_DAY/CarServiceSystem/src/java/model/Category.java</file>
-            <file>file:/D:/DUC_CODE_DAY/CarServiceSystem/src/java/dal/UserDAO.java</file>
-            <file>file:/D:/DUC_CODE_DAY/CarServiceSystem/web/view/Admin/HomePageForAdmin.jsp</file>
-            <file>file:/D:/DUC_CODE_DAY/CarServiceSystem/src/java/model/Product.java</file>
-            <file>file:/D:/DUC_CODE_DAY/CarServiceSystem/src/java/model/PermissionGroup.java</file>
-            <file>file:/D:/DUC_CODE_DAY/CarServiceSystem/src/java/dal/RoleDAO.java</file>
-            <file>file:/D:/DUC_CODE_DAY/CarServiceSystem/src/java/dal/ProductDAO.java</file>
-            <file>file:/D:/DUC_CODE_DAY/CarServiceSystem/src/java/model/Unit.java</file>
-            <file>file:/D:/DUC_CODE_DAY/CarServiceSystem/src/java/controller/web/product/DeleteProductServlet.java</file>
-            <file>file:/D:/DUC_CODE_DAY/CarServiceSystem/src/java/model/ServicePartDetail.java</file>
-            <file>file:/D:/DUC_CODE_DAY/CarServiceSystem/web/WEB-INF/web.xml</file>
-            <file>file:/D:/DUC_CODE_DAY/CarServiceSystem/src/java/controller/PermissionGroupController.java</file>
-            <file>file:/D:/DUC_CODE_DAY/CarServiceSystem/src/java/model/CarMaintenance.java</file>
-            <file>file:/D:/DUC_CODE_DAY/CarServiceSystem/src/java/context/DBContext.java</file>
-            <file>file:/D:/DUC_CODE_DAY/CarServiceSystem/web/view/Admin/AddEmployees.jsp</file>
+            <file>file:/C:/Users/MinHeee/Desktop/hihihi/CarServiceSystem/web/view/layout/sidebar.jsp</file>
+            <file>file:/C:/Users/MinHeee/Desktop/hihihi/CarServiceSystem/web/view/category/list-category.jsp</file>
+            <file>file:/C:/Users/MinHeee/Desktop/hihihi/CarServiceSystem/src/java/controller/Access/AuthController.java</file>
         </group>
     </open-files>
 </project-private>

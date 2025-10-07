@@ -1,47 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
-    <servlet>
-        <servlet-name>PermissionGroupController</servlet-name>
-        <servlet-class>controller.PermissionGroupController</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ListEmployees</servlet-name>
-        <servlet-class>controller.Admin.ListEmployees</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>UpdateEmployees</servlet-name>
-        <servlet-class>controller.Admin.UpdateEmployees</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>DeleteEmployees</servlet-name>
-        <servlet-class>controller.Admin.DeleteEmployees</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>AddEmployees</servlet-name>
-        <servlet-class>controller.Admin.AddEmployees</servlet-class>
-    </servlet>
-    
-    <servlet-mapping>
-        <servlet-name>PermissionGroupController</servlet-name>
-        <url-pattern>/permissionGroupController</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ListEmployees</servlet-name>
-        <url-pattern>/listEmployees</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UpdateEmployees</servlet-name>
-        <url-pattern>/updateEmployees</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DeleteEmployees</servlet-name>
-        <url-pattern>/deleteEmployees</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AddEmployees</servlet-name>
-        <url-pattern>/addEmployees</url-pattern>
-    </servlet-mapping>
-    
     <!-- SMTP configuration for EmailUtil (change values to your SMTP provider) -->
     <context-param>
         <param-name>mail.host</param-name>
@@ -71,55 +29,6 @@
         <param-name>mail.from</param-name>
         <param-value>your_email@example.com</param-value>
     </context-param>
-    <servlet-mapping>
-        <servlet-name>PermissionGroupController</servlet-name>
-        <url-pattern>/PermissionGroupController</url-pattern>
-    </servlet-mapping>
-    
-    <servlet>
-        <servlet-name>AuthController</servlet-name>
-        <servlet-class>controller.Access.AuthController</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>AuthController</servlet-name>
-        <url-pattern>/AuthController</url-pattern>
-    </servlet-mapping>
-    
-    <servlet>
-        <servlet-name>AdminController</servlet-name>
-        <servlet-class>controller.Access.AdminController</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>AdminController</servlet-name>
-        <url-pattern>/AdminController</url-pattern>
-    </servlet-mapping>
-    
-    <servlet>
-        <servlet-name>TechnicianController</servlet-name>
-        <servlet-class>controller.Access.TechnicianController</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>TechnicianController</servlet-name>
-        <url-pattern>/TechnicianController</url-pattern>
-    </servlet-mapping>
-    
-    <servlet>
-        <servlet-name>CustomerController</servlet-name>
-        <servlet-class>controller.Access.CustomerController</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>CustomerController</servlet-name>
-        <url-pattern>/CustomerController</url-pattern>
-    </servlet-mapping>
-    
-    <servlet>
-        <servlet-name>RegisterController</servlet-name>
-        <servlet-class>controller.Access.RegisterController</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>RegisterController</servlet-name>
-        <url-pattern>/RegisterController</url-pattern>
-    </servlet-mapping>
     <!-- Unit Servlets (annotation-based already, this is optional for Jakarta EE 10) -->
     <servlet>
         <servlet-name>ListUnitServlet</servlet-name>
@@ -137,5 +46,4 @@
         <servlet-name>DeleteUnitServlet</servlet-name>
         <url-pattern>/delete-unit</url-pattern>
     </servlet-mapping>
-    
 </web-app>

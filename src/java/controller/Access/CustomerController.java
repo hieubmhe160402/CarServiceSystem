@@ -7,6 +7,7 @@ package controller.Access;
 import dal.UserDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,6 +18,7 @@ import model.User;
  *
  * @author MinHeee
  */
+@WebServlet(name = "CustomerController", urlPatterns = {"/customerController"})
 public class CustomerController extends HttpServlet {
 
     private UserDAO userDAO = new UserDAO();
@@ -34,7 +36,7 @@ public class CustomerController extends HttpServlet {
             return;
         }
         
-        if (user.getRole() == null || !user.getRole().getRoleName().equals("Customer")) {
+        if (user.getRole() == null || !user.getRole().getRoleName().equals("CarOwner")) {
             response.sendRedirect("AuthController?action=login");
             return;
         }
@@ -43,7 +45,7 @@ public class CustomerController extends HttpServlet {
         request.setAttribute("currentUser", user);
         
         // Forward đến trang customer dashboard
-        request.getRequestDispatcher("view/Cusview/customerDashboard.jsp").forward(request, response);
+        request.getRequestDispatcher("view/Cusview/Test.jsp").forward(request, response);
     }
 
     @Override

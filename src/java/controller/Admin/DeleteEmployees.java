@@ -10,6 +10,7 @@ import dal.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,6 +19,8 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author MinHeee
  */
+@WebServlet(name = "DeleteEmployeesServlet", urlPatterns = {"/deleteEmployees"})
+//Để tên delete nhưng nó chỉ là chuyển trang trái 
 public class DeleteEmployees extends HttpServlet {
 
     /**

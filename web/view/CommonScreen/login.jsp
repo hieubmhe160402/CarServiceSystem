@@ -169,7 +169,7 @@
             </div>
         </c:if>
         
-        <form action="${pageContext.request.contextPath}/AuthController" method="post">
+        <form action="${pageContext.request.contextPath}/authController" method="post">
             <input type="hidden" name="action" value="login">
             
             <div class="form-group">
@@ -188,13 +188,13 @@
         </form>
         
         <div class="forgot-password">
-            <a href="${pageContext.request.contextPath}/AuthController?action=resetPassword">
+            <a href="${pageContext.request.contextPath}/authController?action=resetPassword">
                 Quên mật khẩu?
             </a>
         </div>
         
         <div class="register-link">
-            <p>Chưa có tài khoản? <a href="${pageContext.request.contextPath}/RegisterController">Đăng ký ngay</a></p>
+            <p>Chưa có tài khoản? <a href="${pageContext.request.contextPath}/registerController">Đăng ký ngay</a></p>
         </div>
     </div>
     

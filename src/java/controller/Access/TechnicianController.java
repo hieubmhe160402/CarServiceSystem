@@ -7,6 +7,7 @@ package controller.Access;
 import dal.UserDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,6 +18,7 @@ import model.User;
  *
  * @author MinHeee
  */
+@WebServlet(name = "TechnicianController", urlPatterns = {"/technicianController"})
 public class TechnicianController extends HttpServlet {
 
     private UserDAO userDAO = new UserDAO();
@@ -34,7 +36,7 @@ public class TechnicianController extends HttpServlet {
             return;
         }
         
-        if (user.getRole() == null || !user.getRole().getRoleName().equals("Technician")) {
+        if (user.getRole() == null || !user.getRole().getRoleName().equals("ServiceTechnician")) {
             response.sendRedirect("AuthController?action=login");
             return;
         }
@@ -43,7 +45,7 @@ public class TechnicianController extends HttpServlet {
         request.setAttribute("currentUser", user);
         
         // Forward đến trang technician dashboard
-        request.getRequestDispatcher("view/Technicianview/technicianDashboard.jsp").forward(request, response);
+        request.getRequestDispatcher("view/Technicianview/AssignedCars.jsp").forward(request, response);
     }
 
     @Override

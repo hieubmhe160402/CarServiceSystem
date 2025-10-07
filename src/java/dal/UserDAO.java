@@ -4,7 +4,7 @@
  */
 package dal;
 
-import Context.DBContext;
+import context.DBContext;
 import java.util.List;
 import java.sql.*;
 import java.util.ArrayList;

@@ -1,6 +1,6 @@
 package dal;
 
-import Context.DBContext;
+import context.DBContext;
 import model.Category;
 import java.sql.*;
 import java.util.ArrayList;

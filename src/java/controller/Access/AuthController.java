@@ -9,6 +9,7 @@ import dal.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,6 +23,7 @@ import model.User;
  *
  * @author MinHeee
  */
+@WebServlet(name = "AuthController", urlPatterns = {"/authController"})
 public class AuthController extends HttpServlet {
 
     private UserDAO userDAO = new UserDAO();
@@ -31,7 +33,7 @@ public class AuthController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-        
+
         if (action == null) {
             request.getRequestDispatcher("view/CommonScreen/login.jsp").forward(request, response);
         } else {
@@ -63,7 +65,17 @@ public class AuthController extends HttpServlet {
                 case "logout":
                     HttpSession session = request.getSession();
                     session.invalidate();
-                    response.sendRedirect("AuthController?action=login");
+                    response.sendRedirect("authController?action=login");
+                    break;
+                case "home":
+                    HttpSession sessionHome = request.getSession();
+                    User currentUser = (User) sessionHome.getAttribute("user");
+                    if (currentUser == null) {
+                        response.sendRedirect("authController?action=login");
+                        return;
+                    }
+
+                    redirectToHomeByRole(currentUser, response);
                     break;
                 default:
                     request.getRequestDispatcher("view/CommonScreen/login.jsp").forward(request, response);
@@ -76,7 +88,7 @@ public class AuthController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-        
+
         switch (action) {
             case "login":
                 handleLogin(request, response);
@@ -100,34 +112,42 @@ public class AuthController extends HttpServlet {
             throws ServletException, IOException {
         String userName = request.getParameter("userName");
         String password = request.getParameter("password");
-        
+
         if (userName == null || password == null || userName.isEmpty() || password.isEmpty()) {
             request.setAttribute("error", "Vui lòng nhập đầy đủ thông tin!");
             request.getRequestDispatcher("view/CommonScreen/login.jsp").forward(request, response);
             return;
         }
-        
+
         User user = userDAO.login(userName, password);
-        
+
         if (user != null) {
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
             userDAO.updateLastLogin(user.getUserId());
-            
+
             // Redirect based on user role
             String roleName = user.getRole().getRoleName();
             switch (roleName) {
                 case "Admin":
-                    response.sendRedirect("AdminController");
+                    response.sendRedirect("adminController");
                     break;
-                case "Technician":
-                    response.sendRedirect("TechnicianController");
+                case "Staff":
+                    response.sendRedirect("staffController");
                     break;
-                case "Customer":
-                    response.sendRedirect("CustomerController");
+                case "Accountant":
+                    response.sendRedirect("accountantController");
+                    break;
+                case "ServiceTechnician":
+                    response.sendRedirect("technicianController");
+                    break;
+                case "CarOwner":
+                    response.sendRedirect("customerController");
                     break;
                 default:
-                    response.sendRedirect("PermissionGroupController");
+                    // Nếu role không khớp, quay về login
+                    request.setAttribute("error", "Role người dùng không hợp lệ!");
+                    request.getRequestDispatcher("view/CommonScreen/login.jsp").forward(request, response);
                     break;
             }
         } else {
@@ -140,37 +160,37 @@ public class AuthController extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        
+
         if (user == null) {
-            response.sendRedirect("AuthController?action=login");
+            response.sendRedirect("authController?action=login");
             return;
         }
-        
+
         String oldPassword = request.getParameter("oldPassword");
         String newPassword = request.getParameter("newPassword");
         String confirmPassword = request.getParameter("confirmPassword");
-        
-        if (oldPassword == null || newPassword == null || confirmPassword == null ||
-            oldPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
+
+        if (oldPassword == null || newPassword == null || confirmPassword == null
+                || oldPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
             request.setAttribute("error", "Vui lòng nhập đầy đủ thông tin!");
             request.getRequestDispatcher("view/CommonScreen/changePassword.jsp").forward(request, response);
             return;
         }
-        
+
         if (!newPassword.equals(confirmPassword)) {
             request.setAttribute("error", "Mật khẩu mới và xác nhận mật khẩu không khớp!");
             request.getRequestDispatcher("view/CommonScreen/changePassword.jsp").forward(request, response);
             return;
         }
-        
+
         if (newPassword.length() < 6) {
             request.setAttribute("error", "Mật khẩu mới phải có ít nhất 6 ký tự!");
             request.getRequestDispatcher("view/CommonScreen/changePassword.jsp").forward(request, response);
             return;
         }
-        
+
         boolean success = userDAO.changePassword(user.getUserId(), oldPassword, newPassword);
-        
+
         if (success) {
             request.setAttribute("success", "Đổi mật khẩu thành công!");
             request.getRequestDispatcher("view/CommonScreen/changePassword.jsp").forward(request, response);
@@ -183,21 +203,21 @@ public class AuthController extends HttpServlet {
     private void handleResetPassword(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String email = request.getParameter("email");
-        
+
         if (email == null || email.isEmpty()) {
             request.setAttribute("error", "Vui lòng nhập email!");
             request.getRequestDispatcher("view/CommonScreen/resetPassword.jsp").forward(request, response);
             return;
         }
-        
+
         User user = userDAO.getUserByEmail(email);
-        
+
         if (user != null) {
             String token = tokenDAO.createToken(user.getUserId());
             if (token != null) {
                 // Build reset URL
                 String baseUrl = request.getRequestURL().toString().replace(request.getRequestURI(), request.getContextPath());
-                String resetUrl = baseUrl + "/AuthController?action=newPassword&token=" + token;
+                String resetUrl = baseUrl + "/authController?action=newPassword&token=" + token;
 
                 // Load SMTP config from context params
                 SmtpConfig cfg = new SmtpConfig();
@@ -226,7 +246,7 @@ public class AuthController extends HttpServlet {
         } else {
             request.setAttribute("error", "Email không tồn tại trong hệ thống!");
         }
-        
+
         request.getRequestDispatcher("view/CommonScreen/resetPassword.jsp").forward(request, response);
     }
 
@@ -235,34 +255,34 @@ public class AuthController extends HttpServlet {
         String token = request.getParameter("token");
         String newPassword = request.getParameter("newPassword");
         String confirmPassword = request.getParameter("confirmPassword");
-        
-        if (token == null || newPassword == null || confirmPassword == null ||
-            token.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
+
+        if (token == null || newPassword == null || confirmPassword == null
+                || token.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
             request.setAttribute("error", "Vui lòng nhập đầy đủ thông tin!");
             request.setAttribute("token", token);
             request.getRequestDispatcher("view/CommonScreen/newPassword.jsp").forward(request, response);
             return;
         }
-        
+
         if (!newPassword.equals(confirmPassword)) {
             request.setAttribute("error", "Mật khẩu mới và xác nhận mật khẩu không khớp!");
             request.setAttribute("token", token);
             request.getRequestDispatcher("view/CommonScreen/newPassword.jsp").forward(request, response);
             return;
         }
-        
+
         if (newPassword.length() < 6) {
             request.setAttribute("error", "Mật khẩu mới phải có ít nhất 6 ký tự!");
             request.setAttribute("token", token);
             request.getRequestDispatcher("view/CommonScreen/newPassword.jsp").forward(request, response);
             return;
         }
-        
+
         TokenForgetPassword tokenObj = tokenDAO.getTokenByToken(token);
-        
+
         if (tokenObj != null) {
             boolean success = userDAO.updatePassword(tokenObj.getUser().getUserId(), newPassword);
-            
+
             if (success) {
                 tokenDAO.markTokenAsUsed(token);
                 request.setAttribute("success", "Đặt lại mật khẩu thành công! Vui lòng đăng nhập lại.");
@@ -276,5 +296,32 @@ public class AuthController extends HttpServlet {
             request.setAttribute("error", "Token không hợp lệ hoặc đã hết hạn!");
             request.getRequestDispatcher("view/CommonScreen/resetPassword.jsp").forward(request, response);
         }
+    }
+//Button return home 
+
+    private void redirectToHomeByRole(User user, HttpServletResponse response) throws IOException {
+        String roleName = user.getRole().getRoleName();
+
+        switch (roleName) {
+            case "Admin":
+                response.sendRedirect("adminController");
+                break;
+            case "Staff":
+                response.sendRedirect("staffController");
+                break;
+            case "Accountant":
+                response.sendRedirect("accountantController");
+                break;
+            case "ServiceTechnician":
+                response.sendRedirect("technicianController");
+                break;
+            case "CarOwner":
+                response.sendRedirect("customerController");
+                break;
+            default:
+                response.sendRedirect("authController?action=login");
+                break;
+        }
+
     }
 }
