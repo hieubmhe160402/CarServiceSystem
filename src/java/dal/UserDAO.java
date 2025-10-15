@@ -204,7 +204,9 @@ public class UserDAO extends DBContext {
         }
         return list;
     }
-
+    
+    
+    
     public List<User> searchByEmail(String keyword) {
         List<User> list = new ArrayList<>();
         String sql = "SELECT u.*, r.RoleID, r.RoleName, r.Description "
