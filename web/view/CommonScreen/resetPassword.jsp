@@ -244,7 +244,7 @@
                 <p>3. Nhập token và mật khẩu mới</p>
             </div>
             
-            <a href="${pageContext.request.contextPath}/AuthController?action=newPassword&token=${token}" 
+            <a href="${pageContext.request.contextPath}/authController?action=newPassword&token=${token}" 
                class="btn-reset" style="text-decoration: none; display: block;">
                 Đặt lại mật khẩu
             </a>
@@ -261,7 +261,7 @@
                 </ol>
             </div>
             
-            <form action="${pageContext.request.contextPath}/AuthController" method="post">
+            <form action="${pageContext.request.contextPath}/authController" method="post">
                 <input type="hidden" name="action" value="resetPassword">
                 
                 <div class="form-group">
@@ -274,7 +274,7 @@
             </form>
         </c:if>
         
-        <a href="${pageContext.request.contextPath}/AuthController?action=login" class="btn-back">
+        <a href="${pageContext.request.contextPath}/authController?action=login" class="btn-back">
             Quay lại đăng nhập
         </a>
     </div>

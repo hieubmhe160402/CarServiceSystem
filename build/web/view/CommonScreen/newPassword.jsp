@@ -232,7 +232,7 @@
             </ul>
         </div>
         
-        <form action="${pageContext.request.contextPath}/AuthController" method="post">
+        <form action="${pageContext.request.contextPath}/authController" method="post">
             <input type="hidden" name="action" value="newPassword">
             <input type="hidden" name="token" value="${token}">
             
@@ -252,7 +252,7 @@
             <button type="submit" class="btn-reset">Đặt lại mật khẩu</button>
         </form>
         
-        <a href="${pageContext.request.contextPath}/AuthController?action=login" class="btn-back">
+        <a href="${pageContext.request.contextPath}/authController?action=login" class="btn-back">
             Quay lại đăng nhập
         </a>
     </div>
