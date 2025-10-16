@@ -1,13 +1,16 @@
 package util;
 
+//import com.sun.jdi.connect.Transport;
 import jakarta.mail.Authenticator;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.PasswordAuthentication;
 import jakarta.mail.Session;
-import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.Transport;
+
+
 import java.util.Properties;
 
 public class EmailUtil {

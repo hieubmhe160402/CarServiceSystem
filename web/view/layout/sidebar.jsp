@@ -108,10 +108,12 @@
                 <div class="brand">Admin Car Care</div>
                 <a href="view/Admin/HomePageForAdmin.jsp"><span class="ico"></span> Dashboard</a>
                 <a href="/CarCareSystem/listEmployees"><span class="ico"></span> Quản lý nhân viên</a>
+                <a href="/CarCareSystem/ManageCustomerController"><span class="ico"></span> Quản lý thông tin khách hàng</a>
                 <a href="ManageServices.jsp"><span class="ico"></span> Quản lý nhà cung cấp</a>
                 <a href="/CarCareSystem/products"><span class="ico"></span> Quản lý phụ tùng</a>
                 <a href="/CarCareSystem/units"><span class="ico"></span> Quản lý đơn vị</a>
                 <a href="/CarCareSystem/category"><span class="ico"></span> Quản lý danh mục</a>
+                <a href="/CarCareSystem/roleManage"><span class="ico"></span> Quản lý Vai Trò(Role)</a>
                 <a href="SystemLog.jsp"><span class="ico"></span> Log hệ thống</a>
                 <a href="Reports.jsp"><span class="ico"></span> Báo cáo</a>
 
