@@ -11,7 +11,7 @@ import java.math.BigDecimal;
  * @author MinHeee
  */
 public class MaintenancePackageDetail {
-     private int packageDetailId;                 
+    private int packageDetailId;                 
     private MaintenancePackage maintenancePackage; 
     private Product product;                     
     private BigDecimal quantity;                 

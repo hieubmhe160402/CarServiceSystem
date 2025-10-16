@@ -114,6 +114,7 @@
                 <a href="/CarCareSystem/units"><span class="ico"></span> Quản lý đơn vị</a>
                 <a href="/CarCareSystem/category"><span class="ico"></span> Quản lý danh mục</a>
                 <a href="/CarCareSystem/roleManage"><span class="ico"></span> Quản lý Vai Trò(Role)</a>
+                <a href="/CarCareSystem/managerPackage"><span class="ico"></span> Dách chi tiết trong gói combo </a>
                 <a href="SystemLog.jsp"><span class="ico"></span> Log hệ thống</a>
                 <a href="Reports.jsp"><span class="ico"></span> Báo cáo</a>
 
