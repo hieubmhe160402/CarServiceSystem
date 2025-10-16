@@ -218,7 +218,11 @@
                     </div>
                 </form>
 
-
+                <c:if test="${not empty noEmployeesMessage}">
+                    <div style="padding: 10px; background-color: #ffe4e6; color: #b91c1c; border-radius: 6px; margin-top: 15px;">
+                        ${noEmployeesMessage}
+                    </div>
+                </c:if>
                 <br/><br/>
                 <table>
                     <thead>

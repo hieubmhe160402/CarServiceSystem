@@ -135,9 +135,7 @@ public class AuthController extends HttpServlet {
                 case "Staff":
                     response.sendRedirect("staffController");
                     break;
-                case "Accountant":
-                    response.sendRedirect("accountantController");
-                    break;
+              
                 case "ServiceTechnician":
                     response.sendRedirect("technicianController");
                     break;
@@ -310,9 +308,6 @@ public class AuthController extends HttpServlet {
                 break;
             case "Staff":
                 response.sendRedirect("staffController");
-                break;
-            case "Accountant":
-                response.sendRedirect("accountantController");
                 break;
             case "ServiceTechnician":
                 response.sendRedirect("technicianController");

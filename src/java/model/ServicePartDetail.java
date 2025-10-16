@@ -22,11 +22,13 @@ public class ServicePartDetail {
     private String warrantyExpireDate;
     private String lotNumber;
     private String notes;
+    private boolean fromPackage;              // tương ứng FromPackage (bit)
+    private MaintenancePackage maintenancePackage;
 
     public ServicePartDetail() {
     }
 
-    public ServicePartDetail(int servicePartDetailId, CarMaintenance maintenance, Product product, int quantity, BigDecimal unitPrice, BigDecimal totalPrice, String installationDate, String warrantyExpireDate, String lotNumber, String notes) {
+    public ServicePartDetail(int servicePartDetailId, CarMaintenance maintenance, Product product, int quantity, BigDecimal unitPrice, BigDecimal totalPrice, String installationDate, String warrantyExpireDate, String lotNumber, String notes, boolean fromPackage, MaintenancePackage maintenancePackage) {
         this.servicePartDetailId = servicePartDetailId;
         this.maintenance = maintenance;
         this.product = product;
@@ -37,7 +39,11 @@ public class ServicePartDetail {
         this.warrantyExpireDate = warrantyExpireDate;
         this.lotNumber = lotNumber;
         this.notes = notes;
+        this.fromPackage = fromPackage;
+        this.maintenancePackage = maintenancePackage;
     }
+
+    
 
     public int getServicePartDetailId() {
         return servicePartDetailId;
@@ -117,6 +123,22 @@ public class ServicePartDetail {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public boolean isFromPackage() {
+        return fromPackage;
+    }
+
+    public void setFromPackage(boolean fromPackage) {
+        this.fromPackage = fromPackage;
+    }
+
+    public MaintenancePackage getMaintenancePackage() {
+        return maintenancePackage;
+    }
+
+    public void setMaintenancePackage(MaintenancePackage maintenancePackage) {
+        this.maintenancePackage = maintenancePackage;
     }
 
     @Override

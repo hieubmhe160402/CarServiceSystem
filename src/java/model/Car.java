@@ -23,11 +23,12 @@ public class Car {
     private String lastMaintenanceDate;
     private String nextMaintenanceDate;
     private String createdDate;
+    private Integer currentOdometer;
 
     public Car() {
     }
 
-    public Car(int carId, String licensePlate, String brand, String model, int year, String color, String engineNumber, String chassisNumber, User owner, String purchaseDate, String lastMaintenanceDate, String nextMaintenanceDate, String createdDate) {
+    public Car(int carId, String licensePlate, String brand, String model, int year, String color, String engineNumber, String chassisNumber, User owner, String purchaseDate, String lastMaintenanceDate, String nextMaintenanceDate, String createdDate, Integer currentOdometer) {
         this.carId = carId;
         this.licensePlate = licensePlate;
         this.brand = brand;
@@ -41,7 +42,10 @@ public class Car {
         this.lastMaintenanceDate = lastMaintenanceDate;
         this.nextMaintenanceDate = nextMaintenanceDate;
         this.createdDate = createdDate;
+        this.currentOdometer = currentOdometer;
     }
+
+    
 
     public int getCarId() {
         return carId;
@@ -147,9 +151,19 @@ public class Car {
         this.createdDate = createdDate;
     }
 
-    @Override
-    public String toString() {
-        return "Car{" + "carId=" + carId + ", licensePlate=" + licensePlate + ", brand=" + brand + ", model=" + model + ", year=" + year + ", color=" + color + ", engineNumber=" + engineNumber + ", chassisNumber=" + chassisNumber + ", owner=" + owner + ", purchaseDate=" + purchaseDate + ", lastMaintenanceDate=" + lastMaintenanceDate + ", nextMaintenanceDate=" + nextMaintenanceDate + ", createdDate=" + createdDate + '}';
+    public Integer getCurrentOdometer() {
+        return currentOdometer;
     }
 
+    public void setCurrentOdometer(Integer currentOdometer) {
+        this.currentOdometer = currentOdometer;
+    }
+
+    @Override
+    public String toString() {
+        return "Car{" + "carId=" + carId + ", licensePlate=" + licensePlate + ", brand=" + brand + ", model=" + model + ", year=" + year + ", color=" + color + ", engineNumber=" + engineNumber + ", chassisNumber=" + chassisNumber + ", owner=" + owner + ", purchaseDate=" + purchaseDate + ", lastMaintenanceDate=" + lastMaintenanceDate + ", nextMaintenanceDate=" + nextMaintenanceDate + ", createdDate=" + createdDate + ", currentOdometer=" + currentOdometer + '}';
+    }
+    
+
+   
 }
