@@ -41,7 +41,7 @@ public class userProfileController extends HttpServlet {
             cars = carDao.searchCarsByKeyword(user.getUserId(), search);
             request.setAttribute("search", search);
         } else {
-            cars = carDao.getCarsByUserId(user.getUserId());
+            cars = carDao.getCarsByUserIdWithOwnerInfo(user.getUserId());
         }
 
         request.setAttribute("cars", cars);

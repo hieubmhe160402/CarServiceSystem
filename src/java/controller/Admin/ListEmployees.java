@@ -87,6 +87,11 @@ public class ListEmployees extends HttpServlet {
         request.setAttribute("users", users);
         request.setAttribute("roles", roles);
         request.setAttribute("selectedRoleId", roleParam);
+         if (users == null || users.isEmpty()) {
+            request.setAttribute("noEmployeesMessage", "Không tìm thấy nhân viên nào.");
+        } else {
+            request.setAttribute("users", users);
+        }
 
         request.getRequestDispatcher("/view/Admin/ManageEmployees.jsp").forward(request, response);
 

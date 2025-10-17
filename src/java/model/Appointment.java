@@ -20,11 +20,12 @@ public class Appointment {
     private String createdDate;
     private User confirmedBy;
     private String confirmedDate;
+    private MaintenancePackage requestedPackage;
 
     public Appointment() {
     }
 
-    public Appointment(int appointmentId, Car car, String appointmentDate, String requestedServices, String status, String notes, User createdBy, String createdDate, User confirmedBy, String confirmedDate) {
+    public Appointment(int appointmentId, Car car, String appointmentDate, String requestedServices, String status, String notes, User createdBy, String createdDate, User confirmedBy, String confirmedDate, MaintenancePackage requestedPackage) {
         this.appointmentId = appointmentId;
         this.car = car;
         this.appointmentDate = appointmentDate;
@@ -35,7 +36,10 @@ public class Appointment {
         this.createdDate = createdDate;
         this.confirmedBy = confirmedBy;
         this.confirmedDate = confirmedDate;
+        this.requestedPackage = requestedPackage;
     }
+
+    
 
     public int getAppointmentId() {
         return appointmentId;
@@ -117,9 +121,19 @@ public class Appointment {
         this.confirmedDate = confirmedDate;
     }
 
+    public MaintenancePackage getRequestedPackage() {
+        return requestedPackage;
+    }
+
+    public void setRequestedPackage(MaintenancePackage requestedPackage) {
+        this.requestedPackage = requestedPackage;
+    }
+
     @Override
     public String toString() {
-        return "Appointment{" + "appointmentId=" + appointmentId + ", car=" + car + ", appointmentDate=" + appointmentDate + ", requestedServices=" + requestedServices + ", status=" + status + ", notes=" + notes + ", createdBy=" + createdBy + ", createdDate=" + createdDate + ", confirmedBy=" + confirmedBy + ", confirmedDate=" + confirmedDate + '}';
+        return "Appointment{" + "appointmentId=" + appointmentId + ", car=" + car + ", appointmentDate=" + appointmentDate + ", requestedServices=" + requestedServices + ", status=" + status + ", notes=" + notes + ", createdBy=" + createdBy + ", createdDate=" + createdDate + ", confirmedBy=" + confirmedBy + ", confirmedDate=" + confirmedDate + ", requestedPackage=" + requestedPackage + '}';
     }
+
+   
 
 }

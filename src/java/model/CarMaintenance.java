@@ -19,12 +19,35 @@ public class CarMaintenance {
     private int odometer;
     private String status;
     private BigDecimal totalAmount;
+     private BigDecimal discountAmount;   // 🔹 Cột mới
+    private BigDecimal finalAmount;
     private String notes;
     private User createdBy;
     private User assignedTechnician;
     private String createdDate;
     private String completedDate;
 
+    public CarMaintenance() {
+    }
+
+    public CarMaintenance(int maintenanceId, Car car, Appointment appointment, String maintenanceDate, int odometer, String status, BigDecimal totalAmount, BigDecimal discountAmount, BigDecimal finalAmount, String notes, User createdBy, User assignedTechnician, String createdDate, String completedDate) {
+        this.maintenanceId = maintenanceId;
+        this.car = car;
+        this.appointment = appointment;
+        this.maintenanceDate = maintenanceDate;
+        this.odometer = odometer;
+        this.status = status;
+        this.totalAmount = totalAmount;
+        this.discountAmount = discountAmount;
+        this.finalAmount = finalAmount;
+        this.notes = notes;
+        this.createdBy = createdBy;
+        this.assignedTechnician = assignedTechnician;
+        this.createdDate = createdDate;
+        this.completedDate = completedDate;
+    }
+
+    
     public int getMaintenanceId() {
         return maintenanceId;
     }
@@ -121,9 +144,26 @@ public class CarMaintenance {
         this.completedDate = completedDate;
     }
 
-    @Override
-    public String toString() {
-        return "CarMaintenance{" + "maintenanceId=" + maintenanceId + ", car=" + car + ", appointment=" + appointment + ", maintenanceDate=" + maintenanceDate + ", odometer=" + odometer + ", status=" + status + ", totalAmount=" + totalAmount + ", notes=" + notes + ", createdBy=" + createdBy + ", assignedTechnician=" + assignedTechnician + ", createdDate=" + createdDate + ", completedDate=" + completedDate + '}';
+    public BigDecimal getDiscountAmount() {
+        return discountAmount;
     }
 
+    public void setDiscountAmount(BigDecimal discountAmount) {
+        this.discountAmount = discountAmount;
+    }
+
+    public BigDecimal getFinalAmount() {
+        return finalAmount;
+    }
+
+    public void setFinalAmount(BigDecimal finalAmount) {
+        this.finalAmount = finalAmount;
+    }
+
+    @Override
+    public String toString() {
+        return "CarMaintenance{" + "maintenanceId=" + maintenanceId + ", car=" + car + ", appointment=" + appointment + ", maintenanceDate=" + maintenanceDate + ", odometer=" + odometer + ", status=" + status + ", totalAmount=" + totalAmount + ", discountAmount=" + discountAmount + ", finalAmount=" + finalAmount + ", notes=" + notes + ", createdBy=" + createdBy + ", assignedTechnician=" + assignedTechnician + ", createdDate=" + createdDate + ", completedDate=" + completedDate + '}';
+    }
+ 
+   
 }

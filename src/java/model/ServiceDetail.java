@@ -19,11 +19,13 @@ public class ServiceDetail {
     private BigDecimal unitPrice;
     private BigDecimal totalPrice;
     private String notes;
+    private boolean fromPackage;              
+    private MaintenancePackage maintenancePackage;
 
     public ServiceDetail() {
     }
 
-    public ServiceDetail(int serviceDetailId, CarMaintenance maintenance, Product product, BigDecimal quantity, BigDecimal unitPrice, BigDecimal totalPrice, String notes) {
+    public ServiceDetail(int serviceDetailId, CarMaintenance maintenance, Product product, BigDecimal quantity, BigDecimal unitPrice, BigDecimal totalPrice, String notes, boolean fromPackage, MaintenancePackage maintenancePackage) {
         this.serviceDetailId = serviceDetailId;
         this.maintenance = maintenance;
         this.product = product;
@@ -31,7 +33,11 @@ public class ServiceDetail {
         this.unitPrice = unitPrice;
         this.totalPrice = totalPrice;
         this.notes = notes;
+        this.fromPackage = fromPackage;
+        this.maintenancePackage = maintenancePackage;
     }
+
+   
 
     public int getServiceDetailId() {
         return serviceDetailId;
@@ -87,6 +93,22 @@ public class ServiceDetail {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public boolean isFromPackage() {
+        return fromPackage;
+    }
+
+    public void setFromPackage(boolean fromPackage) {
+        this.fromPackage = fromPackage;
+    }
+
+    public MaintenancePackage getMaintenancePackage() {
+        return maintenancePackage;
+    }
+
+    public void setMaintenancePackage(MaintenancePackage maintenancePackage) {
+        this.maintenancePackage = maintenancePackage;
     }
 
     @Override

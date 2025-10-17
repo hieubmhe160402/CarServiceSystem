@@ -135,9 +135,7 @@ public class AuthController extends HttpServlet {
                 case "Staff":
                     response.sendRedirect("staffController");
                     break;
-                case "Accountant":
-                    response.sendRedirect("accountantController");
-                    break;
+              
                 case "ServiceTechnician":
                     response.sendRedirect("technicianController");
                     break;
@@ -239,6 +237,8 @@ public class AuthController extends HttpServlet {
                     EmailUtil.sendEmail(cfg, user.getEmail(), subject, html);
                     request.setAttribute("success", "Email đặt lại mật khẩu đã được gửi! Vui lòng kiểm tra hộp thư.");
                 } catch (Exception ex) {
+                    ex.printStackTrace();
+
                     // fallback: hiển thị token để test trong môi trường dev
                     request.setAttribute("success", "Không gửi được email trong môi trường hiện tại. Token: " + token);
                     request.setAttribute("token", token);
@@ -311,9 +311,6 @@ public class AuthController extends HttpServlet {
                 break;
             case "Staff":
                 response.sendRedirect("staffController");
-                break;
-            case "Accountant":
-                response.sendRedirect("accountantController");
                 break;
             case "ServiceTechnician":
                 response.sendRedirect("technicianController");
