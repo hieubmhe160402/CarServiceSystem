@@ -204,6 +204,8 @@ public class UserDAO extends DBContext {
         }
         return list;
     }
+     
+    // get 1 user
     
     
     
@@ -455,5 +457,45 @@ public class UserDAO extends DBContext {
         }
         return "C001"; // Default first customer code
     }
+
+    
+    public User getUserById(int userId) {
+    String sql = "SELECT u.*, r.RoleID, r.RoleName, r.Description " +
+                 "FROM Users u " +
+                 "JOIN Role r ON u.RoleID = r.RoleID " +
+                 "WHERE u.UserID = ?";
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setInt(1, userId);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            Role role = new Role(
+                    rs.getInt("RoleID"),
+                    rs.getString("RoleName"),
+                    rs.getString("Description")
+            );
+
+            User u = new User(
+                    rs.getInt("UserID"),
+                    rs.getString("UserCode"),
+                    rs.getString("FullName"),
+                    rs.getString("Username"),
+                    rs.getString("Password"),
+                    rs.getString("Email"),
+                    rs.getString("Phone"),
+                    rs.getString("Image"),
+                    rs.getBoolean("Male"),
+                    rs.getString("DateOfBirth"),
+                    role,
+                    rs.getBoolean("IsActive"),
+                    rs.getString("CreatedDate"),
+                    rs.getString("LastLoginDate")
+            );
+            return u;
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return null;
+}
 
 }

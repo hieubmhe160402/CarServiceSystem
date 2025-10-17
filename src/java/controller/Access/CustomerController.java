@@ -40,12 +40,13 @@ public class CustomerController extends HttpServlet {
             response.sendRedirect("AuthController?action=login");
             return;
         }
-        
+ //1111111111111111111111111111111111111111111111       
         // Set thông tin user cho view
         request.setAttribute("currentUser", user);
         
         // Forward đến trang customer dashboard
         request.getRequestDispatcher("view/Cusview/Test.jsp").forward(request, response);
+//        request.getRequestDispatcher("view/Customer/userProfile.jsp").forward(request, response);
     }
 
     @Override

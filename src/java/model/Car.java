@@ -42,6 +42,12 @@ public class Car {
         this.nextMaintenanceDate = nextMaintenanceDate;
         this.createdDate = createdDate;
     }
+    
+    public Car(String brand, String licensePlate, String color) {
+    this.brand = brand;
+    this.licensePlate = licensePlate;
+    this.color = color;
+}
 
     public int getCarId() {
         return carId;
