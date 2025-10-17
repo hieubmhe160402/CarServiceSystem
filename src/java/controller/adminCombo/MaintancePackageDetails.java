@@ -14,7 +14,7 @@ import model.MaintenancePackageDetail;
 import model.Product;
 
 @WebServlet(name = "ManagerPackage", urlPatterns = {"/managerPackage"})
-public class ManagerPackage extends HttpServlet {
+public class MaintancePackageDetails extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -58,7 +58,7 @@ public class ManagerPackage extends HttpServlet {
         request.setAttribute("currentPage", currentPage);
         request.setAttribute("totalPages", totalPages);
 
-        request.getRequestDispatcher("/view/Admin/ManagePackage.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/Admin/MaintenancePackageDetails.jsp").forward(request, response);
     }
 
     @Override
