@@ -56,7 +56,60 @@ public class MaintenancePackageDAO extends DBContext {
     return null;
 }
     
-    
+    public MaintenancePackage getPackageById(int id) {
+    String sql = "SELECT * FROM MaintenancePackage WHERE PackageID = ? AND IsActive = 1";
+    try (Connection conn = connection;
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setInt(1, id);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                MaintenancePackage pkg = new MaintenancePackage();
+                // mapping các cột -> thuộc tính model (giữ nhất quán với các hàm khác)
+                pkg.setPackageId(rs.getInt("PackageID"));
+                pkg.setPackageCode(rs.getString("PackageCode"));
+                pkg.setName(rs.getString("Name"));
+                pkg.setDescription(rs.getString("Description"));
+                // Các cột kiểu int có thể là null trong DB -> dùng rs.getObject để kiểm tra null nếu cần
+                int km = rs.getInt("KilometerMilestone");
+                if (rs.wasNull()) pkg.setKilometerMilestone(null);
+                else pkg.setKilometerMilestone(km);
+
+                int mo = rs.getInt("MonthMilestone");
+                if (rs.wasNull()) pkg.setMonthMilestone(null);
+                else pkg.setMonthMilestone(mo);
+
+                pkg.setBasePrice(rs.getBigDecimal("BasePrice"));
+                pkg.setDiscountPercent(rs.getBigDecimal("DiscountPercent"));
+                // FinalPrice là computed column — vẫn có thể đọc bằng getBigDecimal
+                try {
+                    pkg.setFinalPrice(rs.getBigDecimal("FinalPrice"));
+                } catch (Exception ex) {
+                    pkg.setFinalPrice(null);
+                }
+                pkg.setEstimatedDurationHours(rs.getBigDecimal("EstimatedDurationHours"));
+                pkg.setApplicableBrands(rs.getString("ApplicableBrands"));
+                pkg.setImage(rs.getString("Image"));
+
+                int disp = rs.getInt("DisplayOrder");
+                if (rs.wasNull()) pkg.setDisplayOrder(null);
+                else pkg.setDisplayOrder(disp);
+
+                pkg.setIsActive(rs.getBoolean("IsActive"));
+                // createdDate đọc dưới dạng String giống các hàm trước
+                pkg.setCreatedDate(rs.getString("CreatedDate"));
+
+                // CreatedBy là FK -> bạn giữ null (hoặc có thể load User bằng UserDAO nếu cần)
+                pkg.setCreatedBy(null);
+
+                return pkg;
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return null;
+}
     
    public List<MaintenancePackage> getAllActivePackages() {
     List<MaintenancePackage> list = new ArrayList<>();
@@ -139,20 +192,30 @@ public class MaintenancePackageDAO extends DBContext {
     return list;
 }
 
-   
-    public static void main(String[] args) {
+   public static void main(String[] args) {
     MaintenancePackageDAO dao = new MaintenancePackageDAO();
-    List<MaintenancePackage> packages = dao.getAllActivePackages();
+    
+    int testId = 1; // 👈 đổi ID gói bảo dưỡng bạn muốn test
+    MaintenancePackage pkg = dao.getPackageById(testId);
 
-    if (packages == null || packages.isEmpty()) {
-        System.out.println("⚠️ Không có gói bảo dưỡng nào đang hoạt động!");
+    if (pkg != null) {
+        System.out.println("===== Gói bảo dưỡng tìm thấy =====");
+        System.out.println("ID: " + pkg.getPackageId());
+        System.out.println("Tên gói: " + pkg.getName());
+        System.out.println("Mô tả: " + pkg.getDescription());
+        System.out.println("KM mốc: " + pkg.getKilometerMilestone());
+        System.out.println("Tháng mốc: " + pkg.getMonthMilestone());
+        System.out.println("Giá gốc: " + pkg.getBasePrice());
+        System.out.println("Giảm giá: " + pkg.getDiscountPercent());
+        System.out.println("Giá cuối: " + pkg.getFinalPrice());
+        System.out.println("Hãng áp dụng: " + pkg.getApplicableBrands());
+        System.out.println("Ảnh: " + pkg.getImage());
+        System.out.println("Ngày tạo: " + pkg.getCreatedDate());
+        System.out.println("Trạng thái: " + (pkg.isIsActive() ? "Hoạt động" : "Ngừng"));
     } else {
-        System.out.println("=== Danh sách gói bảo dưỡng đang hoạt động ===");
-        for (MaintenancePackage pkg : packages) {
-            System.out.println(pkg.getPackageId() + " - " + pkg.getName() + " (" + pkg.getFinalPrice() + " VND)");
-        }
-        System.out.println("Tổng số gói: " + packages.size());
+        System.out.println("❌ Không tìm thấy gói nào với ID = " + testId);
     }
 }
+  
     
 }

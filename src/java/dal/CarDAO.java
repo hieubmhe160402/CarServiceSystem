@@ -96,7 +96,53 @@ public boolean insertCar(Car car) {
         }
         return false;
     }
+    
+    // Thêm phương thức này vào CarDAO.java
 
+public Car getCarByIdWithOwner(int carId) {
+    String sql = "SELECT c.*, u.UserId, u.Username, u.FullName, u.Email " +
+                 "FROM Cars c " +
+                 "LEFT JOIN Users u ON c.UserId = u.UserId " +
+                 "WHERE c.CarId = ?";
+    
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setInt(1, carId);
+        ResultSet rs = ps.executeQuery();
+        
+        if (rs.next()) {
+            Car car = new Car();
+            car.setCarId(rs.getInt("CarId"));
+            car.setBrand(rs.getString("Brand"));
+            car.setModel(rs.getString("Model"));
+            car.setYear(rs.getInt("Year"));
+            car.setLicensePlate(rs.getString("LicensePlate"));
+            car.setColor(rs.getString("Color"));
+            car.setEngineNumber(rs.getString("EngineNumber"));
+            car.setChassisNumber(rs.getString("ChassisNumber"));
+            car.setCurrentOdometer(rs.getObject("CurrentOdometer") != null ? rs.getInt("CurrentOdometer") : null);
+            car.setPurchaseDate(rs.getString("PurchaseDate"));
+            car.setLastMaintenanceDate(rs.getString("LastMaintenanceDate"));
+            car.setNextMaintenanceDate(rs.getString("NextMaintenanceDate"));
+            car.setCreatedDate(rs.getString("CreatedDate"));
+            
+            // Load thông tin Owner
+            User owner = new User();
+            owner.setUserId(rs.getInt("UserId"));
+            owner.setUserName(rs.getString("Username"));
+            owner.setFullName(rs.getString("FullName"));
+            owner.setEmail(rs.getString("Email"));
+            
+            car.setOwner(owner);
+            
+            return car;
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return null;
+}
+    
+    
     public Car getCarById(int carId) {
         String sql = "SELECT * FROM Cars WHERE CarID = ?";
         try {
