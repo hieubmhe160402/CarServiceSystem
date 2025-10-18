@@ -21,7 +21,7 @@
                 margin: 0;
                 padding: 0;
             }
-            
+
             html, body {
                 height: 100%;
                 font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
@@ -43,21 +43,21 @@
                 display: flex;
                 flex-direction: column;
             }
-            
+
             .brand {
                 font-weight: 800;
                 font-size: 18px;
                 letter-spacing: 1px;
                 margin-bottom: 22px;
             }
-            
+
             .nav {
                 margin-top: 12px;
                 display: flex;
                 flex-direction: column;
                 gap: 8px;
             }
-            
+
             .nav a {
                 color: rgba(255, 255, 255, 0.9);
                 text-decoration: none;
@@ -68,12 +68,12 @@
                 gap: 12px;
                 transition: all 0.3s;
             }
-            
+
             .nav a.active,
             .nav a:hover {
                 background: rgba(255, 255, 255, 0.1);
             }
-            
+
             .nav a i {
                 width: 20px;
                 text-align: center;
@@ -98,11 +98,11 @@
                 gap: 30px;
                 position: relative;
             }
-            
+
             .profile-image {
                 position: relative;
             }
-            
+
             .profile-image img {
                 width: 100px;
                 height: 100px;
@@ -110,43 +110,43 @@
                 border: 3px solid #e5e7eb;
                 object-fit: cover;
             }
-            
+
             .profile-info {
                 flex: 1;
             }
-            
+
             .profile-info h2 {
                 font-size: 24px;
                 font-weight: 700;
                 margin-bottom: 12px;
                 color: #111827;
             }
-            
+
             .info-grid {
                 display: grid;
                 grid-template-columns: repeat(3, 1fr);
                 gap: 15px;
             }
-            
+
             .info-item {
                 display: flex;
                 flex-direction: column;
                 gap: 4px;
             }
-            
+
             .info-item .label {
                 font-size: 12px;
                 color: #6b7280;
                 font-weight: 600;
                 text-transform: uppercase;
             }
-            
+
             .info-item .value {
                 font-size: 14px;
                 color: #111827;
                 font-weight: 500;
             }
-            
+
             .info-item i {
                 color: #0f2340;
                 margin-right: 6px;
@@ -165,7 +165,7 @@
                 align-items: center;
                 gap: 6px;
             }
-            
+
             .btn-edit {
                 background: #ffc107;
                 color: #000;
@@ -173,34 +173,34 @@
                 top: 20px;
                 right: 20px;
             }
-            
+
             .btn-edit:hover {
                 background: #e0a800;
             }
-            
+
             .btn-add {
                 background: #28a745;
                 color: white;
             }
-            
+
             .btn-add:hover {
                 background: #218838;
             }
-            
+
             .btn-update {
                 background: #007bff;
                 color: white;
             }
-            
+
             .btn-update:hover {
                 background: #0056b3;
             }
-            
+
             .btn-delete {
                 background: #dc3545;
                 color: white;
             }
-            
+
             .btn-delete:hover {
                 background: #c82333;
             }
@@ -212,7 +212,7 @@
                 align-items: center;
                 margin-bottom: 20px;
             }
-            
+
             .section-header h3 {
                 font-size: 20px;
                 font-weight: 700;
@@ -225,7 +225,7 @@
                 gap: 10px;
                 margin-bottom: 20px;
             }
-            
+
             .search-input {
                 flex: 1;
                 padding: 8px 12px;
@@ -233,12 +233,12 @@
                 border-radius: 6px;
                 font-size: 14px;
             }
-            
+
             .search-input:focus {
                 outline: none;
                 border-color: #0f2340;
             }
-            
+
             .btn-search {
                 background: #0f2340;
                 color: white;
@@ -248,7 +248,7 @@
                 cursor: pointer;
                 font-weight: 600;
             }
-            
+
             .btn-search:hover {
                 background: #0b1830;
             }
@@ -262,7 +262,7 @@
                 overflow: hidden;
                 box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
             }
-            
+
             table thead th {
                 background: #f8fafc;
                 padding: 12px 16px;
@@ -271,13 +271,13 @@
                 font-weight: 600;
                 color: #374151;
             }
-            
+
             table tbody td {
                 padding: 12px 16px;
                 border-bottom: 1px solid #f1f5f9;
                 color: #111827;
             }
-            
+
             table tbody tr:hover {
                 background: #f9fafb;
             }
@@ -295,7 +295,7 @@
                 justify-content: center;
                 align-items: center;
             }
-            
+
             .modal-content {
                 background: #fff;
                 padding: 30px;
@@ -305,7 +305,7 @@
                 overflow: auto;
                 box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
             }
-            
+
             .modal-content h2 {
                 margin-bottom: 20px;
                 font-size: 22px;
@@ -319,23 +319,23 @@
                 grid-template-columns: 1fr 1fr;
                 gap: 15px 20px;
             }
-            
+
             .form-group {
                 display: flex;
                 flex-direction: column;
             }
-            
+
             .form-group.full-width {
                 grid-column: span 2;
             }
-            
+
             .form-group label {
                 font-weight: 600;
                 margin-bottom: 6px;
                 color: #374151;
                 font-size: 14px;
             }
-            
+
             .form-group input,
             .form-group select {
                 padding: 8px 12px;
@@ -344,13 +344,13 @@
                 font-size: 14px;
                 font-family: inherit;
             }
-            
+
             .form-group input:focus,
             .form-group select:focus {
                 outline: none;
                 border-color: #0f2340;
             }
-            
+
             .form-actions {
                 margin-top: 20px;
                 display: flex;
@@ -367,7 +367,7 @@
                 background: #fff;
                 border-radius: 8px;
             }
-            
+
             .no-data i {
                 font-size: 48px;
                 margin-bottom: 12px;
@@ -378,20 +378,20 @@
                 .app {
                     flex-direction: column;
                 }
-                
+
                 .sidebar {
                     width: 100%;
                     padding: 20px;
                 }
-                
+
                 .info-grid {
                     grid-template-columns: 1fr;
                 }
-                
+
                 .form-grid {
                     grid-template-columns: 1fr;
                 }
-                
+
                 .modal-content {
                     width: 95%;
                 }
@@ -410,7 +410,7 @@
                     </a>
                     <a href="#">
                         <i class="fas fa-car"></i>
-                        <span>My Vehicles</span>
+                        <span>Xe của tôi</span>
                     </a>
                     <a href="#">
                         <i class="fas fa-calendar-check"></i>
@@ -467,16 +467,16 @@
                             </div>
                         </div>
                     </div>
-                    <button class="btn btn-edit" onclick="document.getElementById('editProfileModal').style.display='flex'">
+                    <button class="btn btn-edit" onclick="document.getElementById('editProfileModal').style.display = 'flex'">
                         <i class="fas fa-edit"></i> Edit Profile
                     </button>
                 </div>
 
                 <!-- Cars Section -->
                 <div class="section-header">
-                    <h3><i class="fas fa-car"></i> My Vehicles</h3>
-                    <button class="btn btn-add" onclick="document.getElementById('addModal').style.display='flex'">
-                        <i class="fas fa-plus"></i> Add New Car
+                    <h3><i class="fas fa-car"></i> Xe của tôi</h3>
+                    <button class="btn btn-add" onclick="document.getElementById('addModal').style.display = 'flex'">
+                        <i class="fas fa-plus"></i> Thêm Xe Mới
                     </button>
                 </div>
 
@@ -484,7 +484,7 @@
                 <form method="get" action="userProfileController" class="search-form">
                     <input type="text" name="search" class="search-input" value="<%= (search != null ? search : "") %>" placeholder="Search by brand, license plate...">
                     <button type="submit" class="btn-search">
-                        <i class="fas fa-search"></i> Search
+                        <i class="fas fa-search"></i> Tìm kiếm
                     </button>
                 </form>
 
@@ -493,12 +493,13 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Brand</th>
-                            <th>License Plate</th>
-                            <th>Color</th>
+                            <th>Hãng</th>
+                            <th>Biển số xe</th>
+                            <th>Màu</th>
                             <th>Model</th>
-                            <th>Year</th>
-                            <th>Action</th>
+                            <th>Năm sản xuất</th>
+                            <th>Số km đã đi</th>
+                            <th>Hành động</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -509,8 +510,9 @@
                             <td><%= c.getColor() %></td>
                             <td><%= c.getModel() != null ? c.getModel() : "N/A" %></td>
                             <td><%= c.getYear() != 0 ? c.getYear() : "N/A" %></td>
+                            <td><%= c.getCurrentOdometer() != 0 ? c.getCurrentOdometer() : "N/A" %></td>
                             <td>
-                                <button class="btn btn-update" onclick="document.getElementById('modal-<%= c.getCarId() %>').style.display='flex'">
+                                <button class="btn btn-update" onclick="document.getElementById('modal-<%= c.getCarId() %>').style.display = 'flex'">
                                     Update
                                 </button>
                                 <form action="userProfileController" method="post" style="display:inline;">
@@ -537,25 +539,25 @@
         <!-- Edit Profile Modal -->
         <div id="editProfileModal" class="modal">
             <div class="modal-content">
-                <h2><i class="fas fa-user-edit"></i> Edit Profile</h2>
+                <h2><i class="fas fa-user-edit"></i> Chỉnh sửa thông tin</h2>
                 <form action="userProfileController" method="post" class="form-grid">
                     <input type="hidden" name="action" value="updateProfile">
-                    
+
                     <div class="form-group">
                         <label>Full Name</label>
                         <input type="text" name="fullName" value="<%= user.getFullName() %>" required>
                     </div>
-                    
+
                     <div class="form-group">
                         <label>Email</label>
                         <input type="email" name="email" value="<%= user.getEmail() %>" required>
                     </div>
-                    
+
                     <div class="form-group">
                         <label>Phone</label>
                         <input type="text" name="phone" value="<%= user.getPhone() != null ? user.getPhone() : "" %>">
                     </div>
-                    
+
                     <div class="form-group">
                         <label>Gender</label>
                         <select name="male">
@@ -563,17 +565,17 @@
                             <option value="false" <%= !user.getMale() ? "selected" : "" %>>Female</option>
                         </select>
                     </div>
-                    
+
                     <div class="form-group">
                         <label>Date of Birth</label>
                         <input type="date" name="dateOfBirth" value="<%= user.getDateOfBirth() != null ? user.getDateOfBirth() : "" %>">
                     </div>
-                    
+
                     <div class="form-actions">
                         <button type="submit" class="btn btn-update">
                             <i class="fas fa-save"></i> Save Changes
                         </button>
-                        <button type="button" class="btn btn-delete" onclick="document.getElementById('editProfileModal').style.display='none'">
+                        <button type="button" class="btn btn-delete" onclick="document.getElementById('editProfileModal').style.display = 'none'">
                             Cancel
                         </button>
                     </div>
@@ -584,55 +586,58 @@
         <!-- Add Car Modal -->
         <div id="addModal" class="modal">
             <div class="modal-content">
-                <h2><i class="fas fa-plus-circle"></i> Add New Vehicle</h2>
+                <h2><i class="fas fa-plus-circle"></i> Thêm xe mới</h2>
                 <form method="post" action="userProfileController" class="form-grid">
                     <input type="hidden" name="action" value="add">
-                    
+
                     <div class="form-group">
                         <label>License Plate *</label>
                         <input name="licensePlate" required placeholder="e.g. 29A-12345">
                     </div>
-                    
+
                     <div class="form-group">
                         <label>Brand *</label>
                         <input name="brand" required placeholder="e.g. Toyota">
                     </div>
-                    
+
                     <div class="form-group">
                         <label>Model</label>
                         <input name="model" placeholder="e.g. Camry">
                     </div>
-                    
+
                     <div class="form-group">
                         <label>Year</label>
                         <input type="number" name="year" placeholder="e.g. 2023">
                     </div>
-                    
+
                     <div class="form-group">
                         <label>Color</label>
                         <input name="color" placeholder="e.g. White">
                     </div>
-                    
+
                     <div class="form-group">
                         <label>Engine Number</label>
                         <input name="engineNumber" placeholder="Engine number">
                     </div>
-                    
+
                     <div class="form-group">
                         <label>Chassis Number</label>
                         <input name="chassisNumber" placeholder="Chassis number">
                     </div>
-                    
+
                     <div class="form-group">
                         <label>Purchase Date</label>
                         <input type="date" name="purchaseDate">
                     </div>
-                    
+                    <div class="form-group">
+                        <label>Current Odometer</label>
+                        <input type="number" name="currentOdometer">
+                    </div>
                     <div class="form-actions">
                         <button type="submit" class="btn btn-add">
                             <i class="fas fa-check"></i> Add Vehicle
                         </button>
-                        <button type="button" class="btn btn-delete" onclick="document.getElementById('addModal').style.display='none'">
+                        <button type="button" class="btn btn-delete" onclick="document.getElementById('addModal').style.display = 'none'">
                             Cancel
                         </button>
                     </div>
@@ -649,52 +654,55 @@
                 <form method="post" action="userProfileController" class="form-grid">
                     <input type="hidden" name="action" value="update">
                     <input type="hidden" name="carId" value="<%= c.getCarId() %>">
-                    
+
                     <div class="form-group">
                         <label>License Plate *</label>
                         <input name="licensePlate" value="<%= c.getLicensePlate() %>" required>
                     </div>
-                    
+
                     <div class="form-group">
                         <label>Brand *</label>
                         <input name="brand" value="<%= c.getBrand() %>" required>
                     </div>
-                    
+
                     <div class="form-group">
                         <label>Model</label>
                         <input name="model" value="<%= c.getModel() != null ? c.getModel() : "" %>">
                     </div>
-                    
+
                     <div class="form-group">
                         <label>Year</label>
                         <input type="number" name="year" value="<%= c.getYear() != 0 ? c.getYear() : "" %>">
                     </div>
-                    
+
                     <div class="form-group">
                         <label>Color</label>
                         <input name="color" value="<%= c.getColor() %>">
                     </div>
-                    
+
                     <div class="form-group">
                         <label>Engine Number</label>
                         <input name="engineNumber" value="<%= c.getEngineNumber() != null ? c.getEngineNumber() : "" %>">
                     </div>
-                    
+
                     <div class="form-group">
                         <label>Chassis Number</label>
                         <input name="chassisNumber" value="<%= c.getChassisNumber() != null ? c.getChassisNumber() : "" %>">
                     </div>
-                    
+
                     <div class="form-group">
                         <label>Purchase Date</label>
                         <input type="date" name="purchaseDate" value="<%= c.getPurchaseDate() != null ? c.getPurchaseDate() : "" %>">
                     </div>
-                    
+                    <div class="form-group">
+                        <label>Current Odometer</label>
+                        <input type="number" name="currentOdometer"value="<%= c.getCurrentOdometer() != null ? c.getCurrentOdometer() : "" %>">
+                    </div>
                     <div class="form-actions">
-                        <button type="submit" class="btn btn-update">
+                        <button type="submit" class="btn btn-update" value="<%= c.getCurrentOdometer() != null ? c.getCurrentOdometer() : "" %>>
                             <i class="fas fa-save"></i> Save Changes
                         </button>
-                        <button type="button" class="btn btn-delete" onclick="document.getElementById('modal-<%= c.getCarId() %>').style.display='none'">
+                        <button type="button" class="btn btn-delete" onclick="document.getElementById('modal-<%= c.getCarId() %>').style.display = 'none'">
                             Cancel
                         </button>
                     </div>
@@ -705,7 +713,7 @@
 
         <script>
             // Close modal when clicking outside
-            window.onclick = function(event) {
+            window.onclick = function (event) {
                 if (event.target.classList.contains('modal')) {
                     event.target.style.display = 'none';
                 }

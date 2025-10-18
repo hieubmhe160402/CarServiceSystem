@@ -31,29 +31,37 @@ public class CarDAO extends DBContext {
         return list;
     }
 
-    // Thêm xe mới
-    public boolean insertCar(Car car) {
-        String sql = "INSERT INTO Cars (LicensePlate, Brand, Model, Year, Color, EngineNumber, "
-                + "ChassisNumber, OwnerID, PurchaseDate, CreatedDate) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, GETDATE())";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1, car.getLicensePlate());
-            ps.setString(2, car.getBrand());
-            ps.setString(3, car.getModel());
-            ps.setInt(4, car.getYear());
-            ps.setString(5, car.getColor());
-            ps.setString(6, car.getEngineNumber());
-            ps.setString(7, car.getChassisNumber());
-            ps.setInt(8, car.getOwner().getUserId());
-            ps.setString(9, car.getPurchaseDate());
+    // Thêm xe mới (đã bao gồm CurrentOdometer)
+public boolean insertCar(Car car) {
+    String sql = "INSERT INTO Cars (LicensePlate, Brand, Model, Year, Color, EngineNumber, "
+               + "ChassisNumber, OwnerID, PurchaseDate, CurrentOdometer, CreatedDate) "
+               + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, GETDATE())";
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setString(1, car.getLicensePlate());
+        ps.setString(2, car.getBrand());
+        ps.setString(3, car.getModel());
+        ps.setInt(4, car.getYear());
+        ps.setString(5, car.getColor());
+        ps.setString(6, car.getEngineNumber());
+        ps.setString(7, car.getChassisNumber());
+        ps.setInt(8, car.getOwner().getUserId());
+        ps.setString(9, car.getPurchaseDate());
 
-            return ps.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+        // currentOdometer có thể là null -> setNull nếu null
+        Integer odo = car.getCurrentOdometer();
+        if (odo != null) {
+            ps.setInt(10, odo);
+        } else {
+            ps.setNull(10, java.sql.Types.INTEGER);
         }
-        return false;
+
+        return ps.executeUpdate() > 0;
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+    return false;
+}
+
 
     public boolean updateCar(Car car) {
         String sql = "UPDATE Cars SET LicensePlate=?, Brand=?, Model=?, Year=?, Color=?, "

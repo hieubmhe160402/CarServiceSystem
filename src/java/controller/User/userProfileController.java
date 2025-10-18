@@ -74,6 +74,7 @@ public class userProfileController extends HttpServlet {
                 car.setEngineNumber(request.getParameter("engineNumber"));
                 car.setChassisNumber(request.getParameter("chassisNumber"));
                 car.setPurchaseDate(request.getParameter("purchaseDate"));
+                car.setCurrentOdometer(Integer.parseInt(request.getParameter("currentOdometer")));
                 car.setOwner(currentUser);
 
                 boolean success = carDao.insertCar(car);
@@ -91,7 +92,7 @@ public class userProfileController extends HttpServlet {
                 car.setEngineNumber(request.getParameter("engineNumber"));
                 car.setChassisNumber(request.getParameter("chassisNumber"));
                 car.setPurchaseDate(request.getParameter("purchaseDate"));
-
+                car.setCurrentOdometer(Integer.parseInt(request.getParameter("currentOdometer")));
                 boolean success = carDao.updateCar(car);
                 request.setAttribute("message", success ? "✅ Cập nhật thành công!" : "❌ Cập nhật thất bại!");
 
