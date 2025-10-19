@@ -589,9 +589,9 @@
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-                        <img src="<%= recommended.getImage() != null && !recommended.getImage().isEmpty() ? recommended.getImage() : "https://via.placeholder.com/800x400/16a34a/ffffff?text=Goi+Goi+Y" %>"
+                        <img src="<%= recommended.getImage() != null && !recommended.getImage().isEmpty() ? recommended.getImage() : "https://tahico.com/wp-content/uploads/2021/04/goi-bao-duong-tiem-rua-va-cham-soc-xe-o-to-5.webp" %>"
                              class="img-fluid mb-3 rounded"
-                             onerror="this.src='https://via.placeholder.com/800x400/16a34a/ffffff?text=Goi+Goi+Y'">
+                             onerror="this.src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBIgu6crRLG7VulmbB_ULqT3viUFF00BbB-A&s'">
                         <p><strong>Mã gói:</strong> <%= recommended.getPackageCode() %></p>
                         <p><strong>Mốc km:</strong> <%= recommended.getKilometerMilestone() %> km</p>
                         <p><strong>Thời gian dự kiến:</strong> <%= recommended.getEstimatedDurationHours() %> giờ</p>
@@ -695,9 +695,9 @@
             %>
             <div class="col-md-4 mb-4">
                 <div class="package-card">
-                    <img src="<%= pkg.getImage() != null && !pkg.getImage().isEmpty() ? pkg.getImage() : "https://via.placeholder.com/400x220/0f2340/ffffff?text=Goi+Bao+Duong" %>" 
+                    <img src="<%= pkg.getImage() != null && !pkg.getImage().isEmpty() ? pkg.getImage() : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBIgu6crRLG7VulmbB_ULqT3viUFF00BbB-A&s" %>" 
                          alt="<%= pkg.getName() %>"
-                         onerror="this.src='https://via.placeholder.com/400x220/0f2340/ffffff?text=Goi+Bao+Duong'">
+                         onerror="this.src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBIgu6crRLG7VulmbB_ULqT3viUFF00BbB-A&s'">
                     <div class="card-body">
                         <h5><%= pkg.getName() %></h5>
                         <p class="description"><%= pkg.getDescription() %></p>
@@ -724,9 +724,9 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body">
-                            <img src="<%= pkg.getImage() != null && !pkg.getImage().isEmpty() ? pkg.getImage() : "https://via.placeholder.com/800x400/0f2340/ffffff?text=Goi+Bao+Duong" %>"
+                            <img src="<%= pkg.getImage() != null && !pkg.getImage().isEmpty() ? pkg.getImage() : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBIgu6crRLG7VulmbB_ULqT3viUFF00BbB-A&s" %>"
                                  class="img-fluid mb-3 rounded"
-                                 onerror="this.src='https://via.placeholder.com/800x400/0f2340/ffffff?text=Goi+Bao+Duong'">
+                                 onerror="this.src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBIgu6crRLG7VulmbB_ULqT3viUFF00BbB-A&s'">
                             <p><strong>Mã gói:</strong> <%= pkg.getPackageCode() %></p>
                             <p><strong>Khoảng km:</strong> <%= pkg.getKilometerMilestone() != null ? pkg.getKilometerMilestone() : 0 %> km</p>
                             <p><strong>Mốc thời gian:</strong> <%= pkg.getMonthMilestone() != null ? pkg.getMonthMilestone() : 0 %> tháng</p>

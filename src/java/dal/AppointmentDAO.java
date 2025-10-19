@@ -38,42 +38,7 @@ public class AppointmentDAO extends DBContext {
         return false;
     }
 
-    public static void main(String[] args) {
-        AppointmentDAO dao = new AppointmentDAO();
-
-        // --- Tạo các đối tượng cần thiết ---
-        // 1️⃣ Giả lập User tạo lịch hẹn
-        User creator = new User();
-        creator.setUserId(13); // 👈 ID user có sẵn trong bảng Users
-
-        // 2️⃣ Giả lập xe của user
-        Car car = new Car();
-        car.setCarId(10); // 👈 ID xe có trong bảng Cars
-
-        // 3️⃣ Giả lập gói bảo dưỡng
-        MaintenancePackage pkg = new MaintenancePackage();
-        pkg.setPackageId(10); // 👈 ID gói bảo dưỡng có sẵn trong MaintenancePackage
-
-        // 4️⃣ Tạo đối tượng Appointment
-        Appointment ap = new Appointment();
-        ap.setCar(car);
-        ap.setAppointmentDate("2025-10-20 10:30:00"); // 👈 Thời gian hẹn
-        ap.setRequestedServices("Thay dầu, kiểm tra phanh"); // mô tả dịch vụ
-        ap.setStatus("Pending"); // trạng thái
-        ap.setNotes("Khách hàng muốn lấy xe trong ngày");
-        ap.setCreatedBy(creator);
-        ap.setRequestedPackage(pkg);
-
-        // --- Gọi DAO để insert ---
-        boolean success = dao.insertAppointment(ap);
-
-        if (success) {
-            System.out.println("✅ Thêm lịch hẹn thành công!");
-        } else {
-            System.out.println("❌ Thêm lịch hẹn thất bại!");
-        }
-    }
-    
+  
     public List<Appointment> getAppointmentsByUserId(int userId) {
         List<Appointment> list = new ArrayList<>();
         String sql = """
@@ -129,13 +94,17 @@ public class AppointmentDAO extends DBContext {
     
     public List<Appointment> getAppointmentsByFilter(int userId, String dateFilter, String packageFilter) {
     List<Appointment> list = new ArrayList<>();
-    String sql = "SELECT * FROM Appointments WHERE CreatedBy = ?";
+
+    String sql = "SELECT a.*, mp.PackageID, mp.Name AS PackageName "
+               + "FROM Appointments a "
+               + "LEFT JOIN MaintenancePackage mp ON a.RequestedPackageID = mp.PackageID "
+               + "WHERE a.CreatedBy = ?";
 
     if (dateFilter != null && !dateFilter.isEmpty()) {
-        sql += " AND CAST(AppointmentDate AS DATE) = ?";
+        sql += " AND CAST(a.AppointmentDate AS DATE) = ?";
     }
     if (packageFilter != null && !packageFilter.isEmpty()) {
-        sql += " AND RequestedPackage IN (SELECT PackageID FROM MaintenancePackage WHERE PackageName LIKE ?)";
+        sql += " AND mp.Name LIKE ?";
     }
 
     try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -156,6 +125,15 @@ public class AppointmentDAO extends DBContext {
             ap.setRequestedServices(rs.getString("RequestedServices"));
             ap.setStatus(rs.getString("Status"));
             ap.setNotes(rs.getString("Notes"));
+
+            // Nếu có gói bảo dưỡng
+            if (rs.getInt("PackageID") != 0) {
+                model.MaintenancePackage pkg = new model.MaintenancePackage();
+                pkg.setPackageId(rs.getInt("PackageID"));
+                pkg.setName(rs.getString("PackageName"));
+                ap.setRequestedPackage(pkg);
+            }
+
             list.add(ap);
         }
     } catch (Exception e) {
@@ -164,4 +142,35 @@ public class AppointmentDAO extends DBContext {
     return list;
 }
 
+    
+public static void main(String[] args) {
+    AppointmentDAO dao = new AppointmentDAO();
+
+    // 🔹 Giả lập thông tin người dùng đang đăng nhập
+    int userId = 13; // ID người dùng có sẵn trong bảng Users
+
+    // 🔹 Bộ lọc (bạn có thể thay đổi để test)
+    String dateFilter = "2025-10-20";     // hoặc để null nếu không muốn lọc theo ngày
+    String packageFilter = "Bảo dưỡng";   // hoặc để null nếu không muốn lọc theo tên gói
+
+    // 🔹 Gọi hàm lấy danh sách lịch hẹn
+    List<Appointment> list = dao.getAppointmentsByFilter(userId, dateFilter, packageFilter);
+
+    // 🔹 In kết quả ra console
+    if (list.isEmpty()) {
+        System.out.println("❌ Không tìm thấy lịch hẹn nào khớp với bộ lọc!");
+    } else {
+        System.out.println("✅ Danh sách lịch hẹn của UserID " + userId + ":");
+        for (Appointment ap : list) {
+            System.out.println("--------------------------------------");
+            System.out.println("AppointmentID: " + ap.getAppointmentId());
+            System.out.println("Ngày hẹn: " + ap.getAppointmentDate());
+            System.out.println("Dịch vụ yêu cầu: " + ap.getRequestedServices());
+            System.out.println("Trạng thái: " + ap.getStatus());
+            System.out.println("Ghi chú: " + ap.getNotes());
+        }
+    }
 }
+
+}
+
