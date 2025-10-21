@@ -75,7 +75,22 @@ public class ListMaintenancePackage extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        request.setCharacterEncoding("UTF-8");
+        String action = request.getParameter("action");
+        MaintenancePackageDAO dao = new MaintenancePackageDAO();
+        try {
+            if ("changeStatus".equals(action)) {
+                int packageId = Integer.parseInt(request.getParameter("packageId"));
+                boolean newStatus = Boolean.parseBoolean(request.getParameter("status"));
+                    dao.updateStatus(packageId, newStatus);
+                response.sendRedirect("maintenancePackage");
+                return;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    "Lỗi xử lý yêu cầu: " + e.getMessage());
+        }
     }
 
     /**

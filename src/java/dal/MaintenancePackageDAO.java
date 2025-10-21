@@ -102,4 +102,16 @@ public class MaintenancePackageDAO extends DBContext {
 
         return list;
     }
+
+    public void updateStatus(int packageId, boolean status) {
+        String sql = "UPDATE MaintenancePackage SET IsActive = ? WHERE PackageID = ?";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setBoolean(1, status);
+            stm.setInt(2, packageId);
+            stm.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

@@ -335,6 +335,75 @@
                             </div>
                         </div>
 
+                        <!--                                    //Add maitenancePackage-->
+                        <div id="addComboModal" class="modal">
+                            <div class="modal-content" style="width: 800px;">
+                                <span class="close-btn" onclick="document.getElementById('addComboModal').style.display = 'none'">&times;</span>
+                                <h3 style="text-align:center; border-bottom:2px solid #28a745; padding-bottom:8px;">Thêm Combo Mới</h3>
+
+                                <form action="maintenancePackage" method="post" enctype="multipart/form-data">
+                                    <input type="hidden" name="action" value="addCombo">
+                                    <table style="width:100%; border-collapse: collapse;">
+                                        <tr>
+                                            <td>PackageCode</td>
+                                            <td><input type="text" name="packageCode" required style="width:100%;"></td>
+                                            <td>FinalPrice</td>
+                                            <td><input type="number" name="finalPrice" required style="width:100%;"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>PackageName</td>
+                                            <td><input type="text" name="name" required style="width:100%;"></td>
+                                            <td>EstimatedDuration</td>
+                                            <td><input type="number" name="estimatedDurationHours" required style="width:100%;"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>KilometerMilestone</td>
+                                            <td><input type="number" name="kilometerMilestone" required style="width:100%;"></td>
+                                            <td>ApplicableBrand</td>
+                                            <td><input type="text" name="applicableBrand" required style="width:100%;"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>MonthMilestone</td>
+                                            <td><input type="number" name="monthMilestone" required style="width:100%;"></td>
+                                            <td>DisplayOrder</td>
+                                            <td><input type="text" name="displayOrder" style="width:100%;"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>BasePrice</td>
+                                            <td><input type="number" name="basePrice" required style="width:100%;"></td>
+                                            <td>DiscountPercent</td>
+                                            <td><input type="number" name="discountPercent" min="0" max="100" value="0" style="width:100%;"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Trạng thái</td>
+                                            <td>
+                                                <select name="isActive" style="width:100%;">
+                                                    <option value="true" selected>Active</option>
+                                                    <option value="false">Inactive</option>
+                                                </select>
+                                            </td>
+                                            <td>Người tạo</td>
+                                            <td><input type="text" name="createdBy" value="${sessionScope.user.userId}" readonly style="width:100%;"></td>
+                                        </tr>
+                                    </table>
+
+                                    <div style="margin-top:15px;">
+                                        <label for="image_add">Hình ảnh:</label>
+                                        <input type="file" name="image" id="image_add" accept="image/*" style="width:100%;">
+                                    </div>
+
+                                    <div style="margin-top:15px;">
+                                        <label for="desc_add">Description:</label>
+                                        <textarea name="description" id="desc_add" rows="4" style="width:100%;"></textarea>
+                                    </div>
+
+                                    <div style="text-align:center; margin-top:20px;">
+                                        <button type="submit" class="btn btn-add" style="padding:8px 20px;">💾 Thêm Combo</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>         
+
                     </c:if>
                 </c:forEach>
 
