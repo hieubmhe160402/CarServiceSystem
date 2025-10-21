@@ -484,17 +484,7 @@
 <body>
 <div class="app">
     <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="brand">🚗 CAR MANAGEMENT</div>
-        <nav class="nav">
-            <a href="userProfileController"><i class="fas fa-user"></i>Profile</a>
-            <a href="#"><i class="fas fa-car"></i>Xe của tôi</a>
-            <a href="bookingAppoitments" class="active"><i class="fas fa-calendar-check"></i>Đặt lịch bảo dưỡng</a>
-            <a href="#"><i class="fas fa-history"></i>Lịch sử</a>
-            <a href="#"><i class="fas fa-cog"></i>Cài đặt</a>
-            <a href="logout" style="margin-top: auto;"><i class="fas fa-sign-out-alt"></i>Đăng xuất</a>
-        </nav>
-    </div>
+    <jsp:include page="/view/layout/sidebar.jsp"/>
 
     <!-- Main content -->
     <div class="main">

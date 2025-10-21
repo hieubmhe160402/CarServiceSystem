@@ -1,7 +1,7 @@
+<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@page import="model.Car"%>
 <%@page import="java.util.List"%>
 <%@page import="model.User"%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
     User user = (User) request.getAttribute("user");
     List<Car> cars = (List<Car>) request.getAttribute("cars");
@@ -31,68 +31,25 @@
 
             .app {
                 display: flex;
-                height: 100vh;
-            }
-
-            /* Sidebar */
-            .sidebar {
-                width: 260px;
-                background: linear-gradient(180deg, #0f2340, #0b1830);
-                color: #fff;
-                padding: 28px 18px;
-                display: flex;
-                flex-direction: column;
-            }
-
-            .brand {
-                font-weight: 800;
-                font-size: 18px;
-                letter-spacing: 1px;
-                margin-bottom: 22px;
-            }
-
-            .nav {
-                margin-top: 12px;
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-            }
-
-            .nav a {
-                color: rgba(255, 255, 255, 0.9);
-                text-decoration: none;
-                padding: 10px 12px;
-                border-radius: 10px;
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                transition: all 0.3s;
-            }
-
-            .nav a.active,
-            .nav a:hover {
-                background: rgba(255, 255, 255, 0.1);
-            }
-
-            .nav a i {
-                width: 20px;
-                text-align: center;
+                min-height: 100vh;
             }
 
             /* Main Content */
             .main {
                 flex: 1;
-                padding: 24px 32px;
+                padding: 40px;
                 overflow: auto;
+                background: linear-gradient(135deg, #f5f7fb 0%, #e8ecf4 100%);
             }
 
             /* Profile Header Card */
             .profile-card {
                 background: #fff;
-                border-radius: 12px;
-                padding: 30px;
-                margin-bottom: 24px;
-                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+                border-radius: 16px;
+                padding: 35px;
+                margin-bottom: 30px;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+                border: 1px solid #e5e7eb;
                 display: flex;
                 align-items: center;
                 gap: 30px;
@@ -104,11 +61,12 @@
             }
 
             .profile-image img {
-                width: 100px;
-                height: 100px;
+                width: 120px;
+                height: 120px;
                 border-radius: 50%;
-                border: 3px solid #e5e7eb;
+                border: 4px solid #e5e7eb;
                 object-fit: cover;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             }
 
             .profile-info {
@@ -116,93 +74,106 @@
             }
 
             .profile-info h2 {
-                font-size: 24px;
-                font-weight: 700;
-                margin-bottom: 12px;
-                color: #111827;
+                font-size: 28px;
+                font-weight: 800;
+                margin-bottom: 16px;
+                color: #0f2340;
             }
 
             .info-grid {
                 display: grid;
                 grid-template-columns: repeat(3, 1fr);
-                gap: 15px;
+                gap: 20px;
             }
 
             .info-item {
                 display: flex;
                 flex-direction: column;
-                gap: 4px;
+                gap: 6px;
             }
 
             .info-item .label {
                 font-size: 12px;
                 color: #6b7280;
-                font-weight: 600;
+                font-weight: 700;
                 text-transform: uppercase;
+                letter-spacing: 0.5px;
             }
 
             .info-item .value {
-                font-size: 14px;
+                font-size: 15px;
                 color: #111827;
-                font-weight: 500;
+                font-weight: 600;
             }
 
             .info-item i {
-                color: #0f2340;
-                margin-right: 6px;
+                color: #16a34a;
+                margin-right: 8px;
             }
 
             /* Buttons */
             .btn {
-                padding: 8px 16px;
+                padding: 10px 20px;
                 border: none;
-                border-radius: 6px;
+                border-radius: 10px;
                 cursor: pointer;
                 font-size: 14px;
-                font-weight: 600;
-                transition: all 0.3s;
+                font-weight: 700;
+                transition: all 0.3s ease;
                 display: inline-flex;
                 align-items: center;
-                gap: 6px;
+                gap: 8px;
             }
 
             .btn-edit {
-                background: #ffc107;
+                background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
                 color: #000;
                 position: absolute;
-                top: 20px;
-                right: 20px;
+                top: 24px;
+                right: 24px;
+                box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
             }
 
             .btn-edit:hover {
-                background: #e0a800;
+                background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(255, 193, 7, 0.4);
             }
 
             .btn-add {
-                background: #28a745;
+                background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
                 color: white;
+                box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
             }
 
             .btn-add:hover {
-                background: #218838;
+                background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(22, 163, 74, 0.4);
             }
 
             .btn-update {
-                background: #007bff;
+                background: linear-gradient(135deg, #0f2340 0%, #1e3a5f 100%);
                 color: white;
+                padding: 6px 14px;
+                font-size: 13px;
             }
 
             .btn-update:hover {
-                background: #0056b3;
+                background: linear-gradient(135deg, #1e3a5f 0%, #2d4a7c 100%);
+                transform: translateY(-2px);
             }
 
             .btn-delete {
-                background: #dc3545;
+                background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
                 color: white;
+                padding: 6px 14px;
+                font-size: 13px;
             }
 
             .btn-delete:hover {
-                background: #c82333;
+                background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
+                transform: translateY(-2px);
             }
 
             /* Section Header */
@@ -210,76 +181,108 @@
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                margin-bottom: 20px;
+                margin-bottom: 25px;
+                padding-bottom: 15px;
+                border-bottom: 3px solid #e5e7eb;
             }
 
             .section-header h3 {
-                font-size: 20px;
-                font-weight: 700;
-                color: #111827;
+                font-size: 22px;
+                font-weight: 800;
+                color: #0f2340;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .section-header h3 i {
+                color: #16a34a;
             }
 
             /* Search Box */
             .search-form {
                 display: flex;
-                gap: 10px;
-                margin-bottom: 20px;
+                gap: 12px;
+                margin-bottom: 25px;
+                background: white;
+                padding: 20px;
+                border-radius: 12px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             }
 
             .search-input {
                 flex: 1;
-                padding: 8px 12px;
-                border: 1px solid #d1d5db;
-                border-radius: 6px;
+                padding: 10px 16px;
+                border: 2px solid #e5e7eb;
+                border-radius: 10px;
                 font-size: 14px;
+                transition: all 0.3s ease;
             }
 
             .search-input:focus {
                 outline: none;
-                border-color: #0f2340;
+                border-color: #16a34a;
+                box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.1);
             }
 
             .btn-search {
-                background: #0f2340;
+                background: linear-gradient(135deg, #0f2340 0%, #1e3a5f 100%);
                 color: white;
-                padding: 8px 20px;
+                padding: 10px 24px;
                 border: none;
-                border-radius: 6px;
+                border-radius: 10px;
                 cursor: pointer;
-                font-weight: 600;
+                font-weight: 700;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 8px;
             }
 
             .btn-search:hover {
-                background: #0b1830;
+                background: linear-gradient(135deg, #1e3a5f 0%, #2d4a7c 100%);
+                transform: translateY(-2px);
             }
 
             /* Table */
+            .table-card {
+                background: white;
+                border-radius: 16px;
+                overflow: hidden;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+                border: 1px solid #e5e7eb;
+            }
+
             table {
                 width: 100%;
                 border-collapse: collapse;
-                background: #fff;
-                border-radius: 8px;
-                overflow: hidden;
-                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
             }
 
             table thead th {
-                background: #f8fafc;
-                padding: 12px 16px;
+                background: linear-gradient(135deg, #0f2340 0%, #1e3a5f 100%);
+                color: white;
+                padding: 18px 16px;
                 text-align: left;
-                border-bottom: 1px solid #e5e7eb;
-                font-weight: 600;
-                color: #374151;
+                font-weight: 700;
+                font-size: 14px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
             }
 
             table tbody td {
-                padding: 12px 16px;
-                border-bottom: 1px solid #f1f5f9;
-                color: #111827;
+                padding: 16px;
+                border-bottom: 1px solid #f3f4f6;
+                color: #374151;
+                font-size: 14px;
+            }
+
+            table tbody tr {
+                transition: all 0.3s ease;
             }
 
             table tbody tr:hover {
                 background: #f9fafb;
+                transform: scale(1.01);
             }
 
             /* Modal */
@@ -298,26 +301,33 @@
 
             .modal-content {
                 background: #fff;
-                padding: 30px;
-                border-radius: 12px;
-                width: 800px;
+                padding: 35px;
+                border-radius: 16px;
+                width: 850px;
                 max-height: 90vh;
                 overflow: auto;
-                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             }
 
             .modal-content h2 {
-                margin-bottom: 20px;
-                font-size: 22px;
-                font-weight: 700;
-                color: #111827;
+                margin-bottom: 25px;
+                font-size: 24px;
+                font-weight: 800;
+                color: #0f2340;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .modal-content h2 i {
+                color: #16a34a;
             }
 
             /* Form Grid */
             .form-grid {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
-                gap: 15px 20px;
+                gap: 20px;
             }
 
             .form-group {
@@ -330,31 +340,33 @@
             }
 
             .form-group label {
-                font-weight: 600;
-                margin-bottom: 6px;
+                font-weight: 700;
+                margin-bottom: 8px;
                 color: #374151;
                 font-size: 14px;
             }
 
             .form-group input,
             .form-group select {
-                padding: 8px 12px;
-                border: 1px solid #d1d5db;
-                border-radius: 6px;
+                padding: 10px 14px;
+                border: 2px solid #e5e7eb;
+                border-radius: 10px;
                 font-size: 14px;
                 font-family: inherit;
+                transition: all 0.3s ease;
             }
 
             .form-group input:focus,
             .form-group select:focus {
                 outline: none;
-                border-color: #0f2340;
+                border-color: #16a34a;
+                box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.1);
             }
 
             .form-actions {
-                margin-top: 20px;
+                margin-top: 25px;
                 display: flex;
-                gap: 10px;
+                gap: 12px;
                 justify-content: flex-end;
                 grid-column: span 2;
             }
@@ -362,16 +374,23 @@
             /* No data message */
             .no-data {
                 text-align: center;
-                padding: 40px;
-                color: #6b7280;
+                padding: 60px;
+                color: #9ca3af;
                 background: #fff;
-                border-radius: 8px;
+                border-radius: 16px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             }
 
             .no-data i {
-                font-size: 48px;
-                margin-bottom: 12px;
+                font-size: 64px;
+                margin-bottom: 20px;
                 opacity: 0.3;
+            }
+
+            .no-data h4 {
+                font-size: 18px;
+                color: #6b7280;
+                margin-bottom: 8px;
             }
 
             @media (max-width: 768px) {
@@ -379,8 +398,7 @@
                     flex-direction: column;
                 }
 
-                .sidebar {
-                    width: 100%;
+                .main {
                     padding: 20px;
                 }
 
@@ -394,42 +412,27 @@
 
                 .modal-content {
                     width: 95%;
+                    padding: 20px;
+                }
+
+                .profile-card {
+                    flex-direction: column;
+                    text-align: center;
+                }
+
+                .btn-edit {
+                    position: relative;
+                    top: 0;
+                    right: 0;
+                    margin-top: 20px;
                 }
             }
         </style>
     </head>
     <body>
         <div class="app">
-            <!-- Sidebar -->
-            <div class="sidebar">
-                <div class="brand">🚗 CAR MANAGEMENT</div>
-                <nav class="nav">
-                    <a href="#" class="active">
-                        <i class="fas fa-user"></i>
-                        <span>Profile</span>
-                    </a>
-                    <a href="#">
-                        <i class="fas fa-car"></i>
-                        <span>Xe của tôi</span>
-                    </a>
-                    <a href="#">
-                        <i class="fas fa-calendar-check"></i>
-                        <span>Appointments</span>
-                    </a>
-                    <a href="#">
-                        <i class="fas fa-history"></i>
-                        <span>History</span>
-                    </a>
-                    <a href="#">
-                        <i class="fas fa-cog"></i>
-                        <span>Settings</span>
-                    </a>
-                    <a href="#" style="margin-top: auto;">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span>Logout</span>
-                    </a>
-                </nav>
-            </div>
+            <!-- Include Sidebar -->
+            <jsp:include page="/view/layout/sidebar.jsp"/>  
 
             <!-- Main Content -->
             <main class="main">
@@ -438,11 +441,11 @@
                     <% 
                         String userImage = user.getImage();
                         if (userImage == null || userImage.equals("null") || userImage.isEmpty()) {
-                            userImage = "https://ui-avatars.com/api/?name=" + user.getFullName().replace(" ", "+") + "&size=100&background=0f2340&color=fff&bold=true";
+                            userImage = "https://ui-avatars.com/api/?name=" + user.getFullName().replace(" ", "+") + "&size=120&background=0f2340&color=fff&bold=true";
                         }
                     %>
                     <div class="profile-image">
-                        <img src="<%= userImage %>" alt="Profile" onerror="this.src='https://ui-avatars.com/api/?name=User&size=100&background=0f2340&color=fff&bold=true'">
+                        <img src="<%= userImage %>" alt="Profile" onerror="this.src='https://ui-avatars.com/api/?name=User&size=120&background=0f2340&color=fff&bold=true'">
                     </div>
                     <div class="profile-info">
                         <h2><%= user.getFullName() %></h2>
@@ -482,7 +485,7 @@
 
                 <!-- Search Form -->
                 <form method="get" action="userProfileController" class="search-form">
-                    <input type="text" name="search" class="search-input" value="<%= (search != null ? search : "") %>" placeholder="Search by brand, license plate...">
+                    <input type="text" name="search" class="search-input" value="<%= (search != null ? search : "") %>" placeholder="Tìm kiếm theo hãng, biển số...">
                     <button type="submit" class="btn-search">
                         <i class="fas fa-search"></i> Tìm kiếm
                     </button>
@@ -490,47 +493,50 @@
 
                 <!-- Cars Table -->
                 <% if (cars != null && !cars.isEmpty()) { %>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Hãng</th>
-                            <th>Biển số xe</th>
-                            <th>Màu</th>
-                            <th>Model</th>
-                            <th>Năm sản xuất</th>
-                            <th>Số km đã đi</th>
-                            <th>Hành động</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% for (Car c : cars) { %>
-                        <tr>
-                            <td><strong><%= c.getBrand() %></strong></td>
-                            <td><%= c.getLicensePlate() %></td>
-                            <td><%= c.getColor() %></td>
-                            <td><%= c.getModel() != null ? c.getModel() : "N/A" %></td>
-                            <td><%= c.getYear() != 0 ? c.getYear() : "N/A" %></td>
-                            <td><%= c.getCurrentOdometer() != 0 ? c.getCurrentOdometer() : "N/A" %></td>
-                            <td>
-                                <button class="btn btn-update" onclick="document.getElementById('modal-<%= c.getCarId() %>').style.display = 'flex'">
-                                    Update
-                                </button>
-                                <form action="userProfileController" method="post" style="display:inline;">
-                                    <input type="hidden" name="action" value="delete">
-                                    <input type="hidden" name="carId" value="<%= c.getCarId() %>">
-                                    <button type="submit" class="btn btn-delete" onclick="return confirm('Are you sure you want to delete this car?')">
-                                        Delete
+                <div class="table-card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-car"></i> Hãng</th>
+                                <th><i class="fas fa-id-card"></i> Biển số</th>
+                                <th><i class="fas fa-palette"></i> Màu</th>
+                                <th><i class="fas fa-tag"></i> Model</th>
+                                <th><i class="fas fa-calendar"></i> Năm SX</th>
+                                <th><i class="fas fa-tachometer-alt"></i> Số km</th>
+                                <th><i class="fas fa-cog"></i> Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for (Car c : cars) { %>
+                            <tr>
+                                <td><strong><%= c.getBrand() %></strong></td>
+                                <td><%= c.getLicensePlate() %></td>
+                                <td><%= c.getColor() %></td>
+                                <td><%= c.getModel() != null ? c.getModel() : "N/A" %></td>
+                                <td><%= c.getYear() != 0 ? c.getYear() : "N/A" %></td>
+                                <td><%= c.getCurrentOdometer() != 0 ? String.format("%,d km", c.getCurrentOdometer()) : "N/A" %></td>
+                                <td>
+                                    <button class="btn btn-update" onclick="document.getElementById('modal-<%= c.getCarId() %>').style.display = 'flex'">
+                                        <i class="fas fa-edit"></i> Sửa
                                     </button>
-                                </form>
-                            </td>
-                        </tr>
-                        <% } %>
-                    </tbody>
-                </table>
+                                    <form action="userProfileController" method="post" style="display:inline;">
+                                        <input type="hidden" name="action" value="delete">
+                                        <input type="hidden" name="carId" value="<%= c.getCarId() %>">
+                                        <button type="submit" class="btn btn-delete" onclick="return confirm('Bạn có chắc muốn xóa xe này?')">
+                                            <i class="fas fa-trash"></i> Xóa
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
                 <% } else { %>
                 <div class="no-data">
                     <i class="fas fa-car"></i>
-                    <p>No vehicles found. Add your first car!</p>
+                    <h4>Chưa có xe nào</h4>
+                    <p>Thêm xe đầu tiên của bạn để bắt đầu!</p>
                 </div>
                 <% } %>
             </main>
@@ -544,7 +550,7 @@
                     <input type="hidden" name="action" value="updateProfile">
 
                     <div class="form-group">
-                        <label>Full Name</label>
+                        <label>Họ và tên</label>
                         <input type="text" name="fullName" value="<%= user.getFullName() %>" required>
                     </div>
 
@@ -554,29 +560,29 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Phone</label>
+                        <label>Số điện thoại</label>
                         <input type="text" name="phone" value="<%= user.getPhone() != null ? user.getPhone() : "" %>">
                     </div>
 
                     <div class="form-group">
-                        <label>Gender</label>
+                        <label>Giới tính</label>
                         <select name="male">
-                            <option value="true" <%= user.getMale() ? "selected" : "" %>>Male</option>
-                            <option value="false" <%= !user.getMale() ? "selected" : "" %>>Female</option>
+                            <option value="true" <%= user.getMale() ? "selected" : "" %>>Nam</option>
+                            <option value="false" <%= !user.getMale() ? "selected" : "" %>>Nữ</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label>Date of Birth</label>
+                        <label>Ngày sinh</label>
                         <input type="date" name="dateOfBirth" value="<%= user.getDateOfBirth() != null ? user.getDateOfBirth() : "" %>">
                     </div>
 
                     <div class="form-actions">
                         <button type="submit" class="btn btn-update">
-                            <i class="fas fa-save"></i> Save Changes
+                            <i class="fas fa-save"></i> Lưu thay đổi
                         </button>
                         <button type="button" class="btn btn-delete" onclick="document.getElementById('editProfileModal').style.display = 'none'">
-                            Cancel
+                            <i class="fas fa-times"></i> Hủy
                         </button>
                     </div>
                 </form>
@@ -591,54 +597,56 @@
                     <input type="hidden" name="action" value="add">
 
                     <div class="form-group">
-                        <label>License Plate *</label>
-                        <input name="licensePlate" required placeholder="e.g. 29A-12345">
+                        <label>Biển số xe *</label>
+                        <input name="licensePlate" required placeholder="VD: 29A-12345">
                     </div>
 
                     <div class="form-group">
-                        <label>Brand *</label>
-                        <input name="brand" required placeholder="e.g. Toyota">
+                        <label>Hãng xe *</label>
+                        <input name="brand" required placeholder="VD: Toyota">
                     </div>
 
                     <div class="form-group">
                         <label>Model</label>
-                        <input name="model" placeholder="e.g. Camry">
+                        <input name="model" placeholder="VD: Camry">
                     </div>
 
                     <div class="form-group">
-                        <label>Year</label>
-                        <input type="number" name="year" placeholder="e.g. 2023">
+                        <label>Năm sản xuất</label>
+                        <input type="number" name="year" placeholder="VD: 2023">
                     </div>
 
                     <div class="form-group">
-                        <label>Color</label>
-                        <input name="color" placeholder="e.g. White">
+                        <label>Màu sắc</label>
+                        <input name="color" placeholder="VD: Trắng">
                     </div>
 
                     <div class="form-group">
-                        <label>Engine Number</label>
-                        <input name="engineNumber" placeholder="Engine number">
+                        <label>Số máy</label>
+                        <input name="engineNumber" placeholder="Số máy">
                     </div>
 
                     <div class="form-group">
-                        <label>Chassis Number</label>
-                        <input name="chassisNumber" placeholder="Chassis number">
+                        <label>Số khung</label>
+                        <input name="chassisNumber" placeholder="Số khung">
                     </div>
 
                     <div class="form-group">
-                        <label>Purchase Date</label>
+                        <label>Ngày mua</label>
                         <input type="date" name="purchaseDate">
                     </div>
+
                     <div class="form-group">
-                        <label>Current Odometer</label>
-                        <input type="number" name="currentOdometer">
+                        <label>Số km hiện tại</label>
+                        <input type="number" name="currentOdometer" placeholder="VD: 50000">
                     </div>
+
                     <div class="form-actions">
                         <button type="submit" class="btn btn-add">
-                            <i class="fas fa-check"></i> Add Vehicle
+                            <i class="fas fa-check"></i> Thêm xe
                         </button>
                         <button type="button" class="btn btn-delete" onclick="document.getElementById('addModal').style.display = 'none'">
-                            Cancel
+                            <i class="fas fa-times"></i> Hủy
                         </button>
                     </div>
                 </form>
@@ -650,18 +658,18 @@
             for (Car c : cars) { %>
         <div id="modal-<%= c.getCarId() %>" class="modal">
             <div class="modal-content">
-                <h2><i class="fas fa-edit"></i> Update Vehicle</h2>
+                <h2><i class="fas fa-edit"></i> Cập nhật thông tin xe</h2>
                 <form method="post" action="userProfileController" class="form-grid">
                     <input type="hidden" name="action" value="update">
                     <input type="hidden" name="carId" value="<%= c.getCarId() %>">
 
                     <div class="form-group">
-                        <label>License Plate *</label>
+                        <label>Biển số xe *</label>
                         <input name="licensePlate" value="<%= c.getLicensePlate() %>" required>
                     </div>
 
                     <div class="form-group">
-                        <label>Brand *</label>
+                        <label>Hãng xe *</label>
                         <input name="brand" value="<%= c.getBrand() %>" required>
                     </div>
 
@@ -671,39 +679,41 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Year</label>
+                        <label>Năm sản xuất</label>
                         <input type="number" name="year" value="<%= c.getYear() != 0 ? c.getYear() : "" %>">
                     </div>
 
                     <div class="form-group">
-                        <label>Color</label>
+                        <label>Màu sắc</label>
                         <input name="color" value="<%= c.getColor() %>">
                     </div>
 
                     <div class="form-group">
-                        <label>Engine Number</label>
+                        <label>Số máy</label>
                         <input name="engineNumber" value="<%= c.getEngineNumber() != null ? c.getEngineNumber() : "" %>">
                     </div>
 
                     <div class="form-group">
-                        <label>Chassis Number</label>
+                        <label>Số khung</label>
                         <input name="chassisNumber" value="<%= c.getChassisNumber() != null ? c.getChassisNumber() : "" %>">
                     </div>
 
                     <div class="form-group">
-                        <label>Purchase Date</label>
+                        <label>Ngày mua</label>
                         <input type="date" name="purchaseDate" value="<%= c.getPurchaseDate() != null ? c.getPurchaseDate() : "" %>">
                     </div>
+
                     <div class="form-group">
-                        <label>Current Odometer</label>
-                        <input type="number" name="currentOdometer"value="<%= c.getCurrentOdometer() != null ? c.getCurrentOdometer() : "" %>">
+                        <label>Số km hiện tại</label>
+                        <input type="number" name="currentOdometer" value="<%= c.getCurrentOdometer() != null ? c.getCurrentOdometer() : "" %>">
                     </div>
+
                     <div class="form-actions">
-                        <button type="submit" class="btn btn-update" value="<%= c.getCurrentOdometer() != null ? c.getCurrentOdometer() : "" %>>
-                            <i class="fas fa-save"></i> Save Changes
+                        <button type="submit" class="btn btn-update">
+                            <i class="fas fa-save"></i> Lưu thay đổi
                         </button>
                         <button type="button" class="btn btn-delete" onclick="document.getElementById('modal-<%= c.getCarId() %>').style.display = 'none'">
-                            Cancel
+                            <i class="fas fa-times"></i> Hủy
                         </button>
                     </div>
                 </form>

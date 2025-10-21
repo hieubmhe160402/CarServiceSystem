@@ -20,8 +20,7 @@ public class MaintenancePackageDAO extends DBContext {
         ORDER BY kilometerMilestone DESC
     """;
 
-    try (Connection conn = connection;
-         PreparedStatement ps = conn.prepareStatement(sql)) {
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
 
         ps.setString(1, "%" + brand + "%");
         ps.setInt(2, currentKm);
@@ -58,8 +57,7 @@ public class MaintenancePackageDAO extends DBContext {
     
     public MaintenancePackage getPackageById(int id) {
     String sql = "SELECT * FROM MaintenancePackage WHERE PackageID = ? AND IsActive = 1";
-    try (Connection conn = connection;
-         PreparedStatement ps = conn.prepareStatement(sql)) {
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
 
         ps.setInt(1, id);
         try (ResultSet rs = ps.executeQuery()) {
@@ -115,8 +113,7 @@ public class MaintenancePackageDAO extends DBContext {
     List<MaintenancePackage> list = new ArrayList<>();
     String sql = "SELECT * FROM MaintenancePackage WHERE isActive = 1 ORDER BY displayOrder";
 
-    try (Connection conn = connection;
-         PreparedStatement ps = conn.prepareStatement(sql);
+    try (PreparedStatement ps = connection.prepareStatement(sql);
          ResultSet rs = ps.executeQuery()) {
 
         while (rs.next()) {
@@ -157,8 +154,7 @@ public class MaintenancePackageDAO extends DBContext {
         ORDER BY DisplayOrder
     """;
 
-    try (Connection conn = connection;
-         PreparedStatement ps = conn.prepareStatement(sql)) {
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
 
         ps.setString(1, "%" + brand + "%");
 
