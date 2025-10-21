@@ -5,6 +5,7 @@
 package dal;
 
 import context.DBContext;
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.sql.ResultSet;
@@ -111,6 +112,36 @@ public class MaintenancePackageDAO extends DBContext {
             stm.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void insertPackage(MaintenancePackage mp) throws IOException {
+        String sql = """
+    INSERT INTO MaintenancePackage
+    (PackageCode, Name, Description, KilometerMilestone, MonthMilestone,
+     BasePrice, DiscountPercent, EstimatedDurationHours,
+     ApplicableBrands, Image, DisplayOrder, IsActive, CreatedDate, CreatedBy)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, GETDATE(), ?)
+""";
+
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setString(1, mp.getPackageCode());
+            stm.setString(2, mp.getName());
+            stm.setString(3, mp.getDescription());
+            stm.setInt(4, mp.getKilometerMilestone());
+            stm.setInt(5, mp.getMonthMilestone());
+            stm.setBigDecimal(6, mp.getBasePrice());
+            stm.setBigDecimal(7, mp.getDiscountPercent());
+            stm.setBigDecimal(8, mp.getEstimatedDurationHours());
+            stm.setString(9, mp.getApplicableBrands());
+            stm.setString(10, mp.getImage());
+            stm.setInt(11, mp.getDisplayOrder());
+            stm.setBoolean(12, mp.isIsActive());
+            stm.setInt(13, mp.getCreatedBy().getUserId());
+
+            stm.executeUpdate();
+        } catch (SQLException e) {
+            throw new IOException("Lỗi thêm combo mới: " + e.getMessage());
         }
     }
 
