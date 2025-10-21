@@ -236,11 +236,10 @@
                             <c:if test="${not fn:contains(processedCodes, d.maintenancePackage.packageCode)}">
                                 <c:set var="processedCodes" value="${processedCodes}${d.maintenancePackage.packageCode}," />
 
-                                <!-- Gom sản phẩm -->
-                                <c:set var="products" value="" />
+                                <c:set var="productsInPackage" value="" />
                                 <c:forEach var="p" items="${listPackage}">
                                     <c:if test="${p.maintenancePackage.packageCode eq d.maintenancePackage.packageCode}">
-                                        <c:set var="products" value="${products}${p.product.name}, " />
+                                        <c:set var="productsInPackage" value="${productsInPackage}${p.product.name}, " />
                                     </c:if>
                                 </c:forEach>
 
@@ -250,7 +249,7 @@
                                     <td>${d.maintenancePackage.description}</td>
                                     <td>${d.maintenancePackage.discountPercent}%</td>
                                     <td>${d.maintenancePackage.finalPrice}</td>
-                                    <td>${fn:substring(products, 0, fn:length(products)-2)}</td>
+                                    <td>${fn:substring(productsInPackage, 0, fn:length(productsInPackage)-2)}</td>
                                     <td>
                                         <c:choose>
                                             <c:when test="${d.maintenancePackage.isActive}">
@@ -265,17 +264,14 @@
                                         <div class="action-buttons">
                                             <c:choose>
                                                 <c:when test="${d.maintenancePackage.isActive}">
-                                                    <%-- Combo đang Active --%>
                                                     <button type="button" class="btn btn-detail"
                                                             onclick="document.getElementById('modal_${d.maintenancePackage.packageCode}').style.display = 'flex'">
                                                         👁 View
                                                     </button>
-
                                                     <button type="button" class="btn btn-edit"
                                                             onclick="document.getElementById('update_${d.maintenancePackage.packageCode}').style.display = 'flex'">
                                                         ✏ Update
                                                     </button>
-
                                                     <form action="maintenancePackage" method="post" style="display:inline;margin:0;">
                                                         <input type="hidden" name="action" value="changeStatus" />
                                                         <input type="hidden" name="packageId" value="${d.maintenancePackage.packageId}" />
@@ -283,9 +279,7 @@
                                                         <button type="submit" class="btn btn-delete">❌ Inactive</button>
                                                     </form>
                                                 </c:when>
-
                                                 <c:otherwise>
-                                                    <%-- Combo đang Inactive --%>
                                                     <form action="maintenancePackage" method="post" style="display:inline;margin:0;">
                                                         <input type="hidden" name="action" value="changeStatus" />
                                                         <input type="hidden" name="packageId" value="${d.maintenancePackage.packageId}" />
@@ -295,7 +289,6 @@
                                                 </c:otherwise>
                                             </c:choose>
                                         </div>
-
                                     </td>
                                 </tr>
                             </c:if>
@@ -303,88 +296,47 @@
                     </tbody>
                 </table>
 
+                <c:set var="processedModalCodes" value="," />
+                <c:forEach var="d" items="${listPackage}">
+                    <c:if test="${not fn:contains(processedModalCodes, d.maintenancePackage.packageCode)}">
+                        <c:set var="processedModalCodes" value="${processedModalCodes}${d.maintenancePackage.packageCode}," />
 
+                        <div id="modal_${d.maintenancePackage.packageCode}" class="modal">
+                            <div class="modal-content">
+                                <span class="close-btn" onclick="document.getElementById('modal_${d.maintenancePackage.packageCode}').style.display = 'none'">&times;</span>
+                                <h3 style="text-align:center; border-bottom:2px solid #0f2340; padding-bottom:8px;">
+                                    Thông tin chi tiết gói combo
+                                </h3>
 
-                <!-- Modal thêm combo -->
-                <!--                        <div id="addComboModal" class="modal">
-                                            <div class="modal-content" style="width: 800px;">
-                                                <span class="close-btn" onclick="document.getElementById('addComboModal').style.display = 'none'">&times;</span>
-                                                <h3 style="text-align:center; border-bottom:2px solid #28a745; padding-bottom:8px;">Thêm Combo Mới</h3>
-                
-                                                <form action="maintenancePackage" method="post" enctype="multipart/form-data">
-                                                    <input type="hidden" name="action" value="addCombo">
-                                                    <table style="width:100%; border-collapse: collapse;">
-                                                        <tr>
-                                                            <td>PackageCode</td>
-                                                            <td><input type="text" name="packageCode" required style="width:100%;"></td>
-                                                            <td>FinalPrice</td>
-                                                            <td><input type="number" name="finalPrice" required style="width:100%;"></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>PackageName</td>
-                                                            <td><input type="text" name="name" required style="width:100%;"></td>
-                                                            <td>EstimatedDuration</td>
-                                                            <td><input type="number" name="estimatedDurationHours" required style="width:100%;"></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>KilometerMilestone</td>
-                                                            <td><input type="number" name="kilometerMilestone" required style="width:100%;"></td>
-                                                            <td>ApplicableBrand</td>
-                                                            <td><input type="text" name="applicableBrand" required style="width:100%;"></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>MonthMilestone</td>
-                                                            <td><input type="number" name="monthMilestone" required style="width:100%;"></td>
-                                                            <td>DisplayOrder</td>
-                                                            <td><input type="text" name="displayOrder" style="width:100%;"></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>BasePrice</td>
-                                                            <td><input type="number" name="basePrice" required style="width:100%;"></td>
-                                                            <td>DiscountPercent</td>
-                                                            <td><input type="number" name="discountPercent" min="0" max="100" value="0" style="width:100%;"></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Trạng thái</td>
-                                                            <td>
-                                                                <select name="isActive" style="width:100%;">
-                                                                    <option value="true" selected>Active</option>
-                                                                    <option value="false">Inactive</option>
-                                                                </select>
-                                                            </td>
-                                                            <td>Người tạo</td>
-                                                            <td><input type="text" name="createdBy" value="${sessionScope.user.userId}" readonly style="width:100%;"></td>
-                                                        </tr>
-                                                    </table>
-                
-                                                    <div style="margin-top:15px;">
-                                                        <label for="image_add">Hình ảnh:</label>
-                                                        <input type="file" name="image" id="image_add" accept="image/*" style="width:100%;">
-                                                    </div>
-                
-                                                    <div style="margin-top:15px;">
-                                                        <label for="desc_add">Description:</label>
-                                                        <textarea name="description" id="desc_add" rows="4" style="width:100%;"></textarea>
-                                                    </div>
-                
-                                                    <div style="text-align:center; margin-top:20px;">
-                                                        <button type="submit" class="btn btn-add" style="padding:8px 20px;">💾 Thêm Combo</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>-->
+                                <table class="detail-table">
+                                    <tr><th>PackageCode</th><td>${d.maintenancePackage.packageCode}</td></tr>
+                                    <tr><th>PackageName</th><td>${d.maintenancePackage.name}</td></tr>
+                                    <tr><th>Description</th><td>${d.maintenancePackage.description}</td></tr>
+                                    <tr><th>KilometerMilestone</th><td>${d.maintenancePackage.kilometerMilestone}</td></tr>
+                                    <tr><th>MonthMilestone</th><td>${d.maintenancePackage.monthMilestone}</td></tr>
+                                    <tr><th>ApplicableBrands</th><td>${d.maintenancePackage.applicableBrands}</td></tr>
+                                    <tr><th>BasePrice</th><td>${d.maintenancePackage.basePrice}</td></tr>
+                                    <tr><th>DiscountPercent</th><td>${d.maintenancePackage.discountPercent}%</td></tr>
+                                    <tr><th>FinalPrice</th><td>${d.maintenancePackage.finalPrice}</td></tr>
+                                    <tr><th>Status</th><td><c:out value="${d.maintenancePackage.isActive ? 'Active' : 'Inactive'}"/></td></tr>
+                                    <tr>
+                                        <th>Detail Product(s)</th>
+                                        <td>
+                                            <ol>
+                                                <c:forEach var="detail" items="${listPackage}">
+                                                    <c:if test="${detail.maintenancePackage.packageCode eq d.maintenancePackage.packageCode}">
+                                                        <li>${detail.product.name}</li>
+                                                        </c:if>
+                                                    </c:forEach>
+                                            </ol>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
 
-
+                    </c:if>
+                </c:forEach>
 
             </main>
         </div>
-
-        <script>
-            window.onclick = function (event) {
-                if (event.target.classList.contains('modal')) {
-                    event.target.style.display = "none";
-                }
-            }
-        </script>
-    </body>
-</html>
