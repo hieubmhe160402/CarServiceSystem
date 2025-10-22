@@ -30,11 +30,11 @@ public class userAppoinmentsHistoryController extends HttpServlet {
         int userId = user.getUserId();
         String dateFilter = request.getParameter("dateFilter");
         String packageFilter = request.getParameter("packageFilter");
-        String appointmentIdParam = request.getParameter("appointmentId"); // 👈 khi user chọn 1 lịch cụ thể để xem chi tiết
+        String appointmentIdParam = request.getParameter("appointmentId"); //  khi user chọn 1 lịch cụ thể để xem chi tiết
 
         AppointmentDAO dao = new AppointmentDAO();
 
-        // --- 1️⃣ Nếu có id lịch hẹn -> Lấy chi tiết 1 lịch hẹn ---
+        // ---Nếu có id lịch hẹn -> Lấy chi tiết 1 lịch hẹn ---
         if (appointmentIdParam != null && !appointmentIdParam.isEmpty()) {
             try {
                 int appointmentId = Integer.parseInt(appointmentIdParam);
@@ -51,7 +51,8 @@ public class userAppoinmentsHistoryController extends HttpServlet {
             }
         }
 
-        // --- 2️⃣ Lấy danh sách lịch hẹn (lọc hoặc toàn bộ) ---
+       
+          //---Lấy danh sách lịch hẹn (lọc hoặc toàn bộ) ---
         List<Appointment> list;
         if ((dateFilter != null && !dateFilter.isEmpty()) ||
             (packageFilter != null && !packageFilter.isEmpty())) {
@@ -60,7 +61,8 @@ public class userAppoinmentsHistoryController extends HttpServlet {
             list = dao.getAppointmentsByUserId(userId);
         }
 
-        // --- 3️⃣ Truyền dữ liệu sang JSP ---
+        
+        //Truyền dữ liệu sang JSP ---
         request.setAttribute("appointmentList", list);
         request.setAttribute("dateFilter", dateFilter);
         request.setAttribute("packageFilter", packageFilter);

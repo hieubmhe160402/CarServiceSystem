@@ -78,7 +78,7 @@ public class userProfileController extends HttpServlet {
                 car.setOwner(currentUser);
 
                 boolean success = carDao.insertCar(car);
-                request.setAttribute("message", success ? "✅ Thêm xe thành công!" : "❌ Thêm xe thất bại!");
+                request.setAttribute("message", success ? " Thêm xe thành công!" : "❌ Thêm xe thất bại!");
 
             } else if ("update".equals(action)) {
                 // Cập nhật
@@ -94,7 +94,7 @@ public class userProfileController extends HttpServlet {
                 car.setPurchaseDate(request.getParameter("purchaseDate"));
                 car.setCurrentOdometer(Integer.parseInt(request.getParameter("currentOdometer")));
                 boolean success = carDao.updateCar(car);
-                request.setAttribute("message", success ? "✅ Cập nhật thành công!" : "❌ Cập nhật thất bại!");
+                request.setAttribute("message", success ? " Cập nhật thành công!" : "❌ Cập nhật thất bại!");
 
             } else if ("delete".equals(action)) {
                 // Xóa
@@ -127,7 +127,7 @@ public class userProfileController extends HttpServlet {
         userDao.UpdateEmployees(currentUser);
 
         session.setAttribute("user", currentUser);
-        request.setAttribute("message", "✅ Cập nhật thông tin thành công!");
+        request.setAttribute("message", " Cập nhật thông tin thành công!");
     } else {
         // Thêm xe (hàm cũ bạn có)
         doAddCar(request, response, currentUser);
@@ -164,7 +164,7 @@ public class userProfileController extends HttpServlet {
         boolean success = carDao.insertCar(car);
 
         if (success) {
-            request.setAttribute("message", "✅ Thêm xe thành công!");
+            request.setAttribute("message", " Thêm xe thành công!");
         } else {
             request.setAttribute("message", "❌ Thêm xe thất bại!");
         }

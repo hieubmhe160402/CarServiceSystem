@@ -643,10 +643,7 @@
                                 </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label"><strong>Dịch vụ yêu cầu:</strong></label>
-                                <textarea name="requestedServices" class="form-control" rows="3" placeholder="Ví dụ: Thay dầu, kiểm tra phanh, vệ sinh điều hòa..."><%= recommended.getDescription() %></textarea>
-                            </div>
+                            
 
                             <div class="mb-3">
                                 <label class="form-label"><strong>Ghi chú thêm:</strong></label>
@@ -782,10 +779,7 @@
                                     </div>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label class="form-label"><strong>Dịch vụ yêu cầu:</strong></label>
-                                    <textarea name="requestedServices" class="form-control" rows="3" placeholder="Ví dụ: Thay dầu, kiểm tra phanh, vệ sinh điều hòa..."><%= pkg.getDescription() %></textarea>
-                                </div>
+                                
 
                                 <div class="mb-3">
                                     <label class="form-label"><strong>Ghi chú thêm:</strong></label>

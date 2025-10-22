@@ -16,28 +16,36 @@ import model.User;
 public class AppointmentDAO extends DBContext {
 
     public boolean insertAppointment(Appointment a) {
-        String sql = "INSERT INTO Appointments "
-                + "(CarId, AppointmentDate, RequestedServices, Status, Notes, CreatedBy, CreatedDate, RequestedPackageID) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO Appointments "
+            + "(CarId, AppointmentDate, RequestedServices, Status, Notes, CreatedBy, CreatedDate, RequestedPackageID) "
+            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
 
-            ps.setInt(1, a.getCar().getCarId());
-            ps.setString(2, a.getAppointmentDate());
+        ps.setInt(1, a.getCar().getCarId());
+        ps.setString(2, a.getAppointmentDate());
+
+        //  Nếu RequestedServices là null thì setNull
+        if (a.getRequestedServices() == null || a.getRequestedServices().isEmpty()) {
+            ps.setNull(3, java.sql.Types.VARCHAR);
+        } else {
             ps.setString(3, a.getRequestedServices());
-            ps.setString(4, a.getStatus());
-            ps.setString(5, a.getNotes());
-            ps.setInt(6, a.getCreatedBy().getUserId());
-            ps.setTimestamp(7, new Timestamp(System.currentTimeMillis()));
-            ps.setInt(8, a.getRequestedPackage().getPackageId());
-
-            return ps.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
-        return false;
+        ps.setString(4, a.getStatus());
+        ps.setString(5, a.getNotes());
+        ps.setInt(6, a.getCreatedBy().getUserId());
+        ps.setTimestamp(7, new Timestamp(System.currentTimeMillis()));
+        ps.setInt(8, a.getRequestedPackage().getPackageId());
+
+        return ps.executeUpdate() > 0;
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+
+    return false;
+}
+
     
     
     
@@ -586,7 +594,7 @@ public class AppointmentDAO extends DBContext {
         if (list.isEmpty()) {
             System.out.println("❌ Không tìm thấy lịch hẹn nào khớp với bộ lọc!");
         } else {
-            System.out.println("✅ Danh sách lịch hẹn của UserID " + userId + ":");
+            System.out.println(" Danh sách lịch hẹn của UserID " + userId + ":");
             for (Appointment ap : list) {
                 System.out.println("--------------------------------------");
                 System.out.println("AppointmentID: " + ap.getAppointmentId());

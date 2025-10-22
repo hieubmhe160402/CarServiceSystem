@@ -111,7 +111,7 @@ public class bookingAppoitments extends HttpServlet {
             int packageId = Integer.parseInt(request.getParameter("packageId"));
             String appointmentDate = request.getParameter("appointmentDate");
             String appointmentTime = request.getParameter("appointmentTime");
-            String requestedServices = request.getParameter("requestedServices");
+            
             String notes = request.getParameter("notes");
 
             // Kiểm tra dữ liệu bắt buộc
@@ -172,7 +172,7 @@ public class bookingAppoitments extends HttpServlet {
             Appointment appointment = new Appointment();
             appointment.setCar(selectedCar);
             appointment.setAppointmentDate(fullDateTime);
-            appointment.setRequestedServices(requestedServices != null ? requestedServices : "");
+//            appointment.setRequestedServices(requestedServices != null ? requestedServices : "");
             appointment.setNotes(notes != null ? notes : "");
             appointment.setRequestedPackage(selectedPackage);
             appointment.setCreatedBy(user);
@@ -183,7 +183,7 @@ public class bookingAppoitments extends HttpServlet {
             boolean success = appointmentDAO.insertAppointment(appointment);
 
             if (success) {
-                request.setAttribute("successMessage", "✅ Đặt lịch hẹn thành công! Chúng tôi sẽ liên hệ với bạn sớm.");
+                request.setAttribute("successMessage", " Đặt lịch hẹn thành công! Chúng tôi sẽ liên hệ với bạn sớm.");
             } else {
                 request.setAttribute("errorMessage", "❌ Đặt lịch thất bại, vui lòng thử lại!");
             }
@@ -204,7 +204,7 @@ public class bookingAppoitments extends HttpServlet {
         return "Booking appointments page with brand search, suggestion, and appointment creation";
     }
 
-    // ==================== HELPER METHOD: KIỂM TRA GÓI PHÙ HỢP VỚI XE ====================
+    // ==================== KIỂM TRA GÓI PHÙ HỢP VỚI XE ====================
     /**
      * Kiểm tra gói bảo dưỡng có phù hợp với hãng xe không
      * @param pkg Gói bảo dưỡng

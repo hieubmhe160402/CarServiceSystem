@@ -294,14 +294,14 @@ public Car getCarByIdWithOwner(int carId) {
 
         // Test phiên bản 1
         List<Car> cars1 = dao.getCarsByUserId(13);
-        System.out.println("✅ Version 1: " + cars1.size() + " cars");
+        System.out.println(" Version 1: " + cars1.size() + " cars");
         cars1.forEach(c -> System.out.println("   - " + c.getBrand()
                 + " " + c.getModel()
                 + " (" + c.getYear() + ")"));
 
         // Test phiên bản 2
         List<Car> cars2 = dao.getCarsByUserIdWithOwnerInfo(13);
-        System.out.println("\n✅ Version 2: " + cars2.size() + " cars");
+        System.out.println("\n Version 2: " + cars2.size() + " cars");
         cars2.forEach(c -> System.out.println("   - " + c.getBrand()
                 + " | Owner: " + c.getOwner().getFullName()));
     }
