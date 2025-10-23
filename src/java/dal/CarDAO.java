@@ -167,7 +167,9 @@ public Car getCarByIdWithOwner(int carId) {
         }
         return null;
     }
-
+    
+    
+    //DL
     public List<Car> getCarsByUserIdWithOwnerInfo(int userId) {
         List<Car> list = new ArrayList<>();
         String sql = "SELECT c.CarID, c.LicensePlate, c.Brand, c.Model, c.Year, c.Color, "
