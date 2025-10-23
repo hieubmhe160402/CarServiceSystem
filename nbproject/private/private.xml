@@ -3,12 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/MinHeee/Desktop/clone%20lại%20project/CarServiceSystem/src/java/model/User.java</file>
-            <file>file:/C:/Users/MinHeee/Desktop/clone%20lại%20project/CarServiceSystem/src/java/controller/appointment/ListAppointmentServlet.java</file>
-            <file>file:/C:/Users/MinHeee/Desktop/clone%20lại%20project/CarServiceSystem/src/java/model/Car.java</file>
-            <file>file:/C:/Users/MinHeee/Desktop/clone%20lại%20project/CarServiceSystem/src/java/model/MaintenancePackage.java</file>
-            <file>file:/C:/Users/MinHeee/Desktop/clone%20lại%20project/CarServiceSystem/web/view/appointment/manageAppointment.jsp</file>
-            <file>file:/C:/Users/MinHeee/Desktop/clone%20lại%20project/CarServiceSystem/src/java/dal/AppointmentDAO.java</file>
+            <file>file:/C:/Users/nxtru/OneDrive/Máy%20tính/SWP391%201610%20bo%20cua%20moi/CarServiceSystem/src/java/controller/Admin/combo/ListMaintenancePackage.java</file>
+            <file>file:/C:/Users/nxtru/OneDrive/Máy%20tính/SWP391%201610%20bo%20cua%20moi/CarServiceSystem/src/java/dal/MaintenancePackageDAO.java</file>
+            <file>file:/C:/Users/nxtru/OneDrive/Máy%20tính/SWP391%201610%20bo%20cua%20moi/CarServiceSystem/web/view/Admin/MaintenancePackage.jsp</file>
         </group>
     </open-files>
 </project-private>

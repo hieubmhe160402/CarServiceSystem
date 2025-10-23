@@ -6,6 +6,7 @@ package model;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  *
@@ -27,7 +28,8 @@ public class MaintenancePackage {
     private Integer displayOrder;          
     private boolean isActive;              
     private String createdDate;          
-    private User createdBy;  
+    private User createdBy;
+    private List<MaintenancePackageDetail> packageDetails = new ArrayList<>();
 
     public MaintenancePackage() {
     }
@@ -177,6 +179,14 @@ public class MaintenancePackage {
 
     public void setCreatedBy(User createdBy) {
         this.createdBy = createdBy;
+    }
+
+    public List<MaintenancePackageDetail> getPackageDetails() {
+        return packageDetails;
+    }
+
+    public void setPackageDetails(List<MaintenancePackageDetail> packageDetails) {
+        this.packageDetails = packageDetails;
     }
 
     @Override
