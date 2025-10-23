@@ -44,7 +44,7 @@
 .main {
     flex: 1;
     padding: 40px;
-    overflow-y: auto;
+    overflow-y: auto;   
     background: linear-gradient(135deg, #f5f7fb 0%, #e8ecf4 100%);
 }
 

@@ -188,8 +188,71 @@ public class MaintenancePackageDAO extends DBContext {
     return list;
 }
 
+   // ===== LẤY GÓI THEO PACKAGE CODE =====
+   public MaintenancePackage getPackageByCode(String packageCode) {
+    String sql = "SELECT * FROM MaintenancePackage WHERE PackageCode = ? AND IsActive = 1";
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setString(1, packageCode);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                MaintenancePackage pkg = new MaintenancePackage();
+                pkg.setPackageId(rs.getInt("PackageID"));
+                pkg.setPackageCode(rs.getString("PackageCode"));
+                pkg.setName(rs.getString("Name"));
+                pkg.setDescription(rs.getString("Description"));
+                
+                int km = rs.getInt("KilometerMilestone");
+                if (rs.wasNull()) pkg.setKilometerMilestone(null);
+                else pkg.setKilometerMilestone(km);
+
+                int mo = rs.getInt("MonthMilestone");
+                if (rs.wasNull()) pkg.setMonthMilestone(null);
+                else pkg.setMonthMilestone(mo);
+
+                pkg.setBasePrice(rs.getBigDecimal("BasePrice"));
+                pkg.setDiscountPercent(rs.getBigDecimal("DiscountPercent"));
+                
+                try {
+                    pkg.setFinalPrice(rs.getBigDecimal("FinalPrice"));
+                } catch (Exception ex) {
+                    pkg.setFinalPrice(null);
+                }
+                
+                pkg.setEstimatedDurationHours(rs.getBigDecimal("EstimatedDurationHours"));
+                pkg.setApplicableBrands(rs.getString("ApplicableBrands"));
+                pkg.setImage(rs.getString("Image"));
+
+                int disp = rs.getInt("DisplayOrder");
+                if (rs.wasNull()) pkg.setDisplayOrder(null);
+                else pkg.setDisplayOrder(disp);
+
+                pkg.setIsActive(rs.getBoolean("IsActive"));
+                pkg.setCreatedDate(rs.getString("CreatedDate"));
+                pkg.setCreatedBy(null);
+
+                return pkg;
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return null;
+}
+
    public static void main(String[] args) {
     MaintenancePackageDAO dao = new MaintenancePackageDAO();
+    
+    // Test lấy gói theo code
+    MaintenancePackage customPkg = dao.getPackageByCode("PKG-EMPTY");
+    if (customPkg != null) {
+        System.out.println("===== Gói tùy chọn tìm thấy =====");
+        System.out.println("ID: " + customPkg.getPackageId());
+        System.out.println("Code: " + customPkg.getPackageCode());
+        System.out.println("Tên: " + customPkg.getName());
+        System.out.println("Mô tả: " + customPkg.getDescription());
+    } else {
+        System.out.println("❌ Không tìm thấy gói PKG-EMPTY");
+    }
     
     int testId = 1; // 👈 đổi ID gói bảo dưỡng bạn muốn test
     MaintenancePackage pkg = dao.getPackageById(testId);

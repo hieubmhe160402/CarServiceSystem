@@ -577,8 +577,92 @@ public class AppointmentDAO extends DBContext {
         return list;
     }
 
+    // ===== TẠO LỊCH HẸN TÙY CHỌN VỚI GÓI PKG-EMPTY =====
+    public boolean insertCustomAppointment(Appointment a, String customServices) {
+        String sql = "INSERT INTO Appointments "
+                + "(CarId, AppointmentDate, RequestedServices, Status, Notes, CreatedBy, CreatedDate, RequestedPackageID) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, a.getCar().getCarId());
+            ps.setString(2, a.getAppointmentDate());
+            
+            // Sử dụng customServices thay vì a.getRequestedServices()
+            if (customServices == null || customServices.trim().isEmpty()) {
+                ps.setNull(3, java.sql.Types.VARCHAR);
+            } else {
+                ps.setString(3, customServices.trim());
+            }
+
+            ps.setString(4, a.getStatus());
+            ps.setString(5, a.getNotes());
+            ps.setInt(6, a.getCreatedBy().getUserId());
+            ps.setTimestamp(7, new Timestamp(System.currentTimeMillis()));
+            ps.setInt(8, a.getRequestedPackage().getPackageId());
+
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // ===== TẠO LỊCH HẸN TÙY CHỌN VỚI PACKAGE CODE =====
+    public boolean createCustomAppointmentWithPackageCode(int carId, String appointmentDate, 
+            String customServices, String notes, int userId, String packageCode) {
+        
+        // Lấy gói PKG-EMPTY
+        MaintenancePackageDAO packageDAO = new MaintenancePackageDAO();
+        MaintenancePackage customPackage = packageDAO.getPackageByCode(packageCode);
+        
+        if (customPackage == null) {
+            System.out.println("❌ Không tìm thấy gói với code: " + packageCode);
+            return false;
+        }
+
+        // Tạo đối tượng Appointment
+        Appointment appointment = new Appointment();
+        
+        // Tạo Car object
+        Car car = new Car();
+        car.setCarId(carId);
+        appointment.setCar(car);
+        
+        // Tạo User object
+        User user = new User();
+        user.setUserId(userId);
+        appointment.setCreatedBy(user);
+        
+        // Set các thông tin khác
+        appointment.setAppointmentDate(appointmentDate);
+        appointment.setRequestedServices(customServices);
+        appointment.setNotes(notes);
+        appointment.setStatus("Pending");
+        appointment.setRequestedPackage(customPackage);
+
+        // Lưu vào database
+        return insertCustomAppointment(appointment, customServices);
+    }
+
     public static void main(String[] args) {
         AppointmentDAO dao = new AppointmentDAO();
+
+        // 🔹 Test tạo lịch hẹn tùy chọn
+        System.out.println("=== TEST TẠO LỊCH HẸN TÙY CHỌN ===");
+        boolean success = dao.createCustomAppointmentWithPackageCode(
+            1,                              // carId
+            "2025-01-15 14:30:00",         // appointmentDate
+            "Thay dầu, kiểm tra phanh, sửa chữa điều hòa", // customServices
+            "Xe có tiếng kêu lạ khi phanh", // notes
+            13,                             // userId
+            "PKG-EMPTY"                     // packageCode
+        );
+        
+        if (success) {
+            System.out.println("✅ Tạo lịch hẹn tùy chọn thành công!");
+        } else {
+            System.out.println("❌ Tạo lịch hẹn tùy chọn thất bại!");
+        }
 
         // 🔹 Giả lập thông tin người dùng đang đăng nhập
         int userId = 13; // ID người dùng có sẵn trong bảng Users

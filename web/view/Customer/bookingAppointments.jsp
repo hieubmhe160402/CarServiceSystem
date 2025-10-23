@@ -5,10 +5,12 @@
     List<MaintenancePackage> list = (List<MaintenancePackage>) request.getAttribute("packageList");
     List<Car> carList = (List<Car>) request.getAttribute("carList");
     MaintenancePackage recommended = (MaintenancePackage) request.getAttribute("recommendedPackage");
+    MaintenancePackage customPackage = (MaintenancePackage) request.getAttribute("customPackage");
     String selectedBrand = (String) request.getAttribute("selectedBrand");
     Integer currentKm = (Integer) request.getAttribute("currentKm");
     String errorMessage = (String) request.getAttribute("errorMessage");
     String successMessage = (String) request.getAttribute("successMessage");
+    Boolean noSuitablePackage = (Boolean) request.getAttribute("noSuitablePackage");
 %>
 <!DOCTYPE html>
 <html>
@@ -38,6 +40,10 @@
             display: flex;
             flex-direction: column;
             box-shadow: 4px 0 12px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
         }
         .brand {
             font-weight: 800;
@@ -71,6 +77,7 @@
         }
         .main {
             flex: 1;
+            margin-left: 260px;
             padding: 40px;
             overflow-y: auto;
             background: linear-gradient(135deg, #f5f7fb 0%, #e8ecf4 100%);
@@ -128,6 +135,10 @@
         .alert-warning {
             background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
             color: #92400e;
+        }
+        .alert-info {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #1e40af;
         }
         @keyframes slideIn {
             from {
@@ -267,6 +278,39 @@
             margin: 8px 0;
             font-weight: 500;
         }
+        
+        /* Alert cho không có gói phù hợp */
+        .no-suitable-alert {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 6px solid #f59e0b;
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 35px;
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.15);
+            animation: slideIn 0.5s ease;
+        }
+        .no-suitable-alert h4 {
+            color: #92400e;
+            font-weight: 800;
+            font-size: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .no-suitable-alert h4 i {
+            color: #f59e0b;
+            font-size: 24px;
+        }
+        .no-suitable-alert p {
+            color: #b45309;
+            margin: 8px 0;
+            font-weight: 500;
+        }
+        .no-suitable-alert .btn {
+            margin-top: 15px;
+        }
+        
         .package-card {
             background: white;
             border-radius: 16px;
@@ -468,8 +512,96 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(22, 163, 74, 0.4);
         }
+        /* ===== CSS CHO FORM ĐẶT LỊCH TÙY CHỌN ===== */
+        .custom-appointment-section {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        .custom-appointment-header {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            padding: 20px 30px;
+            border: none;
+        }
+        .custom-appointment-header h4 {
+            margin: 0;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .custom-appointment-body {
+            padding: 30px;
+        }
+        .custom-package-info {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border: 2px solid #f59e0b;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        .custom-package-info h5 {
+            color: #92400e;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .custom-package-info h6 {
+            color: #92400e;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .custom-package-info p {
+            color: #a16207;
+            margin: 0;
+            font-size: 14px;
+        }
+        
+        /* ===== CSS CHO MODAL ĐẶT LỊCH TÙY CHỌN ===== */
+        .modal-header.bg-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+            color: white !important;
+        }
+        .modal-header.bg-warning .btn-close {
+            filter: invert(1);
+        }
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border: none;
+            color: white;
+            font-weight: 600;
+        }
+        .btn-warning:hover {
+            background: linear-gradient(135deg, #d97706, #b45309);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+        }
+        .required {
+            color: #dc2626;
+        }
+        .form-text {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
         @media (max-width: 768px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
             .main {
+                margin-left: 0;
                 padding: 20px;
             }
             .section-header h2 {
@@ -490,9 +622,11 @@
     <div class="main">
         <div class="section-header">
             <h2><i class="fas fa-tools"></i> Gói bảo dưỡng</h2>
-            <button type="button" class="btn btn-outline-secondary" onclick="window.location.href='bookingAppoitments'" title="Làm mới trang">
-                <i class="fas fa-redo"></i> Làm mới
-            </button>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-outline-secondary" onclick="window.location.href='bookingAppoitments'" title="Làm mới trang">
+                    <i class="fas fa-redo"></i> Làm mới
+                </button>
+            </div>
         </div>
 
         <!-- ===== SUCCESS MESSAGE ===== -->
@@ -500,6 +634,20 @@
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             <i class="fas fa-check-circle"></i> <%= successMessage %>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <% } %>
+
+        <!-- ===== BUTTON ĐẶT LỊCH TÙY CHỌN ===== -->
+        <% if (customPackage != null) { %>
+        <div class="text-center mb-4">
+            <button type="button" class="btn btn-warning btn-lg" data-bs-toggle="modal" data-bs-target="#customAppointmentModal">
+                <i class="fas fa-tools"></i>
+                Đặt lịch sửa chữa tùy chọn
+            </button>
+            <p class="text-muted mt-2">
+                <i class="fas fa-info-circle"></i>
+                Mô tả chi tiết các dịch vụ cần sửa chữa, chúng tôi sẽ báo giá cụ thể sau khi kiểm tra xe
+            </p>
         </div>
         <% } %>
 
@@ -551,6 +699,23 @@
         <div class="alert alert-warning">
             <i class="fas fa-exclamation-triangle"></i> 
             Bạn chưa có xe nào trong hệ thống. Vui lòng thêm xe trước khi sử dụng tính năng gợi ý.
+        </div>
+        <% } %>
+
+        <!-- ===== THÔNG BÁO KHÔNG CÓ GÓI PHÙ HỢP ===== -->
+        <% if (noSuitablePackage != null && noSuitablePackage) { %>
+        <div class="no-suitable-alert">
+            <h4><i class="fas fa-info-circle"></i> Không có gói phù hợp</h4>
+            <p>Hiện tại chúng tôi chưa có gói bảo dưỡng phù hợp với số km hiện tại của xe <%= selectedBrand %> (Số km: <%= currentKm %>).</p>
+            <p><strong>Đề xuất:</strong></p>
+            <ul class="mb-0">
+                <li>Xem tất cả các gói bảo dưỡng có sẵn bên dưới</li>
+                <li>Liên hệ với chúng tôi để được tư vấn gói bảo dưỡng phù hợp</li>
+                <li>Sử dụng dịch vụ đặt lịch tùy chọn cho các nhu cầu đặc biệt</li>
+            </ul>
+            <button type="button" class="btn btn-outline-warning mt-3" onclick="window.location.href='bookingAppoitments'">
+                <i class="fas fa-times"></i> Đóng thông báo
+            </button>
         </div>
         <% } %>
 
@@ -638,12 +803,15 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label"><strong>Giờ hẹn: <span class="text-danger">*</span></strong></label>
-                                    <input type="time" name="appointmentTime" class="form-control" required min="08:00" max="17:00">
+                                    <div class="d-flex gap-2 time-picker">
+                                        <select class="form-select time-hour" aria-label="Giờ" required></select>
+                                        <select class="form-select time-minute" aria-label="Phút" required></select>
+                                        <select class="form-select time-ampm" aria-label="Buổi" required></select>
+                                        <input type="hidden" name="appointmentTime" class="time-value">
+                                    </div>
                                     <small class="text-muted">Giờ làm việc: 08:00 - 17:00</small>
                                 </div>
                             </div>
-
-                            
 
                             <div class="mb-3">
                                 <label class="form-label"><strong>Ghi chú thêm:</strong></label>
@@ -679,6 +847,10 @@
             <%
                 if (list != null && !list.isEmpty()) {
                     for (MaintenancePackage pkg : list) {
+                        // Ẩn gói PKG-EMPTY khỏi danh sách combo
+                        if (pkg.getPackageCode() != null && pkg.getPackageCode().equals("PKG-EMPTY")) {
+                            continue;
+                        }
             %>
             <div class="col-md-4 mb-4">
                 <div class="package-card">
@@ -774,12 +946,15 @@
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label"><strong>Giờ hẹn: <span class="text-danger">*</span></strong></label>
-                                        <input type="time" name="appointmentTime" class="form-control" required min="08:00" max="17:00">
+                                        <div class="d-flex gap-2 time-picker">
+                                            <select class="form-select time-hour" aria-label="Giờ" required></select>
+                                            <select class="form-select time-minute" aria-label="Phút" required></select>
+                                            <select class="form-select time-ampm" aria-label="Buổi" required></select>
+                                            <input type="hidden" name="appointmentTime" class="time-value">
+                                        </div>
                                         <small class="text-muted">Giờ làm việc: 08:00 - 17:00</small>
                                     </div>
                                 </div>
-
-                                
 
                                 <div class="mb-3">
                                     <label class="form-label"><strong>Ghi chú thêm:</strong></label>
@@ -809,6 +984,99 @@
             <% } %>
         </div>
     </div>
+
+    <!-- ===== MODAL ĐẶT LỊCH TÙY CHỌN ===== -->
+    <% if (customPackage != null) { %>
+    <div class="modal fade" id="customAppointmentModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title">
+                        <i class="fas fa-tools"></i> 
+                        Đặt lịch sửa chữa tùy chọn
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form action="bookingAppoitments" method="post">
+                    <div class="modal-body">
+                        <input type="hidden" name="appointmentType" value="custom">
+                        
+                        <!-- Custom Package Info -->
+                        <div class="custom-package-info mb-4">
+                            <h6 class="mb-2">
+                                <i class="fas fa-info-circle"></i>
+                                <strong><%= customPackage.getName() %></strong>
+                            </h6>
+                            <p class="mb-0 text-muted">
+                                <%= customPackage.getDescription() %>
+                            </p>
+                        </div>
+                        
+                        <div class="row">
+                            <!-- Chọn xe -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    Chọn xe <span class="required">*</span>
+                                </label>
+                                <select name="carId" class="form-select" required>
+                                    <option value="">-- Chọn xe của bạn --</option>
+                                    <% if (carList != null) { %>
+                                        <% for (Car car : carList) { %>
+                                        <option value="<%= car.getCarId() %>">
+                                            <%= car.getBrand() %> - <%= car.getModel() %> 
+                                            (<%= car.getLicensePlate() %>)
+                                        </option>
+                                        <% } %>
+                                    <% } %>
+                                </select>
+                            </div>
+
+                            <!-- Ngày hẹn -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    Ngày hẹn <span class="required">*</span>
+                                </label>
+                                <input type="date" name="appointmentDate" class="form-control" required
+                                       min="<%= java.time.LocalDate.now().toString() %>">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Giờ hẹn -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    Giờ hẹn <span class="required">*</span>
+                                </label>
+                                <div class="d-flex gap-2 time-picker">
+                                    <select class="form-select time-hour" aria-label="Giờ" required></select>
+                                    <select class="form-select time-minute" aria-label="Phút" required></select>
+                                    <select class="form-select time-ampm" aria-label="Buổi" required></select>
+                                    <input type="hidden" name="appointmentTime" class="time-value">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ghi chú thêm -->
+                        <div class="mb-3">
+                            <label class="form-label">Ghi chú thêm</label>
+                            <textarea name="notes" class="form-control" rows="3"
+                                      placeholder="Thêm thông tin khác về tình trạng xe hoặc yêu cầu đặc biệt..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-calendar-check"></i>
+                            Đặt lịch tùy chọn
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Hủy
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <% } %>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -821,6 +1089,106 @@
             bsAlert.close();
         });
     }, 5000);
+
+    // Auto-focus vào trường đầu tiên khi modal hiển thị
+    document.addEventListener('DOMContentLoaded', function() {
+        const customModal = document.getElementById('customAppointmentModal');
+        if (customModal) {
+            customModal.addEventListener('shown.bs.modal', function() {
+                const firstInput = customModal.querySelector('select[name="carId"]');
+                if (firstInput) {
+                    firstInput.focus();
+                }
+            });
+        }
+    });
+
+    // Reset form khi modal đóng
+    document.addEventListener('DOMContentLoaded', function() {
+        const customModal = document.getElementById('customAppointmentModal');
+        if (customModal) {
+            customModal.addEventListener('hidden.bs.modal', function() {
+                const form = customModal.querySelector('form');
+                if (form) {
+                    form.reset();
+                }
+            });
+        }
+    });
+
+    // ===== TIME PICKER (HH, mm, SA/CH) for all .time-picker blocks =====
+    document.addEventListener('DOMContentLoaded', function() {
+        function initTimePicker(container) {
+            if (!container) return;
+            const hourSel = container.querySelector('.time-hour');
+            const minuteSel = container.querySelector('.time-minute');
+            const ampmSel = container.querySelector('.time-ampm');
+            const hiddenValue = container.querySelector('.time-value');
+
+            if (!hourSel || !minuteSel || !ampmSel || !hiddenValue) return;
+
+            // Populate hours 01..12
+            ['','01','02','03','04','05','06','07','08','09','10','11','12'].forEach((h, idx) => {
+                const opt = document.createElement('option');
+                opt.value = h;
+                opt.textContent = idx === 0 ? '--' : h;
+                hourSel.appendChild(opt);
+            });
+            // Populate minutes 00..59
+            const minuteOptions = [''];
+            for (let i = 0; i < 60; i++) minuteOptions.push(String(i).padStart(2,'0'));
+            minuteOptions.forEach((m, idx) => {
+                const opt = document.createElement('option');
+                opt.value = m;
+                opt.textContent = idx === 0 ? '--' : m;
+                minuteSel.appendChild(opt);
+            });
+            // Populate AM/PM (SA/CH)
+            [['','--'], ['AM','SA'], ['PM','CH']].forEach(pair => {
+                const opt = document.createElement('option');
+                opt.value = pair[0];
+                opt.textContent = pair[1];
+                ampmSel.appendChild(opt);
+            });
+
+            function to24h(hh12, mm, ampm) {
+                if (!hh12 || !mm || !ampm) return '';
+                let h = parseInt(hh12, 10);
+                if (ampm === 'AM') {
+                    if (h === 12) h = 0;
+                } else if (ampm === 'PM') {
+                    if (h !== 12) h += 12;
+                }
+                return String(h).padStart(2,'0') + ':' + mm;
+            }
+
+            function enforceBusinessHours() {
+                // Business hours 08:00 - 17:00
+                const v = to24h(hourSel.value, minuteSel.value, ampmSel.value);
+                if (!v) { hiddenValue.value = ''; return; }
+                // Disable invalid combinations by snapping
+                const [H,M] = v.split(':').map(Number);
+                let total = H*60 + M;
+                const min = 8*60, max = 17*60; // inclusive endpoints
+                if (total < min) total = min;
+                if (total > max) total = max;
+                const newH = Math.floor(total/60);
+                const newM = total%60;
+                // Reflect back to controls
+                const newAmpm = newH < 12 ? 'AM' : 'PM';
+                let h12 = newH % 12; if (h12 === 0) h12 = 12;
+                hourSel.value = String(h12).padStart(2,'0');
+                minuteSel.value = String(newM).padStart(2,'0');
+                ampmSel.value = newAmpm;
+                hiddenValue.value = String(newH).padStart(2,'0') + ':' + String(newM).padStart(2,'0');
+            }
+
+            [hourSel, minuteSel, ampmSel].forEach(sel => sel.addEventListener('change', enforceBusinessHours));
+        }
+
+        // Initialize for all visible time pickers (both combo and custom modal)
+        document.querySelectorAll('.time-picker').forEach(initTimePicker);
+    });
 </script>
 </body>
 </html>
