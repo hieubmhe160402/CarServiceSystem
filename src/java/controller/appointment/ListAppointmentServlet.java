@@ -162,7 +162,11 @@ public class ListAppointmentServlet extends HttpServlet {
                     return;
                 }
 
-                dao.confirmAppointment(appointmentId, loginUser);
+                // ✅ Gọi hàm vừa confirm Appointment vừa tạo CarMaintenance
+                dao.confirmAppointmentAndCreateMaintenance(appointmentId, loginUser);
+
+                // ✅ Có thể thêm message hiển thị (nếu muốn)
+                request.getSession().setAttribute("successMessage", "Đã xác nhận lịch hẹn và tạo phiếu bảo dưỡng thành công!");
             } else if ("view".equals(action)) {
                 int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
                 Appointment appointment = dao.getAppointmentById(appointmentId); // cần viết hàm này trong DAO

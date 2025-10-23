@@ -580,4 +580,96 @@ public class AppointmentDAO extends DBContext {
         }
         return 0;
     }
+
+    public void confirmAppointmentAndCreateMaintenance(int appointmentId, User confirmedBy) {
+        String updateSql = """
+        UPDATE Appointments
+        SET Status = 'CONFIRMED',
+            ConfirmedBy = ?,
+            ConfirmedDate = GETDATE()
+        WHERE AppointmentID = ?
+    """;
+
+        // ✅ Insert CarMaintenance, có xử lý trường hợp có hoặc không có RequestedPackageID
+        String insertMaintenanceSql = """
+        INSERT INTO CarMaintenance
+        (CarID, AppointmentID, MaintenanceDate, Odometer, Status,
+         TotalAmount, DiscountAmount, Notes, CreatedBy, AssignedTechnicianID, CreatedDate)
+        OUTPUT INSERTED.MaintenanceID
+        SELECT
+            a.CarID,
+            a.AppointmentID,
+            GETDATE(),             -- MaintenanceDate
+            c.CurrentOdometer,     -- Lấy từ Cars
+            'WAITING',             -- Mặc định
+            ISNULL(mp.BasePrice, 0),                         -- ✅ TotalAmount
+            ISNULL(mp.BasePrice - mp.FinalPrice, 0),         -- ✅ DiscountAmount
+            a.Notes,
+            a.ConfirmedBy,         -- Người xác nhận
+            NULL,                  -- Technician (chưa gán)
+            GETDATE()
+        FROM Appointments a
+        JOIN Cars c ON a.CarID = c.CarID
+        LEFT JOIN MaintenancePackage mp ON a.RequestedPackageID = mp.PackageID  -- ✅ Nếu có gói bảo dưỡng thì lấy giá
+        WHERE a.AppointmentID = ?
+    """;
+
+        // ✅ Nếu có RequestedPackageID → thêm MaintenancePackageUsage
+        String insertPackageUsageSql = """
+        INSERT INTO MaintenancePackageUsage (MaintenanceID, PackageID, AppliedPrice, DiscountAmount, AppliedDate)
+        SELECT ?, a.RequestedPackageID, mp.FinalPrice, (mp.BasePrice - mp.FinalPrice), GETDATE()
+        FROM Appointments a
+        JOIN MaintenancePackage mp ON mp.PackageID = a.RequestedPackageID
+        WHERE a.AppointmentID = ? AND a.RequestedPackageID IS NOT NULL
+    """;
+
+        try {
+            connection.setAutoCommit(false);
+
+            // 1️⃣ Cập nhật Appointment
+            try (PreparedStatement psUpd = connection.prepareStatement(updateSql)) {
+                psUpd.setInt(1, confirmedBy.getUserId());
+                psUpd.setInt(2, appointmentId);
+                psUpd.executeUpdate();
+            }
+
+            // 2️⃣ Thêm CarMaintenance
+            Integer newMaintenanceId = null;
+            try (PreparedStatement psIns = connection.prepareStatement(insertMaintenanceSql)) {
+                psIns.setInt(1, appointmentId);
+                try (ResultSet rs = psIns.executeQuery()) {
+                    if (rs.next()) {
+                        newMaintenanceId = rs.getInt(1);
+                    }
+                }
+            }
+
+            // 3️⃣ Nếu có combo → thêm MaintenancePackageUsage
+            if (newMaintenanceId != null) {
+                try (PreparedStatement psPkg = connection.prepareStatement(insertPackageUsageSql)) {
+                    psPkg.setInt(1, newMaintenanceId);
+                    psPkg.setInt(2, appointmentId);
+                    psPkg.executeUpdate();
+                }
+            }
+
+            connection.commit();
+            System.out.println("✅ Appointment confirmed and CarMaintenance created. MaintenanceID=" + newMaintenanceId);
+
+        } catch (SQLException ex) {
+            try {
+                connection.rollback();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            ex.printStackTrace();
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
