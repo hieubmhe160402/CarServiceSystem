@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="vi">
     <head>
@@ -259,16 +260,26 @@
                                         <td>${d.maintenancePackage.packageCode}</td>
                                         <td>${d.product.name}</td>
                                         <td>${d.quantity}</td>
-                                        <td><c:if test="${d.isRequired}">Hoạt động</c:if><c:if test="${not d.isRequired}">Không hoạt động</c:if></td>
-                                        <td>${d.displayOrder}</td>
+                                        <td>
+                                            <c:if test="${d.isRequired}">Hoạt động</c:if>
+                                            <c:if test="${not d.isRequired}">Không hoạt động</c:if>
+                                            </td>
+                                            <td>${d.displayOrder}</td>
                                         <td>${d.notes}</td>
                                         <td>
                                             <c:if test="${d.isRequired}">
+                                                <!-- ✅ Sửa đoạn này -->
                                                 <button class="btn btn-edit"
-                                                        onclick="openEditModal('${d.packageDetailId}', '${d.product.productId}', '${d.quantity}', '${d.displayOrder}', '${d.notes}')">
+                                                        data-id="${d.packageDetailId}"
+                                                        data-product="${d.product.productId}"
+                                                        data-quantity="${d.quantity}"
+                                                        data-displayorder="${d.displayOrder}"
+                                                        data-notes="${fn:escapeXml(d.notes)}"
+                                                        onclick="openEditModalFromButton(this)">
                                                     Sửa
                                                 </button>
                                             </c:if>
+
                                             <form action="managerPackage" method="post" style="display:inline;">
                                                 <input type="hidden" name="action" value="toggleStatus"/>
                                                 <input type="hidden" name="id" value="${d.packageDetailId}"/>
@@ -284,10 +295,13 @@
                                 </c:forEach>
                             </c:when>
                             <c:otherwise>
-                                <tr><td colspan="8" style="text-align:center;color:#999;">Không có dữ liệu phù hợp</td></tr>
+                                <tr>
+                                    <td colspan="8" style="text-align:center;color:#999;">Không có dữ liệu phù hợp</td>
+                                </tr>
                             </c:otherwise>
                         </c:choose>
                     </tbody>
+
                 </table>
 
                 <!-- Pagination -->
@@ -413,21 +427,25 @@
         </div>
 
         <script>
-            function openEditModal(id, productId, quantity, displayOrder, notes) {
+            function openEditModalFromButton(btn) {
+                const id = btn.dataset.id;
+                const productId = btn.dataset.product;
+                const quantity = btn.dataset.quantity;
+                const displayOrder = btn.dataset.displayorder;
+                const notes = btn.dataset.notes;
+
                 document.getElementById('editId').value = id;
-                document.getElementById('editProduct').value = productId;
+
+                const productSelect = document.getElementById('editProduct');
+                if ([...productSelect.options].some(opt => opt.value === productId)) {
+                    productSelect.value = productId;
+                }
+
                 document.getElementById('editQuantity').value = quantity;
                 document.getElementById('editDisplayOrder').value = displayOrder;
-                document.getElementById('editNotes').value = notes;
+                document.getElementById('editNotes').value = notes || '';
+
                 document.getElementById('editModal').style.display = 'flex';
-            }
-            window.onclick = function (event) {
-                const add = document.getElementById('addModal');
-                const edit = document.getElementById('editModal');
-                if (event.target === add)
-                    add.style.display = 'none';
-                if (event.target === edit)
-                    edit.style.display = 'none';
             }
         </script>
     </body>
