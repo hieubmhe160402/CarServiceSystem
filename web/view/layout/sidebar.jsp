@@ -145,7 +145,7 @@
                 <% } else if ("Staff".equals(roleName)) { %>
                 <div class="brand">Staff CARE SYSTEM</div>
 
-                <a href="/CarCareSystem"><span class="ico"></span> Tiếp nhận khách</a>
+                <a href="/CarCareSystem/listCarmaintenance"><span class="ico"></span> Quản lý bảo dưỡng </a>
                 <a href="/CarCareSystem/listAppointmentServlet"><span class="ico"></span> Quản lý yêu cầu</a>
                 <a href="/CarCareSystem"><span class="ico"></span> Tạo lịch hẹn</a>
                 <a href="/CarCareSystem"><span class="ico"></span> Trạng thái xe</a>
