@@ -140,8 +140,11 @@ public class AuthController extends HttpServlet {
                     response.sendRedirect("technicianController");
                     break;
                 case "CarOwner":
-                    response.sendRedirect("customerController");
+                    response.sendRedirect("userProfileController");
                     break;
+//                case "Customer":
+//                    response.sendRedirect("userProfileController");
+//                    break;
                 default:
                     // Nếu role không khớp, quay về login
                     request.setAttribute("error", "Role người dùng không hợp lệ!");
@@ -312,8 +315,11 @@ public class AuthController extends HttpServlet {
             case "ServiceTechnician":
                 response.sendRedirect("technicianController");
                 break;
-            case "CarOwner":
-                response.sendRedirect("customerController");
+//            case "CarOwner":;
+//                response.sendRedirect("customerController"); ////aaaaaaaa
+//                break;
+                case "CarOwner":
+                response.sendRedirect("userProfileController"); ////aaaaaaaa
                 break;
             default:
                 response.sendRedirect("authController?action=login");

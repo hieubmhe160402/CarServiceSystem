@@ -56,6 +56,26 @@ public class UserDAO extends DBContext {
         return list;
     }
 
+    public User getUserByUsername(String username) {
+        String sql = "SELECT * FROM Users WHERE Username = ?";
+        try (Connection conn = connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                User u = new User();
+                u.setUserId(rs.getInt("UserID"));
+                u.setUserName(rs.getString("Username"));
+                u.setFullName(rs.getString("FullName"));
+                u.setEmail(rs.getString("Email"));
+                // ... các trường khác
+                return u;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public User UpdateEmployees(User u) {
         try {
             String sql = "UPDATE Users "
@@ -204,9 +224,8 @@ public class UserDAO extends DBContext {
         }
         return list;
     }
-    
-    
-    
+
+    // get 1 user
     public List<User> searchByEmail(String keyword) {
         List<User> list = new ArrayList<>();
         String sql = "SELECT u.*, r.RoleID, r.RoleName, r.Description "
@@ -260,18 +279,18 @@ public class UserDAO extends DBContext {
             e.printStackTrace();
         }
     }
-    
+
     //============================================================= Part Truong Login =========//
     public User login(String userName, String password) {
-        String sql = "SELECT u.*, r.RoleID, r.RoleName, r.Description " +
-                    "FROM Users u " +
-                    "LEFT JOIN Role r ON u.RoleID = r.RoleID " +
-                    "WHERE u.Username = ? AND u.Password = ? AND u.IsActive = 1";
-        
+        String sql = "SELECT u.*, r.RoleID, r.RoleName, r.Description "
+                + "FROM Users u "
+                + "LEFT JOIN Role r ON u.RoleID = r.RoleID "
+                + "WHERE u.Username = ? AND u.Password = ? AND u.IsActive = 1";
+
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, userName);
             ps.setString(2, password);
-            
+
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 User user = new User();
@@ -288,14 +307,14 @@ public class UserDAO extends DBContext {
                 user.setIsActive(rs.getBoolean("IsActive"));
                 user.setCreatedDate(rs.getString("CreatedDate"));
                 user.setLastLoginDate(rs.getString("LastLoginDate"));
-                
+
                 // Set Role
                 Role role = new Role();
                 role.setRoleID(rs.getInt("RoleID"));
                 role.setRoleName(rs.getString("RoleName"));
                 role.setDescription(rs.getString("Description"));
                 user.setRole(role);
-                
+
                 return user;
             }
         } catch (SQLException ex) {
@@ -306,12 +325,12 @@ public class UserDAO extends DBContext {
 
     public boolean changePassword(int userId, String oldPassword, String newPassword) {
         String sql = "UPDATE Users SET Password = ? WHERE UserID = ? AND Password = ?";
-        
+
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, newPassword);
             ps.setInt(2, userId);
             ps.setString(3, oldPassword);
-            
+
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException ex) {
@@ -321,14 +340,14 @@ public class UserDAO extends DBContext {
     }
 
     public User getUserByEmail(String email) {
-        String sql = "SELECT u.*, r.RoleID, r.RoleName, r.Description " +
-                    "FROM Users u " +
-                    "LEFT JOIN Role r ON u.RoleID = r.RoleID " +
-                    "WHERE u.Email = ? AND u.IsActive = 1";
-        
+        String sql = "SELECT u.*, r.RoleID, r.RoleName, r.Description "
+                + "FROM Users u "
+                + "LEFT JOIN Role r ON u.RoleID = r.RoleID "
+                + "WHERE u.Email = ? AND u.IsActive = 1";
+
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, email);
-            
+
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 User user = new User();
@@ -345,14 +364,14 @@ public class UserDAO extends DBContext {
                 user.setIsActive(rs.getBoolean("IsActive"));
                 user.setCreatedDate(rs.getString("CreatedDate"));
                 user.setLastLoginDate(rs.getString("LastLoginDate"));
-                
+
                 // Set Role
                 Role role = new Role();
                 role.setRoleID(rs.getInt("RoleID"));
                 role.setRoleName(rs.getString("RoleName"));
                 role.setDescription(rs.getString("Description"));
                 user.setRole(role);
-                
+
                 return user;
             }
         } catch (SQLException ex) {
@@ -363,11 +382,11 @@ public class UserDAO extends DBContext {
 
     public boolean updatePassword(int userId, String newPassword) {
         String sql = "UPDATE Users SET Password = ? WHERE UserID = ?";
-        
+
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, newPassword);
             ps.setInt(2, userId);
-            
+
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException ex) {
@@ -378,7 +397,7 @@ public class UserDAO extends DBContext {
 
     public void updateLastLogin(int userId) {
         String sql = "UPDATE Users SET LastLoginDate = GETDATE() WHERE UserID = ?";
-        
+
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.executeUpdate();
@@ -388,9 +407,9 @@ public class UserDAO extends DBContext {
     }
 
     public boolean registerCustomer(String userCode, String fullName, String userName, String password, String email, String phone, Boolean male, String dateOfBirth) {
-        String sql = "INSERT INTO Users (UserCode, FullName, Username, Password, Email, Phone, Male, DateOfBirth, RoleID, IsActive, CreatedDate) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, 3, 1, GETDATE())"; // RoleID = 3 for Customer
-        
+        String sql = "INSERT INTO Users (UserCode, FullName, Username, Password, Email, Phone, Male, DateOfBirth, RoleID, IsActive, CreatedDate) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, 3, 1, GETDATE())"; // RoleID = 3 for Customer
+
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, userCode);
             ps.setString(2, fullName);
@@ -400,7 +419,7 @@ public class UserDAO extends DBContext {
             ps.setString(6, phone);
             ps.setBoolean(7, male);
             ps.setString(8, dateOfBirth);
-            
+
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException ex) {
@@ -411,10 +430,10 @@ public class UserDAO extends DBContext {
 
     public boolean checkUsernameExists(String userName) {
         String sql = "SELECT COUNT(*) FROM Users WHERE Username = ?";
-        
+
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, userName);
-            
+
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return rs.getInt(1) > 0;
@@ -427,10 +446,10 @@ public class UserDAO extends DBContext {
 
     public boolean checkEmailExists(String email) {
         String sql = "SELECT COUNT(*) FROM Users WHERE Email = ?";
-        
+
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, email);
-            
+
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return rs.getInt(1) > 0;
@@ -443,7 +462,7 @@ public class UserDAO extends DBContext {
 
     public String generateUserCode() {
         String sql = "SELECT MAX(CAST(SUBSTRING(UserCode, 2, LEN(UserCode)) AS INT)) FROM Users WHERE UserCode LIKE 'C%'";
-        
+
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -455,5 +474,63 @@ public class UserDAO extends DBContext {
         }
         return "C001"; // Default first customer code
     }
+
+    public User getUserById(int userId) {
+        String sql = "SELECT u.*, r.RoleID, r.RoleName, r.Description "
+                + "FROM Users u "
+                + "JOIN Role r ON u.RoleID = r.RoleID "
+                + "WHERE u.UserID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Role role = new Role(
+                        rs.getInt("RoleID"),
+                        rs.getString("RoleName"),
+                        rs.getString("Description")
+                );
+
+                User u = new User(
+                        rs.getInt("UserID"),
+                        rs.getString("UserCode"),
+                        rs.getString("FullName"),
+                        rs.getString("Username"),
+                        rs.getString("Password"),
+                        rs.getString("Email"),
+                        rs.getString("Phone"),
+                        rs.getString("Image"),
+                        rs.getBoolean("Male"),
+                        rs.getString("DateOfBirth"),
+                        role,
+                        rs.getBoolean("IsActive"),
+                        rs.getString("CreatedDate"),
+                        rs.getString("LastLoginDate")
+                );
+                return u;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    public static void main(String[] args) {
+    UserDAO userDao = new UserDAO();
+
+    // 👉 Thay bằng username thật trong database
+    String testUsername = "hungowners";
+
+    User user = userDao.getUserByUsername(testUsername);
+
+    if (user != null) {
+        System.out.println("===== Thông tin người dùng =====");
+        System.out.println("UserID: " + user.getUserId());
+        System.out.println("Username: " + user.getUserName());
+        System.out.println("Full Name: " + user.getFullName());
+        System.out.println("Email: " + user.getEmail());
+    } else {
+        System.out.println("Không tìm thấy user có username = " + testUsername);
+    }
+}
 
 }

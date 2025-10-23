@@ -39,7 +39,7 @@ public class RoleDAO extends DBContext {
         return list;
     }
 
-    // ✅ CREATE
+    //  CREATE
     public boolean insertRole(Role role) {
         String sql = "INSERT INTO Role (RoleName, Description) VALUES (?, ?)";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
@@ -52,7 +52,7 @@ public class RoleDAO extends DBContext {
         }
     }
 
-    // ✅ READ (All)
+    //  READ (All)
     public List<Role> getAllRolesGara() {
         List<Role> list = new ArrayList<>();
         String sql = "SELECT * FROM Role";
@@ -71,7 +71,7 @@ public class RoleDAO extends DBContext {
         return list;
     }
 
-    // ✅ READ (By ID)
+    //  READ (By ID)
     public Role getRoleById(int id) {
         String sql = "SELECT * FROM Role WHERE RoleID = ?";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
@@ -90,7 +90,7 @@ public class RoleDAO extends DBContext {
         return null;
     }
 
-    // ✅ UPDATE
+    //  UPDATE
     public boolean updateRole(Role role) {
         String sql = "UPDATE Role SET RoleName = ?, Description = ? WHERE RoleID = ?";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
@@ -104,7 +104,7 @@ public class RoleDAO extends DBContext {
         }
     }
 
-    // ✅ DELETE
+    //  DELETE
     public boolean deleteRole(int id) {
         String sql = "DELETE FROM Role WHERE RoleID = ?";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
@@ -151,7 +151,7 @@ public class RoleDAO extends DBContext {
         return 0;
     }
 
-    // ✅ Lấy danh sách Role theo trang (offset, limit)
+    //  Lấy danh sách Role theo trang (offset, limit)
     public List<Role> getRolesByPage(int start, int total) {
         List<Role> list = new ArrayList<>();
         String sql = "SELECT * FROM Role WHERE RoleName <> 'Admin' ORDER BY RoleID OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
