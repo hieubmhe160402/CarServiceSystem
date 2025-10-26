@@ -1,11 +1,14 @@
 package dal;
 
 import context.DBContext;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import model.Appointment;
@@ -643,79 +646,8 @@ public class AppointmentDAO extends DBContext {
         // Lưu vào database
         return insertCustomAppointment(appointment, customServices);
     }
-
-    public static void main(String[] args) {
-        AppointmentDAO dao = new AppointmentDAO();
-
-        // 🔹 Test tạo lịch hẹn tùy chọn
-        System.out.println("=== TEST TẠO LỊCH HẸN TÙY CHỌN ===");
-        boolean success = dao.createCustomAppointmentWithPackageCode(
-            1,                              // carId
-            "2025-01-15 14:30:00",         // appointmentDate
-            "Thay dầu, kiểm tra phanh, sửa chữa điều hòa", // customServices
-            "Xe có tiếng kêu lạ khi phanh", // notes
-            13,                             // userId
-            "PKG-EMPTY"                     // packageCode
-        );
-        
-        if (success) {
-            System.out.println("✅ Tạo lịch hẹn tùy chọn thành công!");
-        } else {
-            System.out.println("❌ Tạo lịch hẹn tùy chọn thất bại!");
-        }
-
-        // 🔹 Giả lập thông tin người dùng đang đăng nhập
-        int userId = 13; // ID người dùng có sẵn trong bảng Users
-
-        // 🔹 Bộ lọc (bạn có thể thay đổi để test)
-        String dateFilter = "2025-10-20";     // hoặc để null nếu không muốn lọc theo ngày
-        String packageFilter = "Bảo dưỡng";   // hoặc để null nếu không muốn lọc theo tên gói
-
-        // 🔹 Gọi hàm lấy danh sách lịch hẹn
-        List<Appointment> list = dao.getAppointmentsByFilter(userId, dateFilter, packageFilter);
-
-        // 🔹 In kết quả ra console
-        if (list.isEmpty()) {
-            System.out.println("❌ Không tìm thấy lịch hẹn nào khớp với bộ lọc!");
-        } else {
-            System.out.println(" Danh sách lịch hẹn của UserID " + userId + ":");
-            for (Appointment ap : list) {
-                System.out.println("--------------------------------------");
-                System.out.println("AppointmentID: " + ap.getAppointmentId());
-                System.out.println("Ngày hẹn: " + ap.getAppointmentDate());
-                System.out.println("Dịch vụ yêu cầu: " + ap.getRequestedServices());
-                System.out.println("Trạng thái: " + ap.getStatus());
-                System.out.println("Ghi chú: " + ap.getNotes());
-            }
-        }
-    }
-
-}
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package dal;
-
-import java.sql.*;
-
-import context.DBContext;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import model.Appointment;
-import model.Car;
-import model.User;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import model.MaintenancePackage;
-
-/**
- *
- * @author MinHeee
- */
-public class AppointmentDAO extends DBContext {
-
+    
+    
     public List<Appointment> getAllAppointments() {
         List<Appointment> list = new ArrayList<>();
         try {
@@ -780,7 +712,7 @@ public class AppointmentDAO extends DBContext {
                 list.add(a);
             }
 
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -1365,4 +1297,55 @@ public class AppointmentDAO extends DBContext {
         }
     }
 
+    public static void main(String[] args) {
+        AppointmentDAO dao = new AppointmentDAO();
+
+        // 🔹 Test tạo lịch hẹn tùy chọn
+        System.out.println("=== TEST TẠO LỊCH HẸN TÙY CHỌN ===");
+        boolean success = dao.createCustomAppointmentWithPackageCode(
+            1,                              // carId
+            "2025-01-15 14:30:00",         // appointmentDate
+            "Thay dầu, kiểm tra phanh, sửa chữa điều hòa", // customServices
+            "Xe có tiếng kêu lạ khi phanh", // notes
+            13,                             // userId
+            "PKG-EMPTY"                     // packageCode
+        );
+        
+        if (success) {
+            System.out.println("✅ Tạo lịch hẹn tùy chọn thành công!");
+        } else {
+            System.out.println("❌ Tạo lịch hẹn tùy chọn thất bại!");
+        }
+
+        // 🔹 Giả lập thông tin người dùng đang đăng nhập
+        int userId = 13; // ID người dùng có sẵn trong bảng Users
+
+        // 🔹 Bộ lọc (bạn có thể thay đổi để test)
+        String dateFilter = "2025-10-20";     // hoặc để null nếu không muốn lọc theo ngày
+        String packageFilter = "Bảo dưỡng";   // hoặc để null nếu không muốn lọc theo tên gói
+
+        // 🔹 Gọi hàm lấy danh sách lịch hẹn
+        List<Appointment> list = dao.getAppointmentsByFilter(userId, dateFilter, packageFilter);
+
+        // 🔹 In kết quả ra console
+        if (list.isEmpty()) {
+            System.out.println("❌ Không tìm thấy lịch hẹn nào khớp với bộ lọc!");
+        } else {
+            System.out.println(" Danh sách lịch hẹn của UserID " + userId + ":");
+            for (Appointment ap : list) {
+                System.out.println("--------------------------------------");
+                System.out.println("AppointmentID: " + ap.getAppointmentId());
+                System.out.println("Ngày hẹn: " + ap.getAppointmentDate());
+                System.out.println("Dịch vụ yêu cầu: " + ap.getRequestedServices());
+                System.out.println("Trạng thái: " + ap.getStatus());
+                System.out.println("Ghi chú: " + ap.getNotes());
+            }
+        }
+    }
+    
 }
+
+
+
+    
+
