@@ -4,6 +4,7 @@
  */
 package controller.maintenanace;
 
+import dal.CarMaintenanceDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -11,6 +12,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
+import model.CarMaintenance;
 
 /**
  *
@@ -57,8 +60,12 @@ public class ListCarmaintenance extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("view/carmaintenance/managerCarmaintenanace.jsp").forward(request, response);
 
+        CarMaintenanceDAO dao = new CarMaintenanceDAO();
+        List<CarMaintenance> list = dao.getAllCarMaintenances();
+
+        request.setAttribute("maintenances", list);
+        request.getRequestDispatcher("/view/carmaintenance/managerCarmaintenanace.jsp").forward(request, response);
     }
 
     /**
@@ -72,7 +79,19 @@ public class ListCarmaintenance extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+
+        String action = request.getParameter("action");
+        CarMaintenanceDAO dao = new CarMaintenanceDAO();
+
+        if ("cancel".equals(action)) {
+            int maintenanceId = Integer.parseInt(request.getParameter("maintenanceId"));
+            dao.updateStatus(maintenanceId, "CANCELLED");
+        }
+
+        // Sau khi update xong, load lại danh sách
+        List<CarMaintenance> list = dao.getAllCarMaintenances();
+        request.setAttribute("maintenances", list);
+        request.getRequestDispatcher("/view/carmaintenance/managerCarmaintenanace.jsp").forward(request, response);
     }
 
     /**

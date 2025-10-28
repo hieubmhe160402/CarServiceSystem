@@ -3,29 +3,32 @@
     Created on : Oct 23, 2025, 4:19:29 PM
     Author     : MinHeee
 --%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <%@ page contentType="text/html; charset=UTF-8" %>
 <!DOCTYPE html>
 <html lang="vi">
     <head>
         <meta charset="UTF-8" />
-        <title>Quản lý lịch hẹn dịch vụ</title>
+        <title>Quản lý lịch bảo dưỡng</title>
         <style>
             * {
-                box-sizing: border-box;
                 margin: 0;
                 padding: 0;
+                box-sizing: border-box;
             }
-            html, body {
-                height: 100%;
-                font-family: Inter, Roboto, Arial, sans-serif;
-                background:#f5f7fb;
-                color:#111827;
+            body {
+                font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+                background: #f5f7fb;
+                color: #111827;
             }
             .app {
                 display: flex;
                 height: 100vh;
             }
+
+            /* --- SIDEBAR --- */
+            /* --- SIDEBAR --- */
             .sidebar {
                 width: 260px;
                 background: linear-gradient(180deg,#0f2340,#0b1830);
@@ -34,233 +37,568 @@
                 display:flex;
                 flex-direction:column;
             }
+
+            /* --- Main Content --- */
             .main {
                 flex: 1;
                 padding: 24px 32px;
                 overflow: auto;
             }
+            .container {
+                background: #fff;
+                border-radius: 8px;
+                padding: 25px 30px;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            }
             h2 {
+                font-size: 22px;
+                font-weight: 600;
+                color: #222;
                 margin-bottom: 20px;
             }
-            .btn {
-                padding: 6px 12px;
-                border: none;
+
+            /* --- TOP BAR --- */
+            .top-bar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 16px;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .search-box {
+                padding: 8px 12px;
+                border: 1px solid #d1d5db;
                 border-radius: 6px;
-                margin: 0 3px;
-                cursor: pointer;
+                width: 300px;
                 font-size: 14px;
             }
+            .search-box:focus {
+                outline: none;
+                border-color: #2563eb;
+                box-shadow: 0 0 0 2px rgba(37,99,235,0.2);
+            }
+
+            /* --- BUTTONS --- */
+            .btn {
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 14px;
+                padding: 8px 16px;
+                font-weight: 500;
+                transition: all 0.25s;
+            }
             .btn-add {
+                background: #16a34a;
+                color: #fff;
+            }
+            .btn-add:hover {
+                background: #15803d;
+            }
+            .btn-edit {
+                background: #3b82f6;
+                color: white;
+                padding: 6px 12px;
+                margin-right: 5px;
+            }
+            .btn-edit:hover {
+                background: #2563eb;
+            }
+            .btn-delete {
+                background: #ef4444;
+                color: white;
+                padding: 6px 12px;
+            }
+            .btn-delete:hover {
+                background: #dc2626;
+            }
+            .btn-cancel {
+                background: #6c757d;
+                color: white;
+            }
+            .btn-save {
                 background: #28a745;
                 color: white;
             }
-            .btn-confirm {
-                background: #007bff;
-                color: white;
-            }
-            .btn-cancel {
-                background: #dc3545;
-                color: white;
-            }
+
+            /* --- TABLE --- */
             table {
                 width: 100%;
                 border-collapse: collapse;
-                background: #fff;
-                border-radius: 8px;
-                overflow: hidden;
-                box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+                margin-top: 15px;
             }
-            table thead th {
-                background: #f8fafc;
-                padding: 12px 16px;
+            th, td {
+                padding: 12px;
                 text-align: left;
                 border-bottom: 1px solid #e5e7eb;
             }
-            table tbody td {
-                padding: 12px 16px;
-                border-bottom: 1px solid #f1f5f9;
+            th {
+                background: #f8fafc;
+                color: #374151;
+                font-weight: 600;
+                font-size: 14px;
+            }
+            td {
+                font-size: 14px;
+                vertical-align: middle;
+            }
+            tr:hover {
+                background: #f9fafb;
+            }
+            .description-cell {
+                max-width: 260px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            /* --- PAGINATION --- */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 6px;
+                margin-top: 25px;
+            }
+            .pagination a {
+                padding: 8px 12px;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                color: #333;
+                text-decoration: none;
+                font-size: 14px;
+                transition: all 0.2s;
+            }
+            .pagination a:hover {
+                background: #2563eb;
+                color: white;
+                border-color: #2563eb;
+            }
+            .pagination .active {
+                background: #2563eb;
+                color: white;
+                border-color: #2563eb;
+                font-weight: 600;
+            }
+
+            /* --- MODAL --- (giữ nguyên layout hiện tại) */
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 1000;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                overflow-y: auto;
+            }
+            .modal-content {
+                background: white;
+                margin: 5% auto;
+                padding: 30px;
+                width: 500px;
+                border-radius: 10px;
+                position: relative;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            }
+            .close {
+                position: absolute;
+                right: 15px;
+                top: 10px;
+                font-size: 26px;
+                cursor: pointer;
+                color: #aaa;
+            }
+            .close:hover {
+                color: #000;
+            }
+            .form-group label {
+                font-weight: 600;
+                margin-bottom: 5px;
+                color: #222;
+                display: block;
+            }
+            .form-group input,
+            .form-group textarea,
+            .form-group select {
+                width: 100%;
+                padding: 8px;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                font-size: 14px;
+            }
+            .form-actions {
+                display: flex;
+                justify-content: flex-end;
+                gap: 10px;
+                margin-top: 20px;
+            }
+
+            /* --- DELETE MODAL --- */
+            #deleteModal .modal-content {
+                width: 400px;
+                text-align: center;
+            }
+            #deleteModal h3 {
+                margin-bottom: 15px;
+                color: #222;
+            }
+            #deleteModal p {
+                margin-bottom: 20px;
+                font-size: 15px;
+                color: #444;
+            }
+            .status-filter {
+                padding: 6px 10px;
+                border-radius: 5px;
+                border: 1px solid #ccc;
+                font-size: 14px;
+            }
+            .btn-reload {
+                background: #0ea5e9;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                padding: 8px 14px;
+                cursor: pointer;
+                transition: background 0.2s;
+            }
+            .btn-reload:hover {
+                background: #0284c7;
+            }
+            .btn-primary {
+                background: #3b82f6; /* xanh dương */
+                color: #fff;
+            }
+            .btn-primary:hover {
+                background: #2563eb;
+            }
+
+            .btn-danger {
+                background: #ef4444; /* đỏ */
+                color: #fff;
+            }
+            .btn-danger:hover {
+                background: #dc2626;
             }
             .modal {
                 display: none;
                 position: fixed;
-                top: 0;
+                z-index: 2000;
                 left: 0;
+                top: 0;
                 width: 100%;
                 height: 100%;
                 background: rgba(0,0,0,0.5);
-                justify-content: center;
-                align-items: center;
-                z-index: 1000;
+                overflow-y: auto;
             }
+
+            /* Hộp nội dung chính */
             .modal-content {
                 background: #fff;
-                padding: 20px;
-                border-radius: 8px;
-                width: 400px;
-                box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+                margin: 3% auto;
+                border-radius: 10px;
+                width: 75%;
+                max-width: 1000px;
+                box-shadow: 0 5px 25px rgba(0,0,0,0.25);
+                animation: fadeIn 0.3s ease-in-out;
             }
-            .modal-content h3 {
-                margin-bottom: 15px;
-                text-align: center;
+
+            /* Header của phiếu */
+            .modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background: #e6f0ff;
+                padding: 15px 25px;
+                border-radius: 10px 10px 0 0;
+                border-bottom: 1px solid #cbd5e1;
             }
-            .modal-content label {
-                display: block;
+            .modal-header h2 {
+                font-size: 20px;
                 font-weight: 600;
-                margin-top: 10px;
+                color: #1e3a8a;
             }
-            .modal-content select,
-            .modal-content input,
-            .modal-content textarea {
-                width: 100%;
-                padding: 8px;
-                margin-top: 5px;
-                border: 1px solid #ccc;
-                border-radius: 5px;
+            .status-badge {
+                padding: 6px 12px;
+                border-radius: 6px;
+                font-size: 13px;
+                font-weight: bold;
+                color: #fff;
+            }
+            .status-badge.waiting {
+                background: #f59e0b;
             }
             .close {
-                float: right;
-                font-size: 20px;
+                font-size: 26px;
                 cursor: pointer;
+                color: #6b7280;
             }
             .close:hover {
-                color: red;
+                color: #000;
+            }
+
+            /* Nội dung body */
+            .modal-body {
+                padding: 25px;
+            }
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;
+                margin-bottom: 20px;
+            }
+            .form-group label {
+                font-weight: 600;
+                margin-bottom: 6px;
+                color: #111827;
+                display: block;
+            }
+            .form-group input, .form-group textarea, .form-group select {
+                width: 100%;
+                padding: 8px 10px;
+                border: 1px solid #d1d5db;
+                border-radius: 6px;
+                font-size: 14px;
+            }
+            .form-group.full {
+                grid-column: 1 / 4;
+            }
+
+            /* Nút chọn */
+            .btn-blue {
+                background: #3b82f6;
+                color: #fff;
+                border: none;
+                border-radius: 6px;
+                padding: 6px 14px;
+                font-size: 14px;
+                cursor: pointer;
+            }
+            .btn-blue:hover {
+                background: #2563eb;
+            }
+
+            /* Animation */
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
             }
         </style>
     </head>
     <body>
         <div class="app">
-            <!-- Sidebar include -->
+            <!-- Sidebar -->
             <jsp:include page="/view/layout/sidebar.jsp"/>
 
-            <main class="main">
-                <h2>Quản lý lịch hẹn dịch vụ</h2>
+            <!-- Main -->
+            <div class="main">
+                <div class="container">
+                    <h2>Quản lý Supplier</h2>
 
-                <!-- Nút mở popup -->
-                <button type="button" class="btn btn-add" onclick="document.getElementById('addModal').style.display = 'flex'">
-                    ➕ Tạo lịch hẹn mới
-                </button>
+                    <div class="top-bar">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="text" class="search-box" placeholder="Tìm kiếm theo tên..." id="searchInput">
 
-                <!-- Bộ lọc -->
-                <form action="#" method="get" style="margin-top: 10px; display:flex; gap:15px; align-items:center;">
-                    <label for="statusFilter">Trạng thái:</label>
-                    <select id="statusFilter">
-                        <option value="">Tất cả</option>
-                        <option value="PENDING">Pending</option>
-                        <option value="CONFIRMED">Confirmed</option>
-                        <option value="CANCELLED">Cancelled</option>
-                    </select>
-
-                    <label for="packageFilter">Gói bảo dưỡng:</label>
-                    <select id="packageFilter">
-                        <option value="">Tất cả</option>
-                        <option value="1">PKG001 - Gói cơ bản</option>
-                        <option value="2">PKG002 - Gói nâng cao</option>
-                    </select>
-
-                    <button type="button">Làm mới</button>
-                </form>
-
-                <br/>
-
-                <!-- Bảng lịch hẹn -->
-                <table>
-                    <thead>
-                        <tr>
-                            <th>MaintenanceID</th>
-                            <th>AppointmentID</th>
-                            <th>Customer</th>
-                            <th>License Plate</th>
-                            <th>Hãng xe</th>
-                            <th>DateAppointment</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Toyota Vios - 30A-12345</td>
-                            <td>2025-10-25 08:00</td>
-                            <td>PKG001</td>
-                            <td>PENDING</td>
-                            <td>Kiểm tra phanh</td>
-                            <td>
-                                <button class="btn btn-confirm">Xác nhận</button>
-                                <button class="btn btn-cancel">Hủy</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Honda City - 29B-88888</td>
-                            <td>2025-10-25 10:00</td>
-                            <td>PKG002</td>
-                            <td>CONFIRMED</td>
-                            <td>Thay nhớt</td>
-                            <td>
-                                <button class="btn btn-cancel">Xem</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <!-- Modal thêm lịch hẹn -->
-                <div id="addModal" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="document.getElementById('addModal').style.display = 'none'">&times;</span>
-                        <h3>Thêm lịch hẹn mới</h3>
-
-                        <form action="#" method="post">
-                            <label>Khách hàng:</label>
-                            <select id="ownerSelect" required>
-                                <option value="">-- Chọn khách hàng --</option>
-                                <option value="1">Nguyễn Văn A</option>
-                                <option value="2">Trần Thị B</option>
+                            <!-- Dropdown filter theo status -->
+                            <select id="statusFilter" class="status-filter">
+                                <option value="">Tất cả</option>
+                                <option value="true">Hoạt động</option>
+                                <option value="false">Ngừng hoạt động</option>
                             </select>
+                            <button type="button" class="btn btn-reload" onclick="window.location.href = 'supplier'">
+                                🔁 Reload
+                            </button>
+                            <button onclick="openServiceModal()" class="btn btn-blue">Test Popup Phiếu Dịch Vụ</button>
 
-                            <label>Xe:</label>
-                            <select id="carSelect" required>
-                                <option value="">-- Chọn xe --</option>
-                                <option value="1" data-owner="1">Toyota Vios - 30A-12345</option>
-                                <option value="2" data-owner="2">Honda City - 29B-88888</option>
-                            </select>
+                        </div>
 
-                            <label>Gói bảo dưỡng:</label>
-                            <select required>
-                                <option value="1">PKG001 - Gói cơ bản</option>
-                                <option value="2">PKG002 - Gói nâng cao</option>
-                            </select>
-
-                            <label>Ngày hẹn:</label>
-                            <input type="datetime-local" required>
-
-                            <label>Ghi chú:</label>
-                            <textarea rows="3"></textarea>
-
-                            <button type="submit" class="btn btn-confirm" style="margin-top:10px;">Thêm mới</button>
-                        </form>
+                        <button class="btn btn-add" onclick="openModal()">+ Thêm Supplier</button>
                     </div>
-                </div>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Mã bảo dưỡng</th>
+                                <th>Mã lịch hẹn</th>
+                                <th>Khách hàng</th>
+                                <th>Biển số xe</th>
+                                <th>Hãng xe</th>
+                                <th>Ngày bảo dưỡng</th>
+                                <th>Trạng thái</th>
+                                <th>Kỹ thuật viên</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:choose>
+                                <c:when test="${not empty maintenances}">
+                                    <c:forEach items="${maintenances}" var="m">
+                                        <tr>
+                                            <td>${m.maintenanceId}</td>
+                                            <td>${m.appointment.appointmentId}</td>
+                                            <td>${m.car.owner.fullName}</td>
+                                            <td>${m.car.licensePlate}</td>
+                                            <td>${m.car.brand} ${m.car.model}</td>
+                                            <td>${m.maintenanceDate}</td>
+                                            <td>${m.status}</td>
 
-                <!-- Modal chi tiết lịch hẹn -->
-                <div id="detailModal" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="document.getElementById('detailModal').style.display = 'none'">&times;</span>
-                        <h3>Chi tiết lịch hẹn</h3>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${m.assignedTechnician.fullName eq 'None'}">
+                                                        <span class="text-muted">None</span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        ${m.assignedTechnician.fullName}
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
 
-                        <p><strong>👤 Tên khách hàng:</strong> Nguyễn Văn A</p>
-                        <p><strong>📧 Email:</strong> a@example.com</p>
-                        <p><strong>📞 SĐT:</strong> 0901234567</p>
-                        <p><strong>🚗 Xe:</strong> Toyota Vios (30A-12345)</p>
-                        <p><strong>📅 Ngày hẹn:</strong> 2025-10-25 08:00</p>
-                        <p><strong>✅ Trạng thái:</strong> Confirmed</p>
-                        <p><strong>💬 Ghi chú:</strong> Kiểm tra phanh</p>
+                                            <!-- Cột hành động -->
+                                            <td class="text-center">
+                                                <c:choose>
+                                                    <c:when test="${m.status eq 'CANCELLED'}">
+                                                        <span class="text-muted">Đã hủy</span>
+                                                    </c:when>
 
-                        <div style="text-align:center; margin-top:15px;">
-                            <button class="btn btn-cancel" onclick="document.getElementById('detailModal').style.display = 'none'">Đóng</button>
+                                                    <c:otherwise>
+                                                        <button type="button" 
+                                                                class="btn btn-primary btn-sm" 
+                                                                onclick="openAssignModal('${m.maintenanceId}')">
+                                                            Assign
+                                                        </button>
+
+                                                        <form method="post" action="listCarmaintenance" style="display:inline;">
+                                                            <input type="hidden" name="action" value="cancel" />
+                                                            <input type="hidden" name="maintenanceId" value="${m.maintenanceId}" />
+                                                            <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+                                                        </form>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                </c:when>
+
+                                <c:otherwise>
+                                    <tr>
+                                        <td colspan="9" class="text-center text-muted">Không có dữ liệu bảo dưỡng.</td>
+                                    </tr>
+                                </c:otherwise>
+                            </c:choose>
+                        </tbody>
+                    </table>
+                    <!-- POPUP PHIẾU DỊCH VỤ -->
+                    <div id="serviceModal" class="modal">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h2>Phiếu dịch vụ</h2>
+                                <span class="status-badge waiting">WAITING</span>
+                                <span class="close" onclick="closeServiceModal()">&times;</span>
+                            </div>
+
+                            <div class="modal-body">
+                                <div class="grid">
+                                    <div class="form-group">
+                                        <label>Mã phiếu dịch vụ</label>
+                                        <input type="text" id="serviceId" value="SRV-2025-001" readonly />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Mã lịch hẹn</label>
+                                        <input type="text" id="createdDate" value="2025-10-28" readonly />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Người tạo phiếu</label>
+                                        <input type="text" id="createdBy" value="Admin" readonly />
+                                    </div>
+                                </div>
+
+
+
+                                <div class="grid">
+                                    <div class="form-group">
+                                        <label>Tên khách hàng</label>
+                                        <input type="text" id="customerName" value="Nguyễn Văn A" readonly />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Số điện thoại</label>
+                                        <input type="text" id="phone" value="0901234567" readonly />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="text" id="email" value="vana@gmail.com" readonly />
+                                    </div>
+                                </div>
+
+                                <div class="grid">
+                                    <div class="form-group">
+                                        <label>Hãng xe</label>
+                                        <input type="text" id="carBrand" value="Toyota" readonly />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Odometer</label>
+                                        <input type="text" id="odometer" value="45,000 km" readonly />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Biển số xe</label>
+                                        <input type="text" id="licensePlate" value="51H-123.45" readonly />
+                                    </div>
+                                </div>
+
+                                <div class="grid">
+                                    <div class="form-group">
+                                        <label>Ngày bảo trì</label>
+                                        <input type="text" id="maintenanceDate" value="2025-10-30" readonly />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Kỹ thuật viên</label>
+                                        <div style="display:flex; gap:10px;">
+                                            <input type="text" id="technician" value="Chưa chọn" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Thời gian hoàn thành </label>
+                                        <input type="text" id="licensePlate" value="51H-123.45" readonly />
+                                    </div>
+                                </div>
+
+                                <div class="form-group full">
+                                    <label>Ghi chú</label>
+                                    <textarea id="note" rows="3" placeholder="Nhập ghi chú thêm..."></textarea>
+                                </div>
+                                <div class="grid">
+                                    <div class="form-group">
+                                        <label>Thông tin nhân viên sửa chữa </label>
+                                        <h6>Chọn nhân viên sửa chữa * </label>
+                                            <button class="btn btn-blue" type="button" onclick="chooseTechnician()">Chọn</button>                                    </div>
+
+                                </div>
+                            </div>
                         </div>
                     </div>
+
+                    <div class="pagination">
+                        <c:if test="${currentPage > 1}">
+                            <a href="supplier?page=${currentPage - 1}">« Trước</a>
+                        </c:if>
+
+                        <c:forEach begin="1" end="${totalPages}" var="i">
+                            <a href="supplier?page=${i}" class="${i == currentPage ? 'active' : ''}">${i}</a>
+                        </c:forEach>
+
+                        <c:if test="${currentPage < totalPages}">
+                            <a href="supplier?page=${currentPage + 1}">Sau »</a>
+                        </c:if>
+                    </div>
                 </div>
-            </main>
+            </div>
         </div>
 
         <script>
@@ -280,6 +618,21 @@
                     opt.style.display = (opt.getAttribute('data-owner') === selectedOwner) ? 'block' : 'none';
                 });
             });
+            function openServiceModal() {
+                document.getElementById('serviceModal').style.display = 'block';
+            }
+            function closeServiceModal() {
+                document.getElementById('serviceModal').style.display = 'none';
+            }
+            function chooseTechnician() {
+                alert("Popup chọn kỹ thuật viên sẽ hiển thị ở đây!");
+            }
+            window.onclick = function (e) {
+                const modal = document.getElementById('serviceModal');
+                if (e.target === modal)
+                    closeServiceModal();
+            }
         </script>
+
     </body>
 </html>

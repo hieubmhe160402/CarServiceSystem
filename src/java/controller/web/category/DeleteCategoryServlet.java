@@ -59,7 +59,7 @@ public class DeleteCategoryServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         CategoryDAO dao = new CategoryDAO();
-        
+
         int id = Integer.parseInt(request.getParameter("id"));
         boolean success = dao.delete(id);
 

@@ -119,7 +119,8 @@
                 <a href="view/Admin/HomePageForAdmin.jsp"><span class="ico"></span> Dashboard</a>
                 <a href="/CarCareSystem/listEmployees"><span class="ico"></span> Quản lý nhân viên</a>
                 <a href="/CarCareSystem/ManageCustomerController"><span class="ico"></span> Quản lý thông tin khách hàng</a>
-                <a href="ManageServices.jsp"><span class="ico"></span> Quản lý nhà cung cấp</a>
+                <a href="/CarCareSystem/supplier"><span class="ico"></span> Quản lý nhà cung cấp</a>
+                <a href="/CarCareSystem/supplierproduct"><span class="ico"></span> Quản lý nhà supplier-product</a>
                 <a href="/CarCareSystem/products"><span class="ico"></span> Quản lý phụ tùng</a>
                 <a href="/CarCareSystem/units"><span class="ico"></span> Quản lý đơn vị</a>
                 <a href="/CarCareSystem/category"><span class="ico"></span> Quản lý danh mục</a>
@@ -140,7 +141,7 @@
                 <% } else if ("CarOwner".equals(roleName)) { %>
                 <div class="brand">🚗 CAR MANAGEMENT</div>
                 <a href="userProfileController"><i class="fas fa-user"></i> Hồ sơ cá nhân</a>
-                
+
                 <a href="bookingAppoitments"><i class="fas fa-calendar-check"></i> Đặt lịch bảo dưỡng</a>
                 <a href="userAppoinmentsHistoryController"><i class="fas fa-history"></i> Lịch sử lịch hẹn</a>
                 <a href="#"><i class="fas fa-chart-line"></i> Theo dõi tiến độ</a>
