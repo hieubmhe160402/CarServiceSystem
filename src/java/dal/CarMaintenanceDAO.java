@@ -100,4 +100,99 @@ public class CarMaintenanceDAO extends DBContext {
         }
     }
 
+    public CarMaintenance getDetailServiceMaintenanceById(int maintenanceId) {
+        String sql = """
+        SELECT 
+            m.MaintenanceID,
+            a.AppointmentID,
+            m.MaintenanceDate,
+            m.Odometer,
+            m.Status,
+            m.Notes,
+            m.AssignedTechnicianID,
+            m.CompletedDate,
+            u.FullName,
+            u.Phone,
+            u.Email,
+            CONCAT(c.Brand, ' ', c.Model, ' - ', c.Color) AS CarInfo
+        FROM Appointments a
+        LEFT JOIN CarMaintenance m ON a.AppointmentID = m.AppointmentID
+        LEFT JOIN Cars c ON a.CarID = c.CarID
+        LEFT JOIN Users u ON c.OwnerID = u.UserID
+        WHERE m.MaintenanceID = ?
+    """;
+
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setInt(1, maintenanceId);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                CarMaintenance cm = new CarMaintenance();
+                cm.setMaintenanceId(rs.getInt("MaintenanceID"));
+                cm.setMaintenanceDate(rs.getString("MaintenanceDate"));
+                cm.setOdometer(rs.getInt("Odometer"));
+                cm.setStatus(rs.getString("Status"));
+                cm.setNotes(rs.getString("Notes"));
+                cm.setCompletedDate(rs.getString("CompletedDate"));
+
+                User tech = new User();
+                tech.setUserId(rs.getInt("AssignedTechnicianID"));
+                cm.setAssignedTechnician(tech);
+
+                Appointment ap = new Appointment();
+                ap.setAppointmentId(rs.getInt("AppointmentID"));
+                cm.setAppointment(ap);
+
+                Car car = new Car();
+                car.setBrand(rs.getString("CarInfo"));
+                cm.setCar(car);
+
+                User owner = new User();
+                owner.setFullName(rs.getString("FullName"));
+                owner.setPhone(rs.getString("Phone"));
+                owner.setEmail(rs.getString("Email"));
+                car.setOwner(owner);
+
+                return cm;
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<User> getTechnicians() {
+        List<User> list = new ArrayList<>();
+
+        String sql = """
+        SELECT 
+            u.UserID,
+            u.FullName,
+            u.Username,
+            u.Phone,
+            u.IsActive
+        FROM Users u
+        INNER JOIN Role r ON u.RoleID = r.RoleID
+        WHERE r.RoleName = 'Technician'   -- lọc theo tên role
+          AND u.IsActive = 1;             -- chỉ lấy user còn hoạt động
+    """;
+
+        try (PreparedStatement stm = connection.prepareStatement(sql); ResultSet rs = stm.executeQuery()) {
+
+            while (rs.next()) {
+                User u = new User();
+                u.setUserId(rs.getInt("UserID"));
+                u.setFullName(rs.getString("FullName"));
+                u.setUserName(rs.getString("Username"));
+                u.setPhone(rs.getString("Phone"));
+                u.setIsActive(rs.getBoolean("IsActive"));
+                list.add(u);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
 }

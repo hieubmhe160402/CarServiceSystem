@@ -392,6 +392,30 @@
                     transform: translateY(0);
                 }
             }
+            .technician-grid {
+                grid-template-columns: 1fr 2fr; /* Bên trái nhỏ hơn bên phải */
+                align-items: flex-start;
+                gap: 20px;
+            }
+
+            .btn-gray {
+                background-color: #999;
+                color: #fff;
+                padding: 6px 14px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+            .info-box {
+                background: #f2f2f2;
+                padding: 20px 15px;
+                border-radius: 4px;
+                display: flex;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                font-size: 14px;
+            }
         </style>
     </head>
     <body>
@@ -402,27 +426,22 @@
             <!-- Main -->
             <div class="main">
                 <div class="container">
-                    <h2>Quản lý Supplier</h2>
+                    <h2>Quản lý lịch bảo dưỡng</h2>
 
                     <div class="top-bar">
                         <div style="display: flex; align-items: center; gap: 10px;">
                             <input type="text" class="search-box" placeholder="Tìm kiếm theo tên..." id="searchInput">
-
-                            <!-- Dropdown filter theo status -->
                             <select id="statusFilter" class="status-filter">
                                 <option value="">Tất cả</option>
                                 <option value="true">Hoạt động</option>
                                 <option value="false">Ngừng hoạt động</option>
                             </select>
-                            <button type="button" class="btn btn-reload" onclick="window.location.href = 'supplier'">
-                                🔁 Reload
+                            <button type="button" class="btn btn-reload" onclick="window.location.href = 'listCarmaintenance'">
+                                🔁 Tải lại
                             </button>
-                            <button onclick="openServiceModal()" class="btn btn-blue">Test Popup Phiếu Dịch Vụ</button>
-
                         </div>
+                    </div> <!-- ✅ Đóng top-bar ở đây -->
 
-                        <button class="btn btn-add" onclick="openModal()">+ Thêm Supplier</button>
-                    </div>
                     <table class="table table-bordered">
                         <thead>
                             <tr>
@@ -469,12 +488,14 @@
                                                     </c:when>
 
                                                     <c:otherwise>
-                                                        <button type="button" 
-                                                                class="btn btn-primary btn-sm" 
-                                                                onclick="openAssignModal('${m.maintenanceId}')">
-                                                            Assign
-                                                        </button>
+                                                        <!-- Gửi request đến servlet để hiển thị chi tiết -->
+                                                        <form method="get" action="listCarmaintenance" style="display:inline;">
+                                                            <input type="hidden" name="action" value="assign" />
+                                                            <input type="hidden" name="maintenanceId" value="${m.maintenanceId}" />
+                                                            <button type="submit" class="btn btn-primary btn-sm">Assign</button>
+                                                        </form>
 
+                                                        <!-- Nút cancel vẫn giữ nguyên -->
                                                         <form method="post" action="listCarmaintenance" style="display:inline;">
                                                             <input type="hidden" name="action" value="cancel" />
                                                             <input type="hidden" name="maintenanceId" value="${m.maintenanceId}" />
@@ -496,93 +517,141 @@
                         </tbody>
                     </table>
                     <!-- POPUP PHIẾU DỊCH VỤ -->
-                    <div id="serviceModal" class="modal">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h2>Phiếu dịch vụ</h2>
-                                <span class="status-badge waiting">WAITING</span>
-                                <span class="close" onclick="closeServiceModal()">&times;</span>
-                            </div>
-
-                            <div class="modal-body">
-                                <div class="grid">
-                                    <div class="form-group">
-                                        <label>Mã phiếu dịch vụ</label>
-                                        <input type="text" id="serviceId" value="SRV-2025-001" readonly />
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Mã lịch hẹn</label>
-                                        <input type="text" id="createdDate" value="2025-10-28" readonly />
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Người tạo phiếu</label>
-                                        <input type="text" id="createdBy" value="Admin" readonly />
-                                    </div>
+                    <c:if test="${not empty detail}">
+                        <div id="serviceModal" class="modal" style="display:block;">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h2>Phiếu dịch vụ</h2>
+                                    <span class="status-badge ${detail.status eq 'WAITING' ? 'waiting' : ''}">${detail.status}</span>
+                                    <a href="listCarmaintenance" class="close">&times;</a>
                                 </div>
 
-
-
-                                <div class="grid">
-                                    <div class="form-group">
-                                        <label>Tên khách hàng</label>
-                                        <input type="text" id="customerName" value="Nguyễn Văn A" readonly />
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Số điện thoại</label>
-                                        <input type="text" id="phone" value="0901234567" readonly />
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Email</label>
-                                        <input type="text" id="email" value="vana@gmail.com" readonly />
-                                    </div>
-                                </div>
-
-                                <div class="grid">
-                                    <div class="form-group">
-                                        <label>Hãng xe</label>
-                                        <input type="text" id="carBrand" value="Toyota" readonly />
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Odometer</label>
-                                        <input type="text" id="odometer" value="45,000 km" readonly />
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Biển số xe</label>
-                                        <input type="text" id="licensePlate" value="51H-123.45" readonly />
-                                    </div>
-                                </div>
-
-                                <div class="grid">
-                                    <div class="form-group">
-                                        <label>Ngày bảo trì</label>
-                                        <input type="text" id="maintenanceDate" value="2025-10-30" readonly />
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Kỹ thuật viên</label>
-                                        <div style="display:flex; gap:10px;">
-                                            <input type="text" id="technician" value="Chưa chọn" readonly />
+                                <div class="modal-body">
+                                    <div class="grid">
+                                        <div class="form-group">
+                                            <label>Mã phiếu dịch vụ</label>
+                                            <input type="text" value="${detail.maintenanceId}" readonly />
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Mã lịch hẹn</label>
+                                            <input type="text" value="${detail.appointment.appointmentId}" readonly />
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Ngày bảo trì</label>
+                                            <input type="text" value="${detail.maintenanceDate}" readonly />
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label>Thời gian hoàn thành </label>
-                                        <input type="text" id="licensePlate" value="51H-123.45" readonly />
-                                    </div>
-                                </div>
 
-                                <div class="form-group full">
-                                    <label>Ghi chú</label>
-                                    <textarea id="note" rows="3" placeholder="Nhập ghi chú thêm..."></textarea>
-                                </div>
-                                <div class="grid">
-                                    <div class="form-group">
-                                        <label>Thông tin nhân viên sửa chữa </label>
-                                        <h6>Chọn nhân viên sửa chữa * </label>
-                                            <button class="btn btn-blue" type="button" onclick="chooseTechnician()">Chọn</button>                                    </div>
+                                    <div class="grid">
+                                        <div class="form-group">
+                                            <label>Tên khách hàng</label>
+                                            <input type="text" value="${detail.car.owner.fullName}" readonly />
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Số điện thoại</label>
+                                            <input type="text" value="${detail.car.owner.phone}" readonly />
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Email</label>
+                                            <input type="text" value="${detail.car.owner.email}" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="grid">
+                                        <div class="form-group">
+                                            <label>Thông tin xe</label>
+                                            <input type="text" value="${detail.car.brand}" readonly />
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Odometer</label>
+                                            <input type="text" value="${detail.odometer}" readonly />
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Kỹ thuật viên</label>
+                                            <input type="text" value="${detail.assignedTechnician.userId}" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group full">
+                                        <label>Ghi chú</label>
+                                        <textarea readonly>${detail.notes}</textarea>
+                                    </div>
+
+                                    <div style="text-align:right;">
+                                        <a href="listCarmaintenance" class="btn btn-secondary">Đóng</a>
+                                    </div>
+                                    <div class="grid technician-grid">
+                                        <!-- Cột chọn kỹ thuật viên -->
+                                        <div class="form-group">
+                                            <label>Thông tin nhân viên sửa chữa</label>
+                                            <p style="margin: 4px 0;">Chọn nhân viên sửa chữa *</p>
+                                            <div style="display: flex; gap: 10px;">
+                                                <button class="btn btn-blue" type="button">Chọn</button>
+                                                <button class="btn btn-gray" type="button">Chọn lại nhân viên</button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Cột hiển thị thông tin kỹ thuật viên -->
+                                        <div class="form-group tech-info-box">
+                                            <label>Thông tin kỹ thuật viên</label>
+                                            <div class="info-box">
+
+                                                <span><strong>Tên:</strong> Nguyễn Văn A</span>
+                                                <span><strong>Điện thoại:</strong> 0962702002</span>
+                                                <span><strong>Email:</strong> hieubmhe160402@fpt.edu.vn</span>
+                                            </div>
+                                        </div>
+
+
+                                        <div id="technicianModal" class="modal" style="display:none;
+                                             position: fixed; z-index: 1000; left: 0; top: 0;
+                                             width: 100%; height: 100%; background: rgba(0,0,0,0.5);">
+
+                                            <div class="modal-content" style="
+                                                 background: white; margin: 8% auto; padding: 20px;
+                                                 width: 400px; border-radius: 8px;">
+
+                                                <h3>Danh sách nhân viên sửa xe</h3>
+                                                <table border="1" cellspacing="0" cellpadding="8" style="width:100%; margin-top:10px;">
+                                                    <thead>
+                                                        <tr style="background:#f5f5f5;">
+                                                            <th>ID</th>
+                                                            <th>Tên nhân viên</th>
+                                                            <th>Hành động</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <c:forEach var="t" items="${technicians}">
+                                                            <tr>
+                                                                <td>${t.userID}</td>
+                                                                <td>${t.fullName}</td>
+                                                                <td>
+                                                                    <form method="post" action="assignTechnician">
+                                                                        <input type="hidden" name="maintenanceId" value="${maintenanceDetail.maintenanceId}" />
+                                                                        <input type="hidden" name="technicianId" value="${t.userID}" />
+                                                                        <button type="submit" class="btn btn-blue">Chọn</button>
+                                                                    </form>
+                                                                </td>
+                                                            </tr>
+                                                        </c:forEach>
+                                                    </tbody>
+                                                </table>
+
+                                                <!-- Nút đóng -->
+                                                <button type="button" class="btn btn-gray"
+                                                        style="margin-top:10px;"
+                                                        onclick="document.getElementById('technicianModal').style.display = 'none'">
+                                                    Đóng
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
 
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </c:if>
+
 
                     <div class="pagination">
                         <c:if test="${currentPage > 1}">
@@ -618,9 +687,7 @@
                     opt.style.display = (opt.getAttribute('data-owner') === selectedOwner) ? 'block' : 'none';
                 });
             });
-            function openServiceModal() {
-                document.getElementById('serviceModal').style.display = 'block';
-            }
+
             function closeServiceModal() {
                 document.getElementById('serviceModal').style.display = 'none';
             }
@@ -631,6 +698,25 @@
                 const modal = document.getElementById('serviceModal');
                 if (e.target === modal)
                     closeServiceModal();
+            }
+            function openAssignModal(maintenanceId) {
+                // Lấy modal
+                const modal = document.getElementById("serviceModal");
+                modal.style.display = "block";
+
+                // 🟦 Nếu bạn muốn test nhanh mà chưa có servlet
+                // thì ta sẽ tạm gán dữ liệu demo (sau này có thể fetch từ server bằng AJAX)
+                document.getElementById("serviceId").value = "SRV-" + maintenanceId;
+                document.getElementById("createdDate").value = "2025-10-28";
+                document.getElementById("createdBy").value = "Admin";
+                document.getElementById("customerName").value = "Nguyễn Văn A";
+                document.getElementById("phone").value = "0901234567";
+                document.getElementById("email").value = "vana@gmail.com";
+                document.getElementById("carBrand").value = "Toyota Camry";
+                document.getElementById("odometer").value = "45,000 km";
+                document.getElementById("licensePlate").value = "51H-123.45";
+                document.getElementById("maintenanceDate").value = "2025-10-30";
+                document.getElementById("technician").value = "Chưa chọn";
             }
         </script>
 

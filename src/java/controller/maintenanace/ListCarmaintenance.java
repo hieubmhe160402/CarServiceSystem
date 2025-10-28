@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import model.CarMaintenance;
+import model.User;
 
 /**
  *
@@ -62,10 +63,43 @@ public class ListCarmaintenance extends HttpServlet {
             throws ServletException, IOException {
 
         CarMaintenanceDAO dao = new CarMaintenanceDAO();
-        List<CarMaintenance> list = dao.getAllCarMaintenances();
+        String action = request.getParameter("action");
 
-        request.setAttribute("maintenances", list);
-        request.getRequestDispatcher("/view/carmaintenance/managerCarmaintenanace.jsp").forward(request, response);
+        try {
+            // ✅ Nếu bấm "Chọn" (mở danh sách nhân viên)
+            if ("assign".equals(action)) {
+                System.out.println(">>> Action assign triggered!"); // ✅ Debug
+                String idRaw = request.getParameter("maintenanceId");
+                if (idRaw != null && !idRaw.isEmpty()) {
+                    int maintenanceId = Integer.parseInt(idRaw);
+
+                    CarMaintenance detail = dao.getDetailServiceMaintenanceById(maintenanceId);
+                    request.setAttribute("detail", detail);
+
+                    List<User> technicians = dao.getTechnicians();
+                    System.out.println(">>> Technicians count = " + technicians.size()); // ✅ Debug
+                    request.setAttribute("technicians", technicians);
+
+                    request.getRequestDispatcher("/view/carmaintenance/managerCarmaintenanace.jsp")
+                            .forward(request, response);
+                    return;
+                }
+            }
+
+            // ✅ Nếu không có action (hiển thị danh sách chung)
+            List<CarMaintenance> maintenances = dao.getAllCarMaintenances();
+            request.setAttribute("maintenances", maintenances);
+
+            // Forward về trang chính
+            request.getRequestDispatcher("/view/carmaintenance/managerCarmaintenanace.jsp")
+                    .forward(request, response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Đã xảy ra lỗi khi tải dữ liệu bảo dưỡng: " + e.getMessage());
+            request.getRequestDispatcher("/view/carmaintenance/managerCarmaintenanace.jsp")
+                    .forward(request, response);
+        }
     }
 
     /**
