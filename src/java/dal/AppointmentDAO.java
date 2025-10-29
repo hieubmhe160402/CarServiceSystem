@@ -19,69 +19,66 @@ import model.User;
 public class AppointmentDAO extends DBContext {
 
     public boolean insertAppointment(Appointment a) {
-    String sql = "INSERT INTO Appointments "
-            + "(CarId, AppointmentDate, RequestedServices, Status, Notes, CreatedBy, CreatedDate, RequestedPackageID) "
-            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Appointments "
+                + "(CarId, AppointmentDate, RequestedServices, Status, Notes, CreatedBy, CreatedDate, RequestedPackageID) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
 
-        ps.setInt(1, a.getCar().getCarId());
-        ps.setString(2, a.getAppointmentDate());
+            ps.setInt(1, a.getCar().getCarId());
+            ps.setString(2, a.getAppointmentDate());
 
-        //  Nếu RequestedServices là null thì setNull
-        if (a.getRequestedServices() == null || a.getRequestedServices().isEmpty()) {
-            ps.setNull(3, java.sql.Types.VARCHAR);
-        } else {
-            ps.setString(3, a.getRequestedServices());
+            //  Nếu RequestedServices là null thì setNull
+            if (a.getRequestedServices() == null || a.getRequestedServices().isEmpty()) {
+                ps.setNull(3, java.sql.Types.VARCHAR);
+            } else {
+                ps.setString(3, a.getRequestedServices());
+            }
+
+            ps.setString(4, a.getStatus());
+            ps.setString(5, a.getNotes());
+            ps.setInt(6, a.getCreatedBy().getUserId());
+            ps.setTimestamp(7, new Timestamp(System.currentTimeMillis()));
+            ps.setInt(8, a.getRequestedPackage().getPackageId());
+
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        ps.setString(4, a.getStatus());
-        ps.setString(5, a.getNotes());
-        ps.setInt(6, a.getCreatedBy().getUserId());
-        ps.setTimestamp(7, new Timestamp(System.currentTimeMillis()));
-        ps.setInt(8, a.getRequestedPackage().getPackageId());
-
-        return ps.executeUpdate() > 0;
-    } catch (Exception e) {
-        e.printStackTrace();
+        return false;
     }
 
-    return false;
-}
-
-    
-    
-    
     public boolean updateAppointment(Appointment a) {
-    String sql = "UPDATE Appointments SET "
-            + "CarID = ?, "
-            + "AppointmentDate = ?, "
-            + "RequestedServices = ?, "
-            + "RequestedPackageID = ?, "
-            + "Status = ?, "
-            + "Notes = ?, "
-            + "ConfirmedBy = ?, "
-            + "ConfirmedDate = ? "
-            + "WHERE AppointmentID = ?";
+        String sql = "UPDATE Appointments SET "
+                + "CarID = ?, "
+                + "AppointmentDate = ?, "
+                + "RequestedServices = ?, "
+                + "RequestedPackageID = ?, "
+                + "Status = ?, "
+                + "Notes = ?, "
+                + "ConfirmedBy = ?, "
+                + "ConfirmedDate = ? "
+                + "WHERE AppointmentID = ?";
 
-    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
 
-        ps.setInt(1, a.getCar().getCarId());
-        ps.setString(2, a.getAppointmentDate());
-        ps.setString(3, a.getRequestedServices());
-        ps.setInt(4, a.getRequestedPackage().getPackageId());
-        ps.setString(5, a.getStatus());
-        ps.setString(6, a.getNotes());
-        ps.setInt(7, a.getConfirmedBy() != null ? a.getConfirmedBy().getUserId() : 0); // tránh null
-        ps.setTimestamp(8, new Timestamp(System.currentTimeMillis()));
-        ps.setInt(9, a.getAppointmentId());
+            ps.setInt(1, a.getCar().getCarId());
+            ps.setString(2, a.getAppointmentDate());
+            ps.setString(3, a.getRequestedServices());
+            ps.setInt(4, a.getRequestedPackage().getPackageId());
+            ps.setString(5, a.getStatus());
+            ps.setString(6, a.getNotes());
+            ps.setInt(7, a.getConfirmedBy() != null ? a.getConfirmedBy().getUserId() : 0); // tránh null
+            ps.setTimestamp(8, new Timestamp(System.currentTimeMillis()));
+            ps.setInt(9, a.getAppointmentId());
 
-        return ps.executeUpdate() > 0;
-    } catch (Exception e) {
-        e.printStackTrace();
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
-    return false;
-}
 
     // Method 1: Đếm tổng số records (có filter)
     public int getTotalRecords(int userId, String dateFilter, String packageFilter) {
@@ -180,7 +177,7 @@ public class AppointmentDAO extends DBContext {
     // 1️⃣ Đếm tổng số records (không filter)
     public int getTotalRecordsByUserId(int userId) {
         int total = 0;
-        String sql = "SELECT COUNT(*) FROM appointments WHERE user_id = ?";
+        String sql = "SELECT COUNT(*) FROM Appointments WHERE CreatedBy = ?";
 
         try (PreparedStatement ps = connection.prepareStatement((sql).toString())) {
 
@@ -201,20 +198,19 @@ public class AppointmentDAO extends DBContext {
     public int getTotalRecordsWithFilter(int userId, String dateFilter, String packageFilter) {
         int total = 0;
         StringBuilder sql = new StringBuilder(
-                "SELECT COUNT(*) FROM appointments a "
-                + "LEFT JOIN maintenance_packages mp ON a.package_id = mp.package_id "
-                + "WHERE a.user_id = ?"
+                "SELECT COUNT(*) FROM Appointments a "
+                + "LEFT JOIN MaintenancePackage mp ON a.RequestedPackageID = mp.PackageID "
+                + "WHERE a.CreatedBy = ?" // hoặc nếu bạn dùng userId là người tạo thì giữ nguyên
         );
 
         if (dateFilter != null && !dateFilter.isEmpty()) {
-            sql.append(" AND a.appointment_date = ?");
+            sql.append(" AND CAST(a.AppointmentDate AS DATE) = ?");
         }
         if (packageFilter != null && !packageFilter.isEmpty()) {
-            sql.append(" AND mp.name LIKE ?");
+            sql.append(" AND mp.Name LIKE ?");
         }
 
-        try (PreparedStatement ps = connection.prepareStatement((sql).toString())) {
-
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
             int paramIndex = 1;
             ps.setInt(paramIndex++, userId);
 
@@ -236,65 +232,62 @@ public class AppointmentDAO extends DBContext {
         return total;
     }
 
+
 // 3️⃣ Lấy danh sách với phân trang (không filter)
     public List<Appointment> getAppointmentsByUserIdPaginated(int userId, int offset, int limit) {
         List<Appointment> list = new ArrayList<>();
-        String sql = "SELECT a.*, c.*, mp.*, u.* "
-                + "FROM appointments a "
-                + "LEFT JOIN cars c ON a.car_id = c.car_id "
-                + "LEFT JOIN maintenance_packages mp ON a.package_id = mp.package_id "
-                + "LEFT JOIN users u ON a.created_by = u.user_id "
-                + "WHERE a.user_id = ? "
-                + "ORDER BY a.appointment_date DESC "
-                + "LIMIT ? OFFSET ?";
+        String sql
+                = "SELECT a.*, c.*, mp.*, u.* "
+                + "FROM Appointments a "
+                + "LEFT JOIN Cars c ON a.CarID = c.CarID "
+                + "LEFT JOIN MaintenancePackage mp ON a.RequestedPackageID = mp.PackageID "
+                + "LEFT JOIN Users u ON a.CreatedBy = u.UserID "
+                + "WHERE a.CreatedBy = ? "
+                + "ORDER BY a.AppointmentDate DESC "
+                + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY"; // ✅ SQL Server style
 
-        try (PreparedStatement ps = connection.prepareStatement((sql).toString())) {
-
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, userId);
-            ps.setInt(2, limit);
-            ps.setInt(3, offset);
+            ps.setInt(2, offset);
+            ps.setInt(3, limit);
 
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                // Tạo object Appointment
                 Appointment a = new Appointment();
-                a.setAppointmentId(rs.getInt("appointment_id"));
-                a.setAppointmentDate(rs.getDate("appointment_date").toString());
-                a.setStatus(rs.getString("status"));
-                a.setRequestedServices(rs.getString("requested_services"));
-                a.setNotes(rs.getString("notes"));
-                a.setCreatedDate(rs.getTimestamp("created_date").toString());
+                a.setAppointmentId(rs.getInt("AppointmentID"));
+                a.setAppointmentDate(rs.getDate("AppointmentDate").toString());
+                a.setStatus(rs.getString("Status"));
+                a.setRequestedServices(rs.getString("RequestedServices"));
+                a.setNotes(rs.getString("Notes"));
+                a.setCreatedDate(rs.getTimestamp("CreatedDate").toString());
 
-                // Tạo object Car
                 Car car = new Car();
-                car.setCarId(rs.getInt("car_id"));
-                car.setBrand(rs.getString("brand"));
-                car.setModel(rs.getString("model"));
-                car.setLicensePlate(rs.getString("license_plate"));
-                car.setYear(rs.getInt("year"));
-                car.setColor(rs.getString("color"));
+                car.setCarId(rs.getInt("CarID"));
+                car.setBrand(rs.getString("Brand"));
+                car.setModel(rs.getString("Model"));
+                car.setLicensePlate(rs.getString("LicensePlate"));
+                car.setYear(rs.getInt("Year"));
+                car.setColor(rs.getString("Color"));
                 a.setCar(car);
 
-                // Tạo object MaintenancePackage
                 MaintenancePackage mp = new MaintenancePackage();
-                mp.setPackageId(rs.getInt("package_id"));
-                mp.setName(rs.getString("name"));
-                mp.setPackageCode(rs.getString("package_code"));
-                mp.setDescription(rs.getString("description"));
-                mp.setKilometerMilestone(rs.getInt("kilometer_milestone"));
-                mp.setMonthMilestone(rs.getInt("month_milestone"));
-                mp.setEstimatedDurationHours(rs.getBigDecimal("estimated_duration_hours"));
-                mp.setBasePrice(rs.getBigDecimal("base_price"));
-                mp.setDiscountPercent(rs.getBigDecimal("discount_percent"));
-                mp.setFinalPrice(rs.getBigDecimal("final_price"));
+                mp.setPackageId(rs.getInt("PackageID"));
+                mp.setName(rs.getString("Name"));
+                mp.setPackageCode(rs.getString("PackageCode"));
+                mp.setDescription(rs.getString("Description"));
+                mp.setKilometerMilestone(rs.getInt("KilometerMilestone"));
+                mp.setMonthMilestone(rs.getInt("MonthMilestone"));
+                mp.setEstimatedDurationHours(rs.getBigDecimal("EstimatedDurationHours"));
+                mp.setBasePrice(rs.getBigDecimal("BasePrice"));
+                mp.setDiscountPercent(rs.getBigDecimal("DiscountPercent"));
+                mp.setFinalPrice(rs.getBigDecimal("FinalPrice"));
                 a.setRequestedPackage(mp);
 
-                // Tạo object User (người tạo)
                 User createdBy = new User();
-                createdBy.setUserId(rs.getInt("user_id"));
-                createdBy.setFullName(rs.getString("full_name"));
-                createdBy.setEmail(rs.getString("email"));
-                createdBy.setPhone(rs.getString("phone"));
+                createdBy.setUserId(rs.getInt("UserID"));
+                createdBy.setFullName(rs.getString("FullName"));
+                createdBy.setEmail(rs.getString("Email"));
+                createdBy.setPhone(rs.getString("Phone"));
                 a.setCreatedBy(createdBy);
 
                 list.add(a);
@@ -306,30 +299,30 @@ public class AppointmentDAO extends DBContext {
         return list;
     }
 
+    // 4️⃣ Lấy danh sách có filter + phân trang
     public List<Appointment> getAppointmentsByFilterPaginated(
             int userId, String dateFilter, String packageFilter, int offset, int limit) {
 
         List<Appointment> list = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
                 "SELECT a.*, c.*, mp.*, u.* "
-                + "FROM appointments a "
-                + "LEFT JOIN cars c ON a.car_id = c.car_id "
-                + "LEFT JOIN maintenance_packages mp ON a.package_id = mp.package_id "
-                + "LEFT JOIN users u ON a.created_by = u.user_id "
-                + "WHERE a.user_id = ?"
+                + "FROM Appointments a "
+                + "LEFT JOIN Cars c ON a.CarID = c.CarID "
+                + "LEFT JOIN MaintenancePackage mp ON a.RequestedPackageID = mp.PackageID "
+                + "LEFT JOIN Users u ON a.CreatedBy = u.UserID "
+                + "WHERE a.CreatedBy = ?"
         );
 
         if (dateFilter != null && !dateFilter.isEmpty()) {
-            sql.append(" AND a.appointment_date = ?");
+            sql.append(" AND CAST(a.AppointmentDate AS DATE) = ?");
         }
         if (packageFilter != null && !packageFilter.isEmpty()) {
-            sql.append(" AND mp.name LIKE ?");
+            sql.append(" AND mp.Name LIKE ?");
         }
 
-        sql.append(" ORDER BY a.appointment_date DESC LIMIT ? OFFSET ?");
+        sql.append(" ORDER BY a.AppointmentDate DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
 
-        try (PreparedStatement ps = connection.prepareStatement((sql).toString())) {
-
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
             int paramIndex = 1;
             ps.setInt(paramIndex++, userId);
 
@@ -340,50 +333,46 @@ public class AppointmentDAO extends DBContext {
                 ps.setString(paramIndex++, "%" + packageFilter + "%");
             }
 
-            ps.setInt(paramIndex++, limit);
             ps.setInt(paramIndex++, offset);
+            ps.setInt(paramIndex++, limit);
 
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                // Tạo object Appointment
                 Appointment a = new Appointment();
-                a.setAppointmentId(rs.getInt("appointment_id"));
-                a.setAppointmentDate(rs.getDate("appointment_date").toString());
-                a.setStatus(rs.getString("status"));
-                a.setRequestedServices(rs.getString("requested_services"));
-                a.setNotes(rs.getString("notes"));
-                a.setCreatedDate(rs.getTimestamp("created_date").toString());
+                a.setAppointmentId(rs.getInt("AppointmentID"));
+                a.setAppointmentDate(rs.getDate("AppointmentDate").toString());
+                a.setStatus(rs.getString("Status"));
+                a.setRequestedServices(rs.getString("RequestedServices"));
+                a.setNotes(rs.getString("Notes"));
+                a.setCreatedDate(rs.getTimestamp("CreatedDate").toString());
 
-                // Tạo object Car
                 Car car = new Car();
-                car.setCarId(rs.getInt("car_id"));
-                car.setBrand(rs.getString("brand"));
-                car.setModel(rs.getString("model"));
-                car.setLicensePlate(rs.getString("license_plate"));
-                car.setYear(rs.getInt("year"));
-                car.setColor(rs.getString("color"));
+                car.setCarId(rs.getInt("CarID"));
+                car.setBrand(rs.getString("Brand"));
+                car.setModel(rs.getString("Model"));
+                car.setLicensePlate(rs.getString("LicensePlate"));
+                car.setYear(rs.getInt("Year"));
+                car.setColor(rs.getString("Color"));
                 a.setCar(car);
 
-                // Tạo object MaintenancePackage
                 MaintenancePackage mp = new MaintenancePackage();
-                mp.setPackageId(rs.getInt("package_id"));
-                mp.setName(rs.getString("name"));
-                mp.setPackageCode(rs.getString("package_code"));
-                mp.setDescription(rs.getString("description"));
-                mp.setKilometerMilestone(rs.getInt("kilometer_milestone"));
-                mp.setMonthMilestone(rs.getInt("month_milestone"));
-                mp.setEstimatedDurationHours(rs.getBigDecimal("estimated_duration_hours"));
-                mp.setBasePrice(rs.getBigDecimal("base_price"));
-                mp.setDiscountPercent(rs.getBigDecimal("discount_percent"));
-                mp.setFinalPrice(rs.getBigDecimal("final_price"));
+                mp.setPackageId(rs.getInt("PackageID"));
+                mp.setName(rs.getString("Name"));
+                mp.setPackageCode(rs.getString("PackageCode"));
+                mp.setDescription(rs.getString("Description"));
+                mp.setKilometerMilestone(rs.getInt("KilometerMilestone"));
+                mp.setMonthMilestone(rs.getInt("MonthMilestone"));
+                mp.setEstimatedDurationHours(rs.getBigDecimal("EstimatedDurationHours"));
+                mp.setBasePrice(rs.getBigDecimal("BasePrice"));
+                mp.setDiscountPercent(rs.getBigDecimal("DiscountPercent"));
+                mp.setFinalPrice(rs.getBigDecimal("FinalPrice"));
                 a.setRequestedPackage(mp);
 
-                // Tạo object User (người tạo)
                 User createdBy = new User();
-                createdBy.setUserId(rs.getInt("user_id"));
-                createdBy.setFullName(rs.getString("full_name"));
-                createdBy.setEmail(rs.getString("email"));
-                createdBy.setPhone(rs.getString("phone"));
+                createdBy.setUserId(rs.getInt("UserID"));
+                createdBy.setFullName(rs.getString("FullName"));
+                createdBy.setEmail(rs.getString("Email"));
+                createdBy.setPhone(rs.getString("Phone"));
                 a.setCreatedBy(createdBy);
 
                 list.add(a);
@@ -589,7 +578,7 @@ public class AppointmentDAO extends DBContext {
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, a.getCar().getCarId());
             ps.setString(2, a.getAppointmentDate());
-            
+
             // Sử dụng customServices thay vì a.getRequestedServices()
             if (customServices == null || customServices.trim().isEmpty()) {
                 ps.setNull(3, java.sql.Types.VARCHAR);
@@ -611,13 +600,13 @@ public class AppointmentDAO extends DBContext {
     }
 
     // ===== TẠO LỊCH HẸN TÙY CHỌN VỚI PACKAGE CODE =====
-    public boolean createCustomAppointmentWithPackageCode(int carId, String appointmentDate, 
+    public boolean createCustomAppointmentWithPackageCode(int carId, String appointmentDate,
             String customServices, String notes, int userId, String packageCode) {
-        
+
         // Lấy gói PKG-EMPTY
         MaintenancePackageDAO packageDAO = new MaintenancePackageDAO();
         MaintenancePackage customPackage = packageDAO.getPackageByCode(packageCode);
-        
+
         if (customPackage == null) {
             System.out.println("❌ Không tìm thấy gói với code: " + packageCode);
             return false;
@@ -625,17 +614,17 @@ public class AppointmentDAO extends DBContext {
 
         // Tạo đối tượng Appointment
         Appointment appointment = new Appointment();
-        
+
         // Tạo Car object
         Car car = new Car();
         car.setCarId(carId);
         appointment.setCar(car);
-        
+
         // Tạo User object
         User user = new User();
         user.setUserId(userId);
         appointment.setCreatedBy(user);
-        
+
         // Set các thông tin khác
         appointment.setAppointmentDate(appointmentDate);
         appointment.setRequestedServices(customServices);
@@ -646,8 +635,7 @@ public class AppointmentDAO extends DBContext {
         // Lưu vào database
         return insertCustomAppointment(appointment, customServices);
     }
-    
-    
+
     public List<Appointment> getAllAppointments() {
         List<Appointment> list = new ArrayList<>();
         try {
@@ -712,7 +700,7 @@ public class AppointmentDAO extends DBContext {
                 list.add(a);
             }
 
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
 
