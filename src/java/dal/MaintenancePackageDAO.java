@@ -12,6 +12,20 @@ import model.MaintenancePackageDetail;
 import model.Product;
 import model.User;
 
+
+import context.DBContext;
+import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.util.ArrayList;
+import java.sql.ResultSet;
+import java.util.List;
+import model.MaintenancePackageDetail;
+import java.sql.SQLException;
+import model.Product;
+import model.User;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import model.MaintenancePackage;
 public class MaintenancePackageDAO extends DBContext {
 
     //DL
@@ -596,4 +610,46 @@ public class MaintenancePackageDAO extends DBContext {
         }
     }
 
+   public static void main(String[] args) {
+    MaintenancePackageDAO dao = new MaintenancePackageDAO();
+    
+    // Test lấy gói theo code
+    MaintenancePackage customPkg = dao.getPackageByCode("PKG-EMPTY");
+    if (customPkg != null) {
+        System.out.println("===== Gói tùy chọn tìm thấy =====");
+        System.out.println("ID: " + customPkg.getPackageId());
+        System.out.println("Code: " + customPkg.getPackageCode());
+        System.out.println("Tên: " + customPkg.getName());
+        System.out.println("Mô tả: " + customPkg.getDescription());
+    } else {
+        System.out.println("❌ Không tìm thấy gói PKG-EMPTY");
+    }
+    
+    int testId = 1; // 👈 đổi ID gói bảo dưỡng bạn muốn test
+    MaintenancePackage pkg = dao.getPackageById(testId);
+
+    if (pkg != null) {
+        System.out.println("===== Gói bảo dưỡng tìm thấy =====");
+        System.out.println("ID: " + pkg.getPackageId());
+        System.out.println("Tên gói: " + pkg.getName());
+        System.out.println("Mô tả: " + pkg.getDescription());
+        System.out.println("KM mốc: " + pkg.getKilometerMilestone());
+        System.out.println("Tháng mốc: " + pkg.getMonthMilestone());
+        System.out.println("Giá gốc: " + pkg.getBasePrice());
+        System.out.println("Giảm giá: " + pkg.getDiscountPercent());
+        System.out.println("Giá cuối: " + pkg.getFinalPrice());
+        System.out.println("Hãng áp dụng: " + pkg.getApplicableBrands());
+        System.out.println("Ảnh: " + pkg.getImage());
+        System.out.println("Ngày tạo: " + pkg.getCreatedDate());
+        System.out.println("Trạng thái: " + (pkg.isIsActive() ? "Hoạt động" : "Ngừng"));
+    } else {
+        System.out.println("❌ Không tìm thấy gói nào với ID = " + testId);
+    }
 }
+  
+    
+}
+
+
+   
+

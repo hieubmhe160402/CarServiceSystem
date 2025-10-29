@@ -52,20 +52,60 @@ public class userAppoinmentsHistoryController extends HttpServlet {
         }
 
        
-          //---Lấy danh sách lịch hẹn (lọc hoặc toàn bộ) ---
+        //---Lấy danh sách lịch hẹn với phân trang (lọc hoặc toàn bộ) ---
         List<Appointment> list;
-        if ((dateFilter != null && !dateFilter.isEmpty()) ||
-            (packageFilter != null && !packageFilter.isEmpty())) {
-            list = dao.getAppointmentsByFilter(userId, dateFilter, packageFilter);
-        } else {
-            list = dao.getAppointmentsByUserId(userId);
+
+        // Parse paging params
+        int currentPage = 1;
+        int pageSize = 4; // default page size
+        String pageParam = request.getParameter("page");
+        String pageSizeParam = request.getParameter("pageSize");
+        try {
+            if (pageParam != null) {
+                currentPage = Integer.parseInt(pageParam);
+            }
+        } catch (NumberFormatException e) {
+            currentPage = 1;
         }
 
-        
-        //Truyền dữ liệu sang JSP ---
+        try {
+            if (pageSizeParam != null) {
+                pageSize = Integer.parseInt(pageSizeParam);
+                if (pageSize <= 0) pageSize = 10;
+            }
+        } catch (NumberFormatException e) {
+            pageSize = 10;
+        }
+
+        if (currentPage < 1) currentPage = 1;
+
+        int totalRecords = 0;
+        if ((dateFilter != null && !dateFilter.isEmpty()) || (packageFilter != null && !packageFilter.isEmpty())) {
+            // Use filtered count + filtered paginated fetch
+            totalRecords = dao.getTotalRecordsWithFilter(userId, dateFilter, packageFilter);
+            int offset = (currentPage - 1) * pageSize;
+            list = dao.getAppointmentsByFilterPaginated(userId, dateFilter, packageFilter, offset, pageSize);
+        } else {
+            // Use total count + paginated fetch for all user's appointments
+            totalRecords = dao.getTotalRecordsByUserId(userId);
+            int offset = (currentPage - 1) * pageSize;
+            list = dao.getAppointmentsByUserIdPaginated(userId, offset, pageSize);
+        }
+
+        int totalPages = 1;
+        if (totalRecords > 0) {
+            totalPages = (totalRecords + pageSize - 1) / pageSize;
+        }
+        if (currentPage > totalPages) currentPage = totalPages;
+
+        // Truyền dữ liệu sang JSP ---
         request.setAttribute("appointmentList", list);
         request.setAttribute("dateFilter", dateFilter);
         request.setAttribute("packageFilter", packageFilter);
+        request.setAttribute("currentPage", currentPage);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("totalRecords", totalRecords);
+        request.setAttribute("pageSize", pageSize);
 
         // Nếu có detail, JSP có thể hiển thị phần chi tiết riêng
         request.getRequestDispatcher("view/Customer/userAppointmentHistory.jsp").forward(request, response);
