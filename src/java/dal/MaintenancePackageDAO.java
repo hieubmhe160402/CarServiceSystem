@@ -12,9 +12,8 @@ import model.MaintenancePackageDetail;
 import model.Product;
 import model.User;
 
-
 public class MaintenancePackageDAO extends DBContext {
-    
+
     //DL
     public MaintenancePackage getRecommendedPackage(String brand, int currentKm) {
         String sql = """
@@ -60,7 +59,7 @@ public class MaintenancePackageDAO extends DBContext {
 
         return null;
     }
-    
+
     //DL
     public MaintenancePackage getPackageById(int id) {
         String sql = "SELECT * FROM MaintenancePackage WHERE PackageID = ? AND IsActive = 1";
@@ -124,8 +123,7 @@ public class MaintenancePackageDAO extends DBContext {
         }
         return null;
     }
-    
-    
+
     //DL
     public List<MaintenancePackage> getAllActivePackages() {
         List<MaintenancePackage> list = new ArrayList<>();
@@ -160,8 +158,7 @@ public class MaintenancePackageDAO extends DBContext {
 
         return list;
     }
-    
-    
+
     //DL
     // ===== TÌM KIẾM GÓI THEO HÃNG XE =====
     public List<MaintenancePackage> searchPackagesByBrand(String brand) {
@@ -206,8 +203,7 @@ public class MaintenancePackageDAO extends DBContext {
 
         return list;
     }
-    
-    
+
     //DL
     // ===== LẤY GÓI THEO PACKAGE CODE =====
     public MaintenancePackage getPackageByCode(String packageCode) {
@@ -273,33 +269,34 @@ public class MaintenancePackageDAO extends DBContext {
         List<MaintenancePackageDetail> list = new ArrayList<>();
 
         String sql = """
-    SELECT 
-        mp.PackageID,
-        mp.PackageCode,
-        mp.Name AS PackageName,
-        mp.Description AS PackageDescription,
-        mp.KilometerMilestone,
-        mp.MonthMilestone,
-        mp.BasePrice,
-        mp.DiscountPercent, 
-        mp.FinalPrice,
-        mp.EstimatedDurationHours,
-        mp.ApplicableBrands,
-        mp.Image,
-        mp.DisplayOrder,
-        mp.IsActive,
-        mp.CreatedDate,
-        mp.CreatedBy,
-        u.FullName AS CreatedByFullName,
-        mpd.PackageDetailID,
-        mpd.DisplayOrder AS DetailDisplayOrder,
-        p.ProductID,
-        p.Name AS ProductName
-    FROM MaintenancePackageDetail mpd
-    INNER JOIN MaintenancePackage mp ON mp.PackageID = mpd.PackageID
-    INNER JOIN Product p ON p.ProductID = mpd.ProductID
-    LEFT JOIN Users u ON mp.CreatedBy = u.UserID
-    ORDER BY mp.PackageCode, mpd.DisplayOrder
+      SELECT 
+             mp.PackageID,
+             mp.PackageCode,
+             mp.Name AS PackageName,
+             mp.Description AS PackageDescription,
+             mp.KilometerMilestone,
+             mp.MonthMilestone,
+             mp.BasePrice,
+             mp.DiscountPercent, 
+             mp.FinalPrice,
+             mp.EstimatedDurationHours,
+             mp.ApplicableBrands,
+             mp.Image,
+             mp.DisplayOrder,
+             mp.IsActive,
+             mp.CreatedDate,
+             mp.CreatedBy,
+             u.FullName AS CreatedByFullName,
+             mpd.PackageDetailID,
+             mpd.DisplayOrder AS DetailDisplayOrder,
+             p.ProductID,
+             p.Name AS ProductName
+         FROM MaintenancePackageDetail mpd
+         INNER JOIN MaintenancePackage mp ON mp.PackageID = mpd.PackageID
+         INNER JOIN Product p ON p.ProductID = mpd.ProductID
+         LEFT JOIN Users u ON mp.CreatedBy = u.UserID
+     	WHERE mpd.IsRequired=1
+         ORDER BY mp.PackageCode, mpd.DisplayOrder  
 """;
 
         try (PreparedStatement stm = connection.prepareStatement(sql); ResultSet rs = stm.executeQuery()) {
@@ -390,7 +387,7 @@ public class MaintenancePackageDAO extends DBContext {
             throw new IOException("Lỗi thêm combo mới: " + e.getMessage());
         }
     }
-    
+
     // ✅ NEW: Search packages by keyword and status
     public List<MaintenancePackageDetail> searchPackages(String keyword, String statusFilter) {
         List<MaintenancePackageDetail> list = new ArrayList<>();
@@ -423,11 +420,11 @@ public class MaintenancePackageDAO extends DBContext {
             LEFT JOIN Users u ON mp.CreatedBy = u.UserID
             WHERE (mp.PackageCode LIKE ? OR mp.Name LIKE ? OR mp.Description LIKE ?)
         """);
-        
+
         if (statusFilter != null && !statusFilter.isEmpty()) {
             sql.append(" AND mp.IsActive = ?");
         }
-        
+
         sql.append(" ORDER BY mp.PackageCode, mpd.DisplayOrder");
 
         try (PreparedStatement stm = connection.prepareStatement(sql.toString())) {
@@ -435,11 +432,11 @@ public class MaintenancePackageDAO extends DBContext {
             stm.setString(1, searchPattern);
             stm.setString(2, searchPattern);
             stm.setString(3, searchPattern);
-            
+
             if (statusFilter != null && !statusFilter.isEmpty()) {
                 stm.setBoolean(4, Boolean.parseBoolean(statusFilter));
             }
-            
+
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
                     // Gói bảo dưỡng
@@ -469,7 +466,7 @@ public class MaintenancePackageDAO extends DBContext {
                     createdBy.setUserId(rs.getInt("CreatedBy"));
                     createdBy.setFullName(rs.getString("CreatedByFullName"));
                     mp.setCreatedBy(createdBy);
-                    
+
                     // Chi tiết gói
                     MaintenancePackageDetail detail = new MaintenancePackageDetail();
                     detail.setPackageDetailId(rs.getInt("PackageDetailID"));
@@ -485,7 +482,7 @@ public class MaintenancePackageDAO extends DBContext {
         }
         return list;
     }
-    
+
     // ✅ NEW: Get packages by status
     public List<MaintenancePackageDetail> getPackagesByStatus(String statusFilter) {
         List<MaintenancePackageDetail> list = new ArrayList<>();
@@ -551,7 +548,7 @@ public class MaintenancePackageDAO extends DBContext {
                     createdBy.setUserId(rs.getInt("CreatedBy"));
                     createdBy.setFullName(rs.getString("CreatedByFullName"));
                     mp.setCreatedBy(createdBy);
-                    
+
                     // Chi tiết gói
                     MaintenancePackageDetail detail = new MaintenancePackageDetail();
                     detail.setPackageDetailId(rs.getInt("PackageDetailID"));
@@ -567,7 +564,7 @@ public class MaintenancePackageDAO extends DBContext {
         }
         return list;
     }
-    
+
     // ✅ NEW: Update package
     public void updatePackage(MaintenancePackage mp) throws IOException {
         String sql = """

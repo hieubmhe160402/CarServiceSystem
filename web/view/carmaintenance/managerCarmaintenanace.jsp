@@ -586,7 +586,11 @@
                                             <label>Thông tin nhân viên sửa chữa</label>
                                             <p style="margin: 4px 0;">Chọn nhân viên sửa chữa *</p>
                                             <div style="display: flex; gap: 10px;">
-                                                <button class="btn btn-blue" type="button">Chọn</button>
+                                                <!-- Nút mở popup -->
+                                                <button class="btn btn-blue" type="button"
+                                                        onclick="document.getElementById('technicianModal').style.display = 'block'">
+                                                    Chọn
+                                                </button>
                                                 <button class="btn btn-gray" type="button">Chọn lại nhân viên</button>
                                             </div>
                                         </div>
@@ -603,33 +607,62 @@
                                         </div>
 
 
-                                        <div id="technicianModal" class="modal" style="display:none;
-                                             position: fixed; z-index: 1000; left: 0; top: 0;
-                                             width: 100%; height: 100%; background: rgba(0,0,0,0.5);">
+                                        <!-- Modal chọn kỹ thuật viên -->
+                                        <div id="technicianModal" class="modal" style="
+                                             display:none;
+                                             position: fixed;
+                                             z-index: 1000;
+                                             left: 0; top: 0;
+                                             width: 100%; height: 100%;
+                                             background: rgba(0,0,0,0.5);">
 
                                             <div class="modal-content" style="
-                                                 background: white; margin: 8% auto; padding: 20px;
-                                                 width: 400px; border-radius: 8px;">
+                                                 background: white;
+                                                 margin: 8% auto;
+                                                 padding: 20px;
+                                                 width: 700px;
+                                                 border-radius: 8px;
+                                                 box-shadow: 0 2px 10px rgba(0,0,0,0.2);">
 
-                                                <h3>Danh sách nhân viên sửa xe</h3>
-                                                <table border="1" cellspacing="0" cellpadding="8" style="width:100%; margin-top:10px;">
-                                                    <thead>
-                                                        <tr style="background:#f5f5f5;">
+                                                <h3 style="text-align:center; margin-bottom: 15px;">Danh sách nhân viên sửa xe</h3>
+
+                                                <table border="1" cellspacing="0" cellpadding="8" 
+                                                       style="width:100%; border-collapse:collapse; text-align:left;">
+                                                    <thead style="background:#f5f5f5;">
+                                                        <tr>
                                                             <th>ID</th>
                                                             <th>Tên nhân viên</th>
+                                                            <th>Email</th>
+                                                            <th>Số điện thoại</th>
+                                                            <th>Trạng thái</th>
+                                                            <th>Chức vụ</th>
                                                             <th>Hành động</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         <c:forEach var="t" items="${technicians}">
                                                             <tr>
-                                                                <td>${t.userID}</td>
+                                                                <td>${t.userId}</td>
                                                                 <td>${t.fullName}</td>
+                                                                <td>${t.email}</td>
+                                                                <td>${t.phone}</td>
                                                                 <td>
-                                                                    <form method="post" action="assignTechnician">
-                                                                        <input type="hidden" name="maintenanceId" value="${maintenanceDetail.maintenanceId}" />
-                                                                        <input type="hidden" name="technicianId" value="${t.userID}" />
-                                                                        <button type="submit" class="btn btn-blue">Chọn</button>
+                                                                    <c:choose>
+                                                                        <c:when test="${t.isActive}">Hoạt động</c:when>
+                                                                        <c:otherwise>Ngưng hoạt động</c:otherwise>
+                                                                    </c:choose>
+                                                                </td>
+                                                                <td>${t.role.roleName}</td>
+                                                                <td style="text-align:center;">
+                                                                    <form action="listCarmaintenance" method="post" style="margin:0;">
+                                                                        <input type="hidden" name="action" value="confirmAssign" />
+                                                                        <input type="hidden" name="maintenanceId" value="${detail.maintenanceId}" />
+                                                                        <input type="hidden" name="technicianId" value="${t.userId}" />
+                                                                        <button type="submit" 
+                                                                                class="btn btn-primary btn-sm"
+                                                                                style="background:#3B82F6; color:white; border:none; padding:5px 10px; border-radius:4px;">
+                                                                            Chọn
+                                                                        </button>
                                                                     </form>
                                                                 </td>
                                                             </tr>
@@ -637,14 +670,17 @@
                                                     </tbody>
                                                 </table>
 
-                                                <!-- Nút đóng -->
-                                                <button type="button" class="btn btn-gray"
-                                                        style="margin-top:10px;"
-                                                        onclick="document.getElementById('technicianModal').style.display = 'none'">
-                                                    Đóng
-                                                </button>
+                                                <div style="text-align:right; margin-top:15px;">
+                                                    <button type="button" class="btn btn-gray"
+                                                            style="background:#ccc; border:none; padding:6px 12px; border-radius:4px;"
+                                                            onclick="document.getElementById('technicianModal').style.display = 'none'">
+                                                        Đóng
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
+
+
                                     </div>
 
                                 </div>

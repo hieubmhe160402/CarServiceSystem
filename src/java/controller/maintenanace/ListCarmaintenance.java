@@ -68,22 +68,15 @@ public class ListCarmaintenance extends HttpServlet {
         try {
             // ✅ Nếu bấm "Chọn" (mở danh sách nhân viên)
             if ("assign".equals(action)) {
-                System.out.println(">>> Action assign triggered!"); // ✅ Debug
-                String idRaw = request.getParameter("maintenanceId");
-                if (idRaw != null && !idRaw.isEmpty()) {
-                    int maintenanceId = Integer.parseInt(idRaw);
+                int maintenanceId = Integer.parseInt(request.getParameter("maintenanceId"));
+                CarMaintenance detail = dao.getDetailServiceMaintenanceById(maintenanceId);
+                List<User> technicians = dao.getTechnicians();
+                request.setAttribute("detail", detail);
+                request.setAttribute("technicians", technicians);
 
-                    CarMaintenance detail = dao.getDetailServiceMaintenanceById(maintenanceId);
-                    request.setAttribute("detail", detail);
-
-                    List<User> technicians = dao.getTechnicians();
-                    System.out.println(">>> Technicians count = " + technicians.size()); // ✅ Debug
-                    request.setAttribute("technicians", technicians);
-
-                    request.getRequestDispatcher("/view/carmaintenance/managerCarmaintenanace.jsp")
-                            .forward(request, response);
-                    return;
-                }
+                request.getRequestDispatcher("/view/carmaintenance/managerCarmaintenanace.jsp")
+                        .forward(request, response);
+                return;
             }
 
             // ✅ Nếu không có action (hiển thị danh sách chung)

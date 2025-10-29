@@ -162,18 +162,20 @@ public class CarMaintenanceDAO extends DBContext {
 
     public List<User> getTechnicians() {
         List<User> list = new ArrayList<>();
-
         String sql = """
         SELECT 
             u.UserID,
             u.FullName,
-            u.Username,
+            u.Email,
             u.Phone,
-            u.IsActive
+            u.IsActive,
+            r.RoleID,
+            r.RoleName
         FROM Users u
         INNER JOIN Role r ON u.RoleID = r.RoleID
-        WHERE r.RoleName = 'Technician'   -- lọc theo tên role
-          AND u.IsActive = 1;             -- chỉ lấy user còn hoạt động
+        WHERE u.RoleID = 3
+          AND u.IsActive = 1
+        ORDER BY u.FullName ASC
     """;
 
         try (PreparedStatement stm = connection.prepareStatement(sql); ResultSet rs = stm.executeQuery()) {
@@ -182,9 +184,16 @@ public class CarMaintenanceDAO extends DBContext {
                 User u = new User();
                 u.setUserId(rs.getInt("UserID"));
                 u.setFullName(rs.getString("FullName"));
-                u.setUserName(rs.getString("Username"));
+                u.setEmail(rs.getString("Email"));
                 u.setPhone(rs.getString("Phone"));
                 u.setIsActive(rs.getBoolean("IsActive"));
+
+                // Gán role cho user
+                model.Role r = new model.Role();
+                r.setRoleID(rs.getInt("RoleID"));
+                r.setRoleName(rs.getString("RoleName"));
+                u.setRole(r);
+
                 list.add(u);
             }
 
