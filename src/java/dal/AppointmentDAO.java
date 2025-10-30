@@ -232,7 +232,6 @@ public class AppointmentDAO extends DBContext {
         return total;
     }
 
-
 // 3️⃣ Lấy danh sách với phân trang (không filter)
     public List<Appointment> getAppointmentsByUserIdPaginated(int userId, int offset, int limit) {
         List<Appointment> list = new ArrayList<>();
@@ -1285,22 +1284,20 @@ public class AppointmentDAO extends DBContext {
         }
     }
 
-
-    
     public static void main(String[] args) {
         AppointmentDAO dao = new AppointmentDAO();
 
         // 🔹 Test tạo lịch hẹn tùy chọn
         System.out.println("=== TEST TẠO LỊCH HẸN TÙY CHỌN ===");
         boolean success = dao.createCustomAppointmentWithPackageCode(
-            1,                              // carId
-            "2025-01-15 14:30:00",         // appointmentDate
-            "Thay dầu, kiểm tra phanh, sửa chữa điều hòa", // customServices
-            "Xe có tiếng kêu lạ khi phanh", // notes
-            13,                             // userId
-            "PKG-EMPTY"                     // packageCode
+                1, // carId
+                "2025-01-15 14:30:00", // appointmentDate
+                "Thay dầu, kiểm tra phanh, sửa chữa điều hòa", // customServices
+                "Xe có tiếng kêu lạ khi phanh", // notes
+                13, // userId
+                "PKG-EMPTY" // packageCode
         );
-        
+
         if (success) {
             System.out.println("✅ Tạo lịch hẹn tùy chọn thành công!");
         } else {
@@ -1334,6 +1331,3 @@ public class AppointmentDAO extends DBContext {
     }
 
 }
-
-
-

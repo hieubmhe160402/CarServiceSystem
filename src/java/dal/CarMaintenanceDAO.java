@@ -104,27 +104,46 @@ public class CarMaintenanceDAO extends DBContext {
         String sql = """
         SELECT 
             m.MaintenanceID,
-            a.AppointmentID,
+            m.AppointmentID,
             m.MaintenanceDate,
             m.Odometer,
             m.Status,
             m.Notes,
             m.AssignedTechnicianID,
             m.CompletedDate,
-            u.FullName,
-            u.Phone,
-            u.Email,
+
+            -- Thông tin khách hàng (chủ xe)
+            u.UserID AS CustomerID,
+            u.FullName AS CustomerName,
+            u.Phone AS CustomerPhone,
+            u.Email AS CustomerEmail,
+
+            -- Thông tin kỹ thuật viên
+            tech.UserID AS TechnicianID,
+            tech.FullName AS TechnicianName,
+            tech.Phone AS TechnicianPhone,
+            tech.Email AS TechnicianEmail,
+
+            -- Thông tin xe
+            c.CarID,
+            c.LicensePlate,
+            c.Brand,
+            c.Model,
+            c.Color,
             CONCAT(c.Brand, ' ', c.Model, ' - ', c.Color) AS CarInfo
-        FROM Appointments a
-        LEFT JOIN CarMaintenance m ON a.AppointmentID = m.AppointmentID
+
+        FROM CarMaintenance m
+        LEFT JOIN Appointments a ON m.AppointmentID = a.AppointmentID
         LEFT JOIN Cars c ON a.CarID = c.CarID
         LEFT JOIN Users u ON c.OwnerID = u.UserID
+        LEFT JOIN Users tech ON m.AssignedTechnicianID = tech.UserID
         WHERE m.MaintenanceID = ?
     """;
 
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setInt(1, maintenanceId);
             ResultSet rs = stm.executeQuery();
+
             if (rs.next()) {
                 CarMaintenance cm = new CarMaintenance();
                 cm.setMaintenanceId(rs.getInt("MaintenanceID"));
@@ -134,29 +153,49 @@ public class CarMaintenanceDAO extends DBContext {
                 cm.setNotes(rs.getString("Notes"));
                 cm.setCompletedDate(rs.getString("CompletedDate"));
 
-                User tech = new User();
-                tech.setUserId(rs.getInt("AssignedTechnicianID"));
-                cm.setAssignedTechnician(tech);
-
+                // 🔹 Appointment
                 Appointment ap = new Appointment();
                 ap.setAppointmentId(rs.getInt("AppointmentID"));
                 cm.setAppointment(ap);
 
+                // 🔹 Car
                 Car car = new Car();
-                car.setBrand(rs.getString("CarInfo"));
+                car.setCarId(rs.getInt("CarID"));
+                car.setLicensePlate(rs.getString("LicensePlate"));
+                car.setBrand(rs.getString("Brand"));
+                car.setModel(rs.getString("Model"));
+                car.setColor(rs.getString("Color"));
                 cm.setCar(car);
 
+                // 🔹 Owner (Customer)
                 User owner = new User();
-                owner.setFullName(rs.getString("FullName"));
-                owner.setPhone(rs.getString("Phone"));
-                owner.setEmail(rs.getString("Email"));
+                owner.setUserId(rs.getInt("CustomerID"));
+                owner.setFullName(rs.getString("CustomerName"));
+                owner.setPhone(rs.getString("CustomerPhone"));
+                owner.setEmail(rs.getString("CustomerEmail"));
                 car.setOwner(owner);
+
+                // 🔹 Technician (Assigned Technician)
+                User tech = new User();
+                String techName = rs.getString("TechnicianName");
+                if (techName == null || techName.trim().isEmpty()) {
+                    tech.setFullName("Chưa chọn");
+                    tech.setPhone("-");
+                    tech.setEmail("-");
+                } else {
+                    tech.setUserId(rs.getInt("TechnicianID"));
+                    tech.setFullName(techName);
+                    tech.setPhone(rs.getString("TechnicianPhone"));
+                    tech.setEmail(rs.getString("TechnicianEmail"));
+                }
+                cm.setAssignedTechnician(tech);
 
                 return cm;
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
+
         return null;
     }
 

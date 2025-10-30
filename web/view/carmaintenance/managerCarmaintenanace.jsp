@@ -643,12 +643,11 @@
                                         <div class="form-group tech-info-box">
                                             <label>Thông tin kỹ thuật viên</label>
                                             <div class="info-box">
-                                                <span><strong>Tên:</strong> <span id="techName">Chưa chọn</span></span>
-                                                <span><strong>Điện thoại:</strong> <span id="techPhone">-</span></span>
-                                                <span><strong>Email:</strong> <span id="techEmail">-</span></span>
+                                                <span><strong>Tên:</strong> ${detail.assignedTechnician.fullName}</span>
+                                                <span><strong>Điện thoại:</strong> ${detail.assignedTechnician.phone}</span>
+                                                <span><strong>Email:</strong> ${detail.assignedTechnician.email}</span>
                                             </div>
                                         </div>
-
 
                                         <!-- Modal chọn kỹ thuật viên -->
                                         <div id="technicianModal" class="modal" style="
@@ -722,8 +721,7 @@
                                                 </div>
                                             </div>
                                         </div>
-
-
+                                        <p>DEBUG: ${detail.assignedTechnician.fullName} / ${detail.assignedTechnician.phone}</p>
                                     </div>
 
                                 </div>
