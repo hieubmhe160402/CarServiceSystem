@@ -204,4 +204,21 @@ public class CarMaintenanceDAO extends DBContext {
         return list;
     }
 
+    public void assignTechnician(int maintenanceId, int technicianId) {
+        String sql = """
+        UPDATE CarMaintenance
+        SET AssignedTechnicianID = ?, Status = 'PROCESSING'
+        WHERE MaintenanceID = ?
+    """;
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setInt(1, technicianId);
+            stm.setInt(2, maintenanceId);
+            int rows = stm.executeUpdate();
+            System.out.println(">>> assignTechnician updated rows = " + rows);
+            System.out.println(">>> technicianId = " + technicianId + ", maintenanceId = " + maintenanceId);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
 }

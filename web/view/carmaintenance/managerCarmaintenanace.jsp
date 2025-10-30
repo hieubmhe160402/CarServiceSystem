@@ -587,11 +587,55 @@
                                             <p style="margin: 4px 0;">Chọn nhân viên sửa chữa *</p>
                                             <div style="display: flex; gap: 10px;">
                                                 <!-- Nút mở popup -->
-                                                <button class="btn btn-blue" type="button"
+                                                <button id="btnSelectTech" class="btn btn-blue" type="button"
                                                         onclick="document.getElementById('technicianModal').style.display = 'block'">
                                                     Chọn
                                                 </button>
-                                                <button class="btn btn-gray" type="button">Chọn lại nhân viên</button>
+                                                <!--information when staff picking up--> 
+                                                <div id="technicianModal" class="modal" style="display:none;">
+                                                    <div class="modal-content" style="width: 500px; padding: 20px;">
+                                                        <h4>Chọn kỹ thuật viên</h4>
+
+                                                        <table class="table table-bordered" style="width:100%;">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Tên</th>
+                                                                    <th>Điện thoại</th>
+                                                                    <th>Email</th>
+                                                                    <th>Chọn</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <c:forEach var="t" items="${technicians}">
+                                                                    <tr>
+                                                                        <td>${t.fullName}</td>
+                                                                        <td>${t.phone}</td>
+                                                                        <td>${t.email}</td>
+                                                                        <td style="text-align:center;">
+                                                                            <form action="listCarmaintenance" method="post" style="display:inline;">
+                                                                                <input type="hidden" name="action" value="confirmAssign" />
+                                                                                <input type="hidden" name="maintenanceId" value="${detail.maintenanceId}" />
+                                                                                <input type="hidden" name="technicianId" value="${t.userId}" />
+                                                                                <button type="submit" class="btn btn-blue">Chọn</button>
+                                                                            </form>
+                                                                        </td>
+                                                                    </tr>
+                                                                </c:forEach>
+                                                            </tbody>
+                                                        </table>
+
+                                                        <div style="text-align:right; margin-top:10px;">
+                                                            <button class="btn btn-gray" type="button"
+                                                                    onclick="document.getElementById('technicianModal').style.display = 'none'">
+                                                                Đóng
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <button id="btnResetTech" class="btn btn-gray" type="button" style="display:none;"
+                                                        onclick="resetTechnician()">
+                                                    Chọn lại nhân viên
+                                                </button>
                                             </div>
                                         </div>
 
@@ -599,10 +643,9 @@
                                         <div class="form-group tech-info-box">
                                             <label>Thông tin kỹ thuật viên</label>
                                             <div class="info-box">
-
-                                                <span><strong>Tên:</strong> Nguyễn Văn A</span>
-                                                <span><strong>Điện thoại:</strong> 0962702002</span>
-                                                <span><strong>Email:</strong> hieubmhe160402@fpt.edu.vn</span>
+                                                <span><strong>Tên:</strong> <span id="techName">Chưa chọn</span></span>
+                                                <span><strong>Điện thoại:</strong> <span id="techPhone">-</span></span>
+                                                <span><strong>Email:</strong> <span id="techEmail">-</span></span>
                                             </div>
                                         </div>
 
@@ -755,6 +798,47 @@
                 document.getElementById("technician").value = "Chưa chọn";
             }
         </script>
+        <c:if test="${openModal}">
+            <script>
+                const serviceModal = new bootstrap.Modal(document.getElementById('serviceModal'));
+                serviceModal.show();
+            </script>
+        </c:if>
 
+        <script>
+            function selectTechnician(id, name, phone, email) {
+                // Cập nhật thông tin hiển thị
+                document.getElementById('techName').textContent = name;
+                document.getElementById('techPhone').textContent = phone;
+                document.getElementById('techEmail').textContent = email;
+
+                // Cập nhật input ẩn (nếu có)
+                const inputTechId = document.getElementById('technicianId');
+                if (inputTechId)
+                    inputTechId.value = id;
+
+                // Ẩn popup
+                document.getElementById('technicianModal').style.display = 'none';
+
+                // Ẩn nút "Chọn", hiện nút "Chọn lại"
+                document.getElementById('btnSelectTech').style.display = 'none';
+                document.getElementById('btnResetTech').style.display = 'inline-block';
+            }
+            function resetTechnician() {
+                // Xóa thông tin kỹ thuật viên
+                document.getElementById('techName').textContent = 'Chưa chọn';
+                document.getElementById('techPhone').textContent = '-';
+                document.getElementById('techEmail').textContent = '-';
+
+                // Reset input hidden
+                const inputTechId = document.getElementById('technicianId');
+                if (inputTechId)
+                    inputTechId.value = '';
+
+                // Hiện lại nút "Chọn", ẩn nút "Chọn lại"
+                document.getElementById('btnSelectTech').style.display = 'inline-block';
+                document.getElementById('btnResetTech').style.display = 'none';
+            }
+        </script>
     </body>
 </html>

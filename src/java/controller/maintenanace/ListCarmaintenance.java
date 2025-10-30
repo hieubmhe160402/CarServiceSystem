@@ -71,9 +71,11 @@ public class ListCarmaintenance extends HttpServlet {
                 int maintenanceId = Integer.parseInt(request.getParameter("maintenanceId"));
                 CarMaintenance detail = dao.getDetailServiceMaintenanceById(maintenanceId);
                 List<User> technicians = dao.getTechnicians();
+                List<CarMaintenance> maintenances = dao.getAllCarMaintenances();
+                request.setAttribute("maintenances", maintenances);
                 request.setAttribute("detail", detail);
                 request.setAttribute("technicians", technicians);
-
+                request.setAttribute("openModal", true);
                 request.getRequestDispatcher("/view/carmaintenance/managerCarmaintenanace.jsp")
                         .forward(request, response);
                 return;
@@ -82,14 +84,12 @@ public class ListCarmaintenance extends HttpServlet {
             // ✅ Nếu không có action (hiển thị danh sách chung)
             List<CarMaintenance> maintenances = dao.getAllCarMaintenances();
             request.setAttribute("maintenances", maintenances);
-
-            // Forward về trang chính
             request.getRequestDispatcher("/view/carmaintenance/managerCarmaintenanace.jsp")
                     .forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Đã xảy ra lỗi khi tải dữ liệu bảo dưỡng: " + e.getMessage());
+            request.setAttribute("error", "Đã xảy ra lỗi khi tải dữ liệu: " + e.getMessage());
             request.getRequestDispatcher("/view/carmaintenance/managerCarmaintenanace.jsp")
                     .forward(request, response);
         }
@@ -113,6 +113,15 @@ public class ListCarmaintenance extends HttpServlet {
         if ("cancel".equals(action)) {
             int maintenanceId = Integer.parseInt(request.getParameter("maintenanceId"));
             dao.updateStatus(maintenanceId, "CANCELLED");
+            response.sendRedirect("listCarmaintenance");
+            return;
+        }
+        if ("confirmAssign".equals(action) || "assignTechnician".equals(action)) {
+            int maintenanceId = Integer.parseInt(request.getParameter("maintenanceId"));
+            int technicianId = Integer.parseInt(request.getParameter("technicianId"));
+            dao.assignTechnician(maintenanceId, technicianId);
+            response.sendRedirect("listCarmaintenance");
+            return;
         }
 
         // Sau khi update xong, load lại danh sách
