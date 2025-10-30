@@ -342,7 +342,7 @@
 
             /* Nội dung body */
             .modal-body {
-                padding: 25px;
+                padding: 10px;
             }
             .grid {
                 display: grid;
@@ -721,15 +721,47 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <p>DEBUG: ${detail.assignedTechnician.fullName} / ${detail.assignedTechnician.phone}</p>
                                     </div>
+                                </div>
+                                <!-- ===================== DANH SÁCH DỊCH VỤ SỬ DỤNG ===================== -->
+                                <div class="form-group full">
+                                    <h3 style="margin-bottom: 10px;">Danh sách dịch vụ sử dụng</h3>
+                                    <table border="1" cellspacing="0" cellpadding="8" 
+                                           style="width:100%; border-collapse:collapse; text-align:left;">
+                                        <thead style="background:#f5f5f5;">
+                                            <tr>
+                                                <th>Mã SP</th>
+                                                <th>Tên linh kiện/Dịch vụ</th>
+                                                <th>Số lượng</th>
+                                                <th>Đơn giá</th>
+                                                <th>Thành tiền</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <c:forEach var="item" items="${detail.products}">
+                                                <tr>
+                                                    <td>${item.productId}</td>
+                                                    <td>${item.productName}</td>
+                                                    <td>${item.quantity}</td>
+                                                    <td>
+                                            <fmt:formatNumber value="${item.unitPrice}" type="number" groupingUsed="true" /> VND
+                                            </td>
+                                            <td>
+                                            <fmt:formatNumber value="${item.quantity * item.unitPrice}" type="number" groupingUsed="true" /> VND
+                                            </td>
+                                            </tr>
+                                        </c:forEach>
+                                        </tbody>
+                                    </table>
 
+                                    <div style="text-align:right; margin-top:10px; font-weight:bold;">
+                                        Tổng tiền: 
+                                        <fmt:formatNumber value="${detail.totalAmount}" type="number" groupingUsed="true" /> VND
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </c:if>
-
-
                     <div class="pagination">
                         <c:if test="${currentPage > 1}">
                             <a href="supplier?page=${currentPage - 1}">« Trước</a>
