@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
 import model.CarMaintenance;
 import model.User;
 
@@ -72,6 +73,9 @@ public class ListCarmaintenance extends HttpServlet {
                 CarMaintenance detail = dao.getDetailServiceMaintenanceById(maintenanceId);
                 List<User> technicians = dao.getTechnicians();
                 List<CarMaintenance> maintenances = dao.getAllCarMaintenances();
+                List<Map<String, Object>> products = dao.getMaintenanceProducts(maintenanceId);
+                request.setAttribute("products", products);
+
                 request.setAttribute("maintenances", maintenances);
                 request.setAttribute("detail", detail);
                 request.setAttribute("technicians", technicians);

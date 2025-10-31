@@ -4,6 +4,7 @@
     Author     : MinHeee
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <%@ page contentType="text/html; charset=UTF-8" %>
 <!DOCTYPE html>
@@ -734,23 +735,30 @@
                                                 <th>Tên linh kiện/Dịch vụ</th>
                                                 <th>Số lượng</th>
                                                 <th>Đơn giá</th>
+                                                <th>Giảm giá </th>
                                                 <th>Thành tiền</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <c:forEach var="item" items="${detail.products}">
-                                                <tr>
-                                                    <td>${item.productId}</td>
-                                                    <td>${item.productName}</td>
-                                                    <td>${item.quantity}</td>
-                                                    <td>
-                                            <fmt:formatNumber value="${item.unitPrice}" type="number" groupingUsed="true" /> VND
-                                            </td>
-                                            <td>
-                                            <fmt:formatNumber value="${item.quantity * item.unitPrice}" type="number" groupingUsed="true" /> VND
-                                            </td>
-                                            </tr>
-                                        </c:forEach>
+                                            <c:choose>
+                                                <c:when test="${not empty products}">
+                                                    <c:forEach var="item" items="${products}">
+                                                        <tr>
+                                                            <td>${item.packageCode}</td>
+                                                            <td>${item.productName}</td>
+                                                            <td>${item.quantity}</td>
+                                                            <td><fmt:formatNumber value="${item.basePrice}" type="number" groupingUsed="true"/> VND</td>
+                                                            <td>${item.discountPercent}%</td>
+                                                            <td><fmt:formatNumber value="${item.finalPrice}" type="number" groupingUsed="true"/> VND</td>
+                                                        </tr>
+                                                    </c:forEach>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <tr>
+                                                        <td colspan="6" style="text-align:center;">Không có sản phẩm nào trong phiếu bảo dưỡng này</td>
+                                                    </tr>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </tbody>
                                     </table>
 

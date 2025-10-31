@@ -7,7 +7,9 @@ package dal;
 import java.sql.*;
 import context.DBContext;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import model.Appointment;
 import model.Car;
 import model.CarMaintenance;
@@ -258,6 +260,165 @@ public class CarMaintenanceDAO extends DBContext {
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
+    }
+
+    //join so use listMap
+//    public List<Map<String, Object>> (int maintenanceId) {
+//        List<Map<String, Object>> list = new ArrayList<>();
+//        String sql = """
+//        SELECT 
+//            mp.PackageCode,
+//            p.Name AS ProductName,
+//            pd.Quantity,
+//            mp.BasePrice,
+//            mp.DiscountPercent,
+//            mp.FinalPrice
+//        FROM MaintenancePackageUsage mpu
+//        JOIN MaintenancePackage mp ON mpu.PackageID = mp.PackageID
+//        JOIN MaintenancePackageDetail pd ON mp.PackageID = pd.PackageID
+//        JOIN Product p ON pd.ProductID = p.ProductID
+//        WHERE mpu.MaintenanceID = ?
+//    """;
+//
+//        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+//            stm.setInt(1, maintenanceId);
+//            ResultSet rs = stm.executeQuery();
+//
+//            while (rs.next()) {
+//                Map<String, Object> map = new HashMap<>();
+//                map.put("packageCode", rs.getString("PackageCode"));
+//                map.put("productName", rs.getString("ProductName"));
+//                map.put("quantity", rs.getInt("Quantity"));
+//                map.put("basePrice", rs.getDouble("BasePrice"));
+//                map.put("discountPercent", rs.getDouble("DiscountPercent"));
+//                map.put("finalPrice", rs.getDouble("FinalPrice"));     // ✅ chữ thường
+//                list.add(map);
+//            }
+//        } catch (SQLException ex) {
+//            ex.printStackTrace();
+//        }
+//        return list;
+//    }
+    public List<Map<String, Object>> getMaintenanceProducts(int maintenanceId) {
+        List<Map<String, Object>> list = new ArrayList<>();
+
+        // ✅ Lấy PackageID nếu có
+        Integer packageId = null;
+        String checkPackageSql = """
+        SELECT RequestedPackageID 
+        FROM Appointments a
+        JOIN CarMaintenance m ON a.AppointmentID = m.AppointmentID
+        WHERE m.MaintenanceID = ?
+    """;
+        try (PreparedStatement ps = connection.prepareStatement(checkPackageSql)) {
+            ps.setInt(1, maintenanceId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                packageId = rs.getInt("RequestedPackageID");
+                if (rs.wasNull()) {
+                    packageId = null;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            // 🔹 Nếu có gói combo → lấy sản phẩm từ MaintenancePackageDetail
+            if (packageId != null) {
+                String sqlCombo = """
+                SELECT 
+                    mp.PackageCode,
+                    p.Name AS ProductName,
+                    mpd.Quantity,
+                    mp.BasePrice,
+                    mp.DiscountPercent,
+                    mp.FinalPrice
+                FROM MaintenancePackage mp
+                JOIN MaintenancePackageDetail mpd ON mp.PackageID = mpd.PackageID
+                JOIN Product p ON mpd.ProductID = p.ProductID
+                WHERE mp.PackageID = ?
+            """;
+                try (PreparedStatement stm = connection.prepareStatement(sqlCombo)) {
+                    stm.setInt(1, packageId);
+                    ResultSet rs = stm.executeQuery();
+                    while (rs.next()) {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("packageCode", rs.getString("PackageCode"));
+                        map.put("productName", rs.getString("ProductName"));
+                        map.put("quantity", rs.getBigDecimal("Quantity"));
+                        map.put("basePrice", rs.getDouble("BasePrice"));
+                        map.put("discountPercent", rs.getDouble("DiscountPercent"));
+                        map.put("finalPrice", rs.getDouble("FinalPrice"));
+                        map.put("itemType", "Dịch vụ combo");
+                        list.add(map);
+                    }
+                }
+            }
+
+            // 🔹 Dịch vụ lẻ
+            String sqlService = """
+            SELECT 
+                p.Code,
+                p.Name AS ProductName,
+                sd.Quantity,
+                sd.UnitPrice AS BasePrice,
+                0 AS DiscountPercent,
+                sd.TotalPrice AS FinalPrice
+            FROM ServiceDetails sd
+            JOIN Product p ON sd.ProductID = p.ProductID
+            WHERE sd.MaintenanceID = ?
+        """;
+            try (PreparedStatement stm = connection.prepareStatement(sqlService)) {
+                stm.setInt(1, maintenanceId);
+                ResultSet rs = stm.executeQuery();
+                while (rs.next()) {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("packageCode", rs.getString("Code"));
+                    map.put("productName", rs.getString("ProductName"));
+                    map.put("quantity", rs.getBigDecimal("Quantity"));
+                    map.put("basePrice", rs.getDouble("BasePrice"));
+                    map.put("discountPercent", rs.getDouble("DiscountPercent"));
+                    map.put("finalPrice", rs.getDouble("FinalPrice"));
+                    map.put("itemType", "Dịch vụ lẻ");
+                    list.add(map);
+                }
+            }
+
+            // 🔹 Phụ tùng lẻ
+            String sqlPart = """
+            SELECT 
+                p.Code,
+                p.Name AS ProductName,
+                spd.Quantity,
+                spd.UnitPrice AS BasePrice,
+                0 AS DiscountPercent,
+                spd.TotalPrice AS FinalPrice
+            FROM ServicePartDetails spd
+            JOIN Product p ON spd.ProductID = p.ProductID
+            WHERE spd.MaintenanceID = ?
+        """;
+            try (PreparedStatement stm = connection.prepareStatement(sqlPart)) {
+                stm.setInt(1, maintenanceId);
+                ResultSet rs = stm.executeQuery();
+                while (rs.next()) {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("packageCode", rs.getString("Code"));
+                    map.put("productName", rs.getString("ProductName"));
+                    map.put("quantity", rs.getBigDecimal("Quantity"));
+                    map.put("basePrice", rs.getDouble("BasePrice"));
+                    map.put("discountPercent", rs.getDouble("DiscountPercent"));
+                    map.put("finalPrice", rs.getDouble("FinalPrice"));
+                    map.put("itemType", "Phụ tùng thay thế");
+                    list.add(map);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
     }
 
 }
