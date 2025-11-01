@@ -835,15 +835,15 @@
                         </c:if>
                         <div class="pagination">
                             <c:if test="${currentPage > 1}">
-                                <a href="supplier?page=${currentPage - 1}">« Trước</a>
+                                <a href="listCarmaintenance?page=${currentPage - 1}">« Trước</a>
                             </c:if>
 
                             <c:forEach begin="1" end="${totalPages}" var="i">
-                                <a href="supplier?page=${i}" class="${i == currentPage ? 'active' : ''}">${i}</a>
+                                <a href="listCarmaintenance?page=${i}" class="${i == currentPage ? 'active' : ''}">${i}</a>
                             </c:forEach>
 
                             <c:if test="${currentPage < totalPages}">
-                                <a href="supplier?page=${currentPage + 1}">Sau »</a>
+                                <a href="listCarmaintenance?page=${currentPage + 1}">Sau »</a>
                             </c:if>
                         </div>
                     </div>

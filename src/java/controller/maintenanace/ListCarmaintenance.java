@@ -76,9 +76,21 @@ public class ListCarmaintenance extends HttpServlet {
                 // Khi mở modal, vẫn nên load danh sách hiện tại theo param (nếu có)
                 String statusForList = request.getParameter("status");
                 String searchForList = request.getParameter("search");
+
+                int page = 1;
+                int pageSize = 10;
+                try {
+                    page = Integer.parseInt(request.getParameter("page"));
+                } catch (NumberFormatException e) {
+                }
+
                 List<CarMaintenance> maintenances = dao.getAllCarMaintenances(
                         statusForList != null ? statusForList : "",
-                        searchForList != null ? searchForList : "");
+                        searchForList != null ? searchForList : "",
+                        page, pageSize);
+
+                int totalRecords = dao.countMaintenanceRecords(statusForList, searchForList);
+                int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
 
                 List<Map<String, Object>> products = dao.getMaintenanceProducts(maintenanceId);
 
@@ -87,27 +99,38 @@ public class ListCarmaintenance extends HttpServlet {
                 request.setAttribute("detail", detail);
                 request.setAttribute("technicians", technicians);
                 request.setAttribute("openModal", true);
+                request.setAttribute("currentPage", page);
+                request.setAttribute("totalPages", totalPages);
 
                 request.getRequestDispatcher("/view/carmaintenance/managerCarmaintenanace.jsp")
                         .forward(request, response);
                 return;
             }
 
-            // Lấy param filter & search (có thể null)
+            // Lấy filter & search
             String status = request.getParameter("status");
             String search = request.getParameter("search");
 
-            // Nếu null -> chuyền chuỗi rỗng để DAO xử lý dễ hơn
             String statusParam = (status != null) ? status : "";
             String searchParam = (search != null) ? search.trim() : "";
 
-            // Gọi DAO luôn (DAO sẽ decide có thêm WHERE cho search/status hay không)
-            List<CarMaintenance> maintenances = dao.getAllCarMaintenances(statusParam, searchParam);
+            // Phân trang
+            int page = 1;
+            int pageSize = 8;
+            try {
+                page = Integer.parseInt(request.getParameter("page"));
+            } catch (NumberFormatException e) {
+            }
 
-            // Trả lại view, giữ lại giá trị người dùng nhập
+            List<CarMaintenance> maintenances = dao.getAllCarMaintenances(statusParam, searchParam, page, pageSize);
+            int totalRecords = dao.countMaintenanceRecords(statusParam, searchParam);
+            int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
+
             request.setAttribute("maintenances", maintenances);
             request.setAttribute("selectedStatus", statusParam);
             request.setAttribute("searchKeyword", searchParam);
+            request.setAttribute("currentPage", page);
+            request.setAttribute("totalPages", totalPages);
 
             request.getRequestDispatcher("/view/carmaintenance/managerCarmaintenanace.jsp")
                     .forward(request, response);
