@@ -240,7 +240,7 @@
                 ${success}
             </div>
             <div class="success-login">
-                <p>Đăng ký thành công! Bạn có thể <a href="AuthController?action=login">đăng nhập ngay</a> với tài khoản: <strong>${registeredUsername}</strong></p>
+                <p>Đăng ký thành công! Bạn có thể <a href="authController?action=login">đăng nhập ngay</a> với tài khoản: <strong>${registeredUsername}</strong></p>
             </div>
         </c:if>
         
@@ -256,7 +256,7 @@
                 </ul>
             </div>
             
-            <form action="${pageContext.request.contextPath}/RegisterController" method="post">
+            <form action="${pageContext.request.contextPath}/registerController" method="post">
                 <div class="form-row">
                     <div class="form-group">
                         <label for="fullName">Họ và tên *:</label>
@@ -321,7 +321,7 @@
             </form>
         </c:if>
         
-        <a href="AuthController?action=login" class="btn-login">
+        <a href="authController?action=login" class="btn-login">
             Đã có tài khoản? Đăng nhập ngay
         </a>
     </div>
