@@ -1,6 +1,6 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+         * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+         * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package dal;
 
@@ -24,74 +24,6 @@ import java.util.logging.Level;
  */
 public class CarMaintenanceDAO extends DBContext {
 
-    public List<CarMaintenance> getAllCarMaintenances() {
-        List<CarMaintenance> list = new ArrayList<>();
-        try {
-            String sql = """
-                SELECT 
-                    cm.MaintenanceID,
-                    a.AppointmentID,
-                    u.FullName AS CustomerName,
-                    c.LicensePlate,
-                    c.Brand,
-                    c.Model,
-                    CONVERT(VARCHAR(10), cm.MaintenanceDate, 103) AS MaintenanceDate,
-                    cm.Status,
-                    tech.FullName AS TechnicianName
-                FROM CarMaintenance cm
-                LEFT JOIN Appointments a ON cm.AppointmentID = a.AppointmentID
-                LEFT JOIN Cars c ON cm.CarID = c.CarID
-                LEFT JOIN Users u ON c.OwnerID = u.UserID           -- khách hàng
-                LEFT JOIN Users tech ON cm.AssignedTechnicianID = tech.UserID  -- kỹ thuật viên
-                ORDER BY cm.MaintenanceDate DESC
-            """;
-
-            PreparedStatement stm = connection.prepareStatement(sql);
-            ResultSet rs = stm.executeQuery();
-
-            while (rs.next()) {
-                CarMaintenance cm = new CarMaintenance();
-                cm.setMaintenanceId(rs.getInt("MaintenanceID"));
-                cm.setStatus(rs.getString("Status"));
-                cm.setMaintenanceDate(rs.getString("MaintenanceDate"));
-
-                // Appointment
-                Appointment appointment = new Appointment();
-                appointment.setAppointmentId(rs.getInt("AppointmentID"));
-                cm.setAppointment(appointment);
-
-                // Car
-                Car car = new Car();
-                car.setLicensePlate(rs.getString("LicensePlate"));
-                car.setBrand(rs.getString("Brand"));
-                car.setModel(rs.getString("Model"));
-
-                // Chủ xe (khách hàng)
-                User owner = new User();
-                owner.setFullName(rs.getString("CustomerName"));
-                car.setOwner(owner);
-                cm.setCar(car);
-
-                // Kỹ thuật viên (assignedTechnician)
-                User technician = new User();
-                String techName = rs.getString("TechnicianName");
-                if (techName == null || techName.trim().isEmpty()) {
-                    technician.setFullName("None");
-                } else {
-                    technician.setFullName(techName);
-                }
-                cm.setAssignedTechnician(technician);
-
-                list.add(cm);
-            }
-
-        } catch (SQLException ex) {
-            Logger.getLogger(CarMaintenanceDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return list;
-    }
-
     public void updateStatus(int maintenanceId, String newStatus) {
         String sql = "UPDATE CarMaintenance SET Status = ?, AssignedTechnicianID = NULL WHERE MaintenanceID = ?";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
@@ -105,44 +37,44 @@ public class CarMaintenanceDAO extends DBContext {
 
     public CarMaintenance getDetailServiceMaintenanceById(int maintenanceId) {
         String sql = """
-        SELECT 
-            m.MaintenanceID,
-            m.AppointmentID,
-            m.MaintenanceDate,
-            m.Odometer,
-            m.Status,
-            m.Notes,
-            m.AssignedTechnicianID,
-            m.CompletedDate,
-            m.FinalAmount,
+                SELECT 
+                    m.MaintenanceID,
+                    m.AppointmentID,
+                    m.MaintenanceDate,
+                    m.Odometer,
+                    m.Status,
+                    m.Notes,
+                    m.AssignedTechnicianID,
+                    m.CompletedDate,
+                    m.FinalAmount,
 
-            -- Thông tin khách hàng (chủ xe)
-            u.UserID AS CustomerID,
-            u.FullName AS CustomerName,
-            u.Phone AS CustomerPhone,
-            u.Email AS CustomerEmail,
+                    -- Thông tin khách hàng (chủ xe)
+                    u.UserID AS CustomerID,
+                    u.FullName AS CustomerName,
+                    u.Phone AS CustomerPhone,
+                    u.Email AS CustomerEmail,
 
-            -- Thông tin kỹ thuật viên
-            tech.UserID AS TechnicianID,
-            tech.FullName AS TechnicianName,
-            tech.Phone AS TechnicianPhone,
-            tech.Email AS TechnicianEmail,
+                    -- Thông tin kỹ thuật viên
+                    tech.UserID AS TechnicianID,
+                    tech.FullName AS TechnicianName,
+                    tech.Phone AS TechnicianPhone,
+                    tech.Email AS TechnicianEmail,
 
-            -- Thông tin xe
-            c.CarID,
-            c.LicensePlate,
-            c.Brand,
-            c.Model,
-            c.Color,
-            CONCAT(c.Brand, ' ', c.Model, ' - ', c.Color) AS CarInfo
+                    -- Thông tin xe
+                    c.CarID,
+                    c.LicensePlate,
+                    c.Brand,
+                    c.Model,
+                    c.Color,
+                    CONCAT(c.Brand, ' ', c.Model, ' - ', c.Color) AS CarInfo
 
-        FROM CarMaintenance m
-        LEFT JOIN Appointments a ON m.AppointmentID = a.AppointmentID
-        LEFT JOIN Cars c ON a.CarID = c.CarID
-        LEFT JOIN Users u ON c.OwnerID = u.UserID
-        LEFT JOIN Users tech ON m.AssignedTechnicianID = tech.UserID
-        WHERE m.MaintenanceID = ?
-    """;
+                FROM CarMaintenance m
+                LEFT JOIN Appointments a ON m.AppointmentID = a.AppointmentID
+                LEFT JOIN Cars c ON a.CarID = c.CarID
+                LEFT JOIN Users u ON c.OwnerID = u.UserID
+                LEFT JOIN Users tech ON m.AssignedTechnicianID = tech.UserID
+                WHERE m.MaintenanceID = ?
+            """;
 
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setInt(1, maintenanceId);
@@ -207,20 +139,20 @@ public class CarMaintenanceDAO extends DBContext {
     public List<User> getTechnicians() {
         List<User> list = new ArrayList<>();
         String sql = """
-        SELECT 
-            u.UserID,
-            u.FullName,
-            u.Email,
-            u.Phone,
-            u.IsActive,
-            r.RoleID,
-            r.RoleName
-        FROM Users u
-        INNER JOIN Role r ON u.RoleID = r.RoleID
-        WHERE u.RoleID = 3
-          AND u.IsActive = 1
-        ORDER BY u.FullName ASC
-    """;
+                SELECT 
+                    u.UserID,
+                    u.FullName,
+                    u.Email,
+                    u.Phone,
+                    u.IsActive,
+                    r.RoleID,
+                    r.RoleName
+                FROM Users u
+                INNER JOIN Role r ON u.RoleID = r.RoleID
+                WHERE u.RoleID = 3
+                  AND u.IsActive = 1
+                ORDER BY u.FullName ASC
+            """;
 
         try (PreparedStatement stm = connection.prepareStatement(sql); ResultSet rs = stm.executeQuery()) {
 
@@ -250,10 +182,10 @@ public class CarMaintenanceDAO extends DBContext {
 
     public void assignTechnician(int maintenanceId, int technicianId) {
         String sql = """
-        UPDATE CarMaintenance
-        SET AssignedTechnicianID = ?, Status = 'PROCESSING'
-        WHERE MaintenanceID = ?
-    """;
+                UPDATE CarMaintenance
+                SET AssignedTechnicianID = ?, Status = 'PROCESSING'
+                WHERE MaintenanceID = ?
+            """;
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setInt(1, technicianId);
             stm.setInt(2, maintenanceId);
@@ -271,11 +203,11 @@ public class CarMaintenanceDAO extends DBContext {
         // ✅ Lấy PackageID nếu có
         Integer packageId = null;
         String checkPackageSql = """
-        SELECT RequestedPackageID 
-        FROM Appointments a
-        JOIN CarMaintenance m ON a.AppointmentID = m.AppointmentID
-        WHERE m.MaintenanceID = ?
-    """;
+                SELECT RequestedPackageID 
+                FROM Appointments a
+                JOIN CarMaintenance m ON a.AppointmentID = m.AppointmentID
+                WHERE m.MaintenanceID = ?
+            """;
         try (PreparedStatement ps = connection.prepareStatement(checkPackageSql)) {
             ps.setInt(1, maintenanceId);
             ResultSet rs = ps.executeQuery();
@@ -293,18 +225,18 @@ public class CarMaintenanceDAO extends DBContext {
             // 🔹 Nếu có gói combo → lấy sản phẩm từ MaintenancePackageDetail
             if (packageId != null) {
                 String sqlCombo = """
-                SELECT 
-                    mp.PackageCode,
-                    p.Name AS ProductName,
-                    mpd.Quantity,
-                    mp.BasePrice,
-                    mp.DiscountPercent,
-                    mp.FinalPrice
-                FROM MaintenancePackage mp
-                JOIN MaintenancePackageDetail mpd ON mp.PackageID = mpd.PackageID
-                JOIN Product p ON mpd.ProductID = p.ProductID
-                WHERE mp.PackageID = ?
-            """;
+                        SELECT 
+                            mp.PackageCode,
+                            p.Name AS ProductName,
+                            mpd.Quantity,
+                            mp.BasePrice,
+                            mp.DiscountPercent,
+                            mp.FinalPrice
+                        FROM MaintenancePackage mp
+                        JOIN MaintenancePackageDetail mpd ON mp.PackageID = mpd.PackageID
+                        JOIN Product p ON mpd.ProductID = p.ProductID
+                        WHERE mp.PackageID = ?
+                    """;
                 try (PreparedStatement stm = connection.prepareStatement(sqlCombo)) {
                     stm.setInt(1, packageId);
                     ResultSet rs = stm.executeQuery();
@@ -324,17 +256,17 @@ public class CarMaintenanceDAO extends DBContext {
 
             // 🔹 Dịch vụ lẻ
             String sqlService = """
-            SELECT 
-                p.Code,
-                p.Name AS ProductName,
-                sd.Quantity,
-                sd.UnitPrice AS BasePrice,
-                0 AS DiscountPercent,
-                sd.TotalPrice AS FinalPrice
-            FROM ServiceDetails sd
-            JOIN Product p ON sd.ProductID = p.ProductID
-            WHERE sd.MaintenanceID = ?
-        """;
+                    SELECT 
+                        p.Code,
+                        p.Name AS ProductName,
+                        sd.Quantity,
+                        sd.UnitPrice AS BasePrice,
+                        0 AS DiscountPercent,
+                        sd.TotalPrice AS FinalPrice
+                    FROM ServiceDetails sd
+                    JOIN Product p ON sd.ProductID = p.ProductID
+                    WHERE sd.MaintenanceID = ?
+                """;
             try (PreparedStatement stm = connection.prepareStatement(sqlService)) {
                 stm.setInt(1, maintenanceId);
                 ResultSet rs = stm.executeQuery();
@@ -353,17 +285,17 @@ public class CarMaintenanceDAO extends DBContext {
 
             // 🔹 Phụ tùng lẻ
             String sqlPart = """
-            SELECT 
-                p.Code,
-                p.Name AS ProductName,
-                spd.Quantity,
-                spd.UnitPrice AS BasePrice,
-                0 AS DiscountPercent,
-                spd.TotalPrice AS FinalPrice
-            FROM ServicePartDetails spd
-            JOIN Product p ON spd.ProductID = p.ProductID
-            WHERE spd.MaintenanceID = ?
-        """;
+                    SELECT 
+                        p.Code,
+                        p.Name AS ProductName,
+                        spd.Quantity,
+                        spd.UnitPrice AS BasePrice,
+                        0 AS DiscountPercent,
+                        spd.TotalPrice AS FinalPrice
+                    FROM ServicePartDetails spd
+                    JOIN Product p ON spd.ProductID = p.ProductID
+                    WHERE spd.MaintenanceID = ?
+                """;
             try (PreparedStatement stm = connection.prepareStatement(sqlPart)) {
                 stm.setInt(1, maintenanceId);
                 ResultSet rs = stm.executeQuery();
@@ -387,182 +319,16 @@ public class CarMaintenanceDAO extends DBContext {
         return list;
     }
 
-    public List<CarMaintenance> getAllCarMaintenances(String statusFilter, String technicianFilter, String dateFilter) {
-        List<CarMaintenance> list = new ArrayList<>();
-        try {
-            StringBuilder sql = new StringBuilder("""
-            SELECT 
-                cm.MaintenanceID,
-                a.AppointmentID,
-                u.FullName AS CustomerName,
-                c.LicensePlate,
-                c.Brand,
-                c.Model,
-                CONVERT(VARCHAR(10), cm.MaintenanceDate, 103) AS MaintenanceDate,
-                cm.Status,
-                tech.FullName AS TechnicianName
-            FROM CarMaintenance cm
-            LEFT JOIN Appointments a ON cm.AppointmentID = a.AppointmentID
-            LEFT JOIN Cars c ON cm.CarID = c.CarID
-            LEFT JOIN Users u ON c.OwnerID = u.UserID
-            LEFT JOIN Users tech ON cm.AssignedTechnicianID = tech.UserID
-            WHERE 1=1
-        """);
-
-            List<Object> params = new ArrayList<>();
-
-            // 🔹 Thêm điều kiện lọc nếu có
-            if (statusFilter != null && !statusFilter.isEmpty()) {
-                sql.append(" AND cm.Status = ? ");
-                params.add(statusFilter);
-            }
-
-            if (technicianFilter != null && !technicianFilter.isEmpty()) {
-                sql.append(" AND tech.FullName LIKE ? ");
-                params.add("%" + technicianFilter + "%");
-            }
-
-            if (dateFilter != null && !dateFilter.isEmpty()) {
-                sql.append(" AND CONVERT(VARCHAR(10), cm.MaintenanceDate, 103) = ? ");
-                params.add(dateFilter);
-            }
-
-            sql.append(" ORDER BY cm.MaintenanceDate DESC");
-
-            PreparedStatement stm = connection.prepareStatement(sql.toString());
-
-            // Set tham số
-            for (int i = 0; i < params.size(); i++) {
-                stm.setObject(i + 1, params.get(i));
-            }
-
-            ResultSet rs = stm.executeQuery();
-
-            while (rs.next()) {
-                CarMaintenance cm = new CarMaintenance();
-                cm.setMaintenanceId(rs.getInt("MaintenanceID"));
-                cm.setStatus(rs.getString("Status"));
-                cm.setMaintenanceDate(rs.getString("MaintenanceDate"));
-
-                // Appointment
-                Appointment appointment = new Appointment();
-                appointment.setAppointmentId(rs.getInt("AppointmentID"));
-                cm.setAppointment(appointment);
-
-                // Car
-                Car car = new Car();
-                car.setLicensePlate(rs.getString("LicensePlate"));
-                car.setBrand(rs.getString("Brand"));
-                car.setModel(rs.getString("Model"));
-
-                // Chủ xe
-                User owner = new User();
-                owner.setFullName(rs.getString("CustomerName"));
-                car.setOwner(owner);
-                cm.setCar(car);
-
-                // Kỹ thuật viên
-                User technician = new User();
-                String techName = rs.getString("TechnicianName");
-                technician.setFullName((techName == null || techName.trim().isEmpty()) ? "None" : techName);
-                cm.setAssignedTechnician(technician);
-
-                list.add(cm);
-            }
-
-        } catch (SQLException ex) {
-            Logger.getLogger(CarMaintenanceDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return list;
-    }
-
-    public List<CarMaintenance> getAllCarMaintenances(String status, String search) {
-        List<CarMaintenance> list = new ArrayList<>();
-        try {
-            StringBuilder sql = new StringBuilder("""
-            SELECT 
-                cm.MaintenanceID,
-                a.AppointmentID,
-                u.FullName AS CustomerName,
-                c.LicensePlate,
-                c.Brand,
-                c.Model,
-                CONVERT(VARCHAR(10), cm.MaintenanceDate, 103) AS MaintenanceDate,
-                cm.Status,
-                tech.FullName AS TechnicianName
-            FROM CarMaintenance cm
-            LEFT JOIN Appointments a ON cm.AppointmentID = a.AppointmentID
-            LEFT JOIN Cars c ON cm.CarID = c.CarID
-            LEFT JOIN Users u ON c.OwnerID = u.UserID
-            LEFT JOIN Users tech ON cm.AssignedTechnicianID = tech.UserID
-            WHERE 1=1
-        """);
-
-            List<Object> params = new ArrayList<>();
-
-            if (status != null && !status.isEmpty()) {
-                sql.append(" AND cm.Status = ? ");
-                params.add(status);
-            }
-
-            if (search != null && !search.isEmpty()) {
-                sql.append(" AND u.FullName LIKE ? ");
-                params.add("%" + search + "%");
-            }
-
-            sql.append(" ORDER BY cm.MaintenanceDate DESC");
-
-            PreparedStatement stm = connection.prepareStatement(sql.toString());
-            for (int i = 0; i < params.size(); i++) {
-                stm.setObject(i + 1, params.get(i));
-            }
-
-            ResultSet rs = stm.executeQuery();
-            while (rs.next()) {
-                CarMaintenance cm = new CarMaintenance();
-                cm.setMaintenanceId(rs.getInt("MaintenanceID"));
-                cm.setStatus(rs.getString("Status"));
-                cm.setMaintenanceDate(rs.getString("MaintenanceDate"));
-
-                Appointment appointment = new Appointment();
-                appointment.setAppointmentId(rs.getInt("AppointmentID"));
-                cm.setAppointment(appointment);
-
-                Car car = new Car();
-                car.setLicensePlate(rs.getString("LicensePlate"));
-                car.setBrand(rs.getString("Brand"));
-                car.setModel(rs.getString("Model"));
-
-                User owner = new User();
-                owner.setFullName(rs.getString("CustomerName"));
-                car.setOwner(owner);
-                cm.setCar(car);
-
-                User technician = new User();
-                String techName = rs.getString("TechnicianName");
-                technician.setFullName((techName == null || techName.trim().isEmpty()) ? "None" : techName);
-                cm.setAssignedTechnician(technician);
-
-                list.add(cm);
-            }
-
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return list;
-    }
-
     public int countMaintenanceRecords(String status, String search) {
         int count = 0;
         try {
             StringBuilder sql = new StringBuilder("""
-                SELECT COUNT(*) AS Total
-                FROM CarMaintenance cm
-                LEFT JOIN Cars c ON cm.CarID = c.CarID
-                LEFT JOIN Users u ON c.OwnerID = u.UserID
-                WHERE 1=1
-            """);
+                        SELECT COUNT(*) AS Total
+                        FROM CarMaintenance cm
+                        LEFT JOIN Cars c ON cm.CarID = c.CarID
+                        LEFT JOIN Users u ON c.OwnerID = u.UserID
+                        WHERE 1=1
+                    """);
 
             List<Object> params = new ArrayList<>();
 
@@ -596,23 +362,23 @@ public class CarMaintenanceDAO extends DBContext {
         List<CarMaintenance> list = new ArrayList<>();
         try {
             StringBuilder sql = new StringBuilder("""
-                SELECT 
-                    cm.MaintenanceID,
-                    a.AppointmentID,
-                    u.FullName AS CustomerName,
-                    c.LicensePlate,
-                    c.Brand,
-                    c.Model,
-                    CONVERT(VARCHAR(10), cm.MaintenanceDate, 103) AS MaintenanceDate,
-                    cm.Status,
-                    tech.FullName AS TechnicianName
-                FROM CarMaintenance cm
-                LEFT JOIN Appointments a ON cm.AppointmentID = a.AppointmentID
-                LEFT JOIN Cars c ON cm.CarID = c.CarID
-                LEFT JOIN Users u ON c.OwnerID = u.UserID
-                LEFT JOIN Users tech ON cm.AssignedTechnicianID = tech.UserID
-                WHERE 1=1
-            """);
+                        SELECT 
+                            cm.MaintenanceID,
+                            a.AppointmentID,
+                            u.FullName AS CustomerName,
+                            c.LicensePlate,
+                            c.Brand,
+                            c.Model,
+                            CONVERT(VARCHAR(10), cm.MaintenanceDate, 103) AS MaintenanceDate,
+                            cm.Status,
+                            tech.FullName AS TechnicianName
+                        FROM CarMaintenance cm
+                        LEFT JOIN Appointments a ON cm.AppointmentID = a.AppointmentID
+                        LEFT JOIN Cars c ON cm.CarID = c.CarID
+                        LEFT JOIN Users u ON c.OwnerID = u.UserID
+                        LEFT JOIN Users tech ON cm.AssignedTechnicianID = tech.UserID
+                        WHERE 1=1
+                    """);
 
             List<Object> params = new ArrayList<>();
 

@@ -63,78 +63,57 @@ public class ListCarmaintenance extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        
         CarMaintenanceDAO dao = new CarMaintenanceDAO();
         String action = request.getParameter("action");
-
+        
         try {
-            if ("assign".equals(action)) {
-                int maintenanceId = Integer.parseInt(request.getParameter("maintenanceId"));
-                CarMaintenance detail = dao.getDetailServiceMaintenanceById(maintenanceId);
-                List<User> technicians = dao.getTechnicians();
-
-                // Khi mở modal, vẫn nên load danh sách hiện tại theo param (nếu có)
-                String statusForList = request.getParameter("status");
-                String searchForList = request.getParameter("search");
-
-                int page = 1;
-                int pageSize = 10;
-                try {
-                    page = Integer.parseInt(request.getParameter("page"));
-                } catch (NumberFormatException e) {
-                }
-
-                List<CarMaintenance> maintenances = dao.getAllCarMaintenances(
-                        statusForList != null ? statusForList : "",
-                        searchForList != null ? searchForList : "",
-                        page, pageSize);
-
-                int totalRecords = dao.countMaintenanceRecords(statusForList, searchForList);
-                int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
-
-                List<Map<String, Object>> products = dao.getMaintenanceProducts(maintenanceId);
-
-                request.setAttribute("products", products);
-                request.setAttribute("maintenances", maintenances);
-                request.setAttribute("detail", detail);
-                request.setAttribute("technicians", technicians);
-                request.setAttribute("openModal", true);
-                request.setAttribute("currentPage", page);
-                request.setAttribute("totalPages", totalPages);
-
-                request.getRequestDispatcher("/view/carmaintenance/managerCarmaintenanace.jsp")
-                        .forward(request, response);
-                return;
-            }
-
-            // Lấy filter & search
+            // --- 1. Lấy tham số lọc & phân trang (Dùng chung) ---
             String status = request.getParameter("status");
             String search = request.getParameter("search");
-
             String statusParam = (status != null) ? status : "";
             String searchParam = (search != null) ? search.trim() : "";
-
-            // Phân trang
+            
             int page = 1;
-            int pageSize = 8;
+            int pageSize = 5; // Chỉ cần định nghĩa pageSize ở 1 nơi
             try {
                 page = Integer.parseInt(request.getParameter("page"));
             } catch (NumberFormatException e) {
+                // Bỏ qua, dùng trang mặc định là 1
             }
 
+            // --- 2. Xử lý Action "assign" (Nếu có) ---
+            // Chỉ làm những việc "thêm"
+            if ("assign".equals(action)) {
+                int maintenanceId = Integer.parseInt(request.getParameter("maintenanceId"));
+                
+                CarMaintenance detail = dao.getDetailServiceMaintenanceById(maintenanceId);
+                List<User> technicians = dao.getTechnicians();
+                List<Map<String, Object>> products = dao.getMaintenanceProducts(maintenanceId);
+                
+                request.setAttribute("products", products);
+                request.setAttribute("detail", detail);
+                request.setAttribute("technicians", technicians);
+                request.setAttribute("openModal", true); // Báo cho JSP mở modal
+            }
+
+            // --- 3. Lấy dữ liệu danh sách (Luôn luôn chạy) ---
+            // Code này đã được đưa ra ngoài, chạy 1 lần duy nhất
             List<CarMaintenance> maintenances = dao.getAllCarMaintenances(statusParam, searchParam, page, pageSize);
             int totalRecords = dao.countMaintenanceRecords(statusParam, searchParam);
             int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
 
+            // --- 4. Set thuộc tính (Dùng chung) ---
             request.setAttribute("maintenances", maintenances);
             request.setAttribute("selectedStatus", statusParam);
             request.setAttribute("searchKeyword", searchParam);
             request.setAttribute("currentPage", page);
             request.setAttribute("totalPages", totalPages);
 
+            // --- 5. Chuyển tiếp (Forward 1 lần) ---
             request.getRequestDispatcher("/view/carmaintenance/managerCarmaintenanace.jsp")
                     .forward(request, response);
-
+            
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Đã xảy ra lỗi khi tải dữ liệu: " + e.getMessage());
@@ -154,10 +133,10 @@ public class ListCarmaintenance extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        
         String action = request.getParameter("action");
         CarMaintenanceDAO dao = new CarMaintenanceDAO();
-
+        
         if ("cancel".equals(action)) {
             int maintenanceId = Integer.parseInt(request.getParameter("maintenanceId"));
             dao.updateStatus(maintenanceId, "CANCELLED");
@@ -173,7 +152,7 @@ public class ListCarmaintenance extends HttpServlet {
         }
 
         // Sau khi update xong, load lại danh sách
-        List<CarMaintenance> list = dao.getAllCarMaintenances();
+        List<CarMaintenance> list = dao.getAllCarMaintenances(action, action, 0, 0);
         request.setAttribute("maintenances", list);
         request.getRequestDispatcher("/view/carmaintenance/managerCarmaintenanace.jsp").forward(request, response);
     }
