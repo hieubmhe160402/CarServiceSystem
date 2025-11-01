@@ -12,9 +12,8 @@ import model.MaintenancePackageDetail;
 import model.Product;
 import model.User;
 
-
 public class MaintenancePackageDAO extends DBContext {
-    
+
     //DL
     public MaintenancePackage getRecommendedPackage(String brand, int currentKm) {
         String sql = """
@@ -60,7 +59,7 @@ public class MaintenancePackageDAO extends DBContext {
 
         return null;
     }
-    
+
     //DL
     public MaintenancePackage getPackageById(int id) {
         String sql = "SELECT * FROM MaintenancePackage WHERE PackageID = ? AND IsActive = 1";
@@ -124,8 +123,7 @@ public class MaintenancePackageDAO extends DBContext {
         }
         return null;
     }
-    
-    
+
     //DL
     public List<MaintenancePackage> getAllActivePackages() {
         List<MaintenancePackage> list = new ArrayList<>();
@@ -160,8 +158,7 @@ public class MaintenancePackageDAO extends DBContext {
 
         return list;
     }
-    
-    
+
     //DL
     // ===== TÌM KIẾM GÓI THEO HÃNG XE =====
     public List<MaintenancePackage> searchPackagesByBrand(String brand) {
@@ -206,8 +203,7 @@ public class MaintenancePackageDAO extends DBContext {
 
         return list;
     }
-    
-    
+
     //DL
     // ===== LẤY GÓI THEO PACKAGE CODE =====
     public MaintenancePackage getPackageByCode(String packageCode) {
@@ -271,39 +267,37 @@ public class MaintenancePackageDAO extends DBContext {
 
     public List<MaintenancePackageDetail> getAll() {
         List<MaintenancePackageDetail> list = new ArrayList<>();
-
         String sql = """
     SELECT 
-        mp.PackageID,
-        mp.PackageCode,
-        mp.Name AS PackageName,
-        mp.Description AS PackageDescription,
-        mp.KilometerMilestone,
-        mp.MonthMilestone,
-        mp.BasePrice,
-        mp.DiscountPercent, 
-        mp.FinalPrice,
-        mp.EstimatedDurationHours,
-        mp.ApplicableBrands,
-        mp.Image,
-        mp.DisplayOrder,
-        mp.IsActive,
-        mp.CreatedDate,
-        mp.CreatedBy,
-        u.FullName AS CreatedByFullName,
-        mpd.PackageDetailID,
-        mpd.DisplayOrder AS DetailDisplayOrder,
-        p.ProductID,
-        p.Name AS ProductName
-    FROM MaintenancePackageDetail mpd
-    INNER JOIN MaintenancePackage mp ON mp.PackageID = mpd.PackageID
-    INNER JOIN Product p ON p.ProductID = mpd.ProductID
-    LEFT JOIN Users u ON mp.CreatedBy = u.UserID
-    ORDER BY mp.PackageCode, mpd.DisplayOrder
+            mp.PackageID,
+            mp.PackageCode,
+            mp.Name AS PackageName,
+            mp.Description AS PackageDescription,
+            mp.KilometerMilestone,
+            mp.MonthMilestone,
+            mp.BasePrice,
+            mp.DiscountPercent, 
+            mp.FinalPrice,
+            mp.EstimatedDurationHours,
+            mp.ApplicableBrands,
+            mp.Image,
+            mp.DisplayOrder,
+            mp.IsActive,
+            mp.CreatedDate,
+            mp.CreatedBy,
+            u.FullName AS CreatedByFullName,
+            mpd.PackageDetailID,
+            mpd.DisplayOrder AS DetailDisplayOrder,
+            p.ProductID,
+            p.Name AS ProductName
+        FROM MaintenancePackageDetail mpd
+        INNER JOIN MaintenancePackage mp ON mp.PackageID = mpd.PackageID
+        INNER JOIN Product p ON p.ProductID = mpd.ProductID
+        LEFT JOIN Users u ON mp.CreatedBy = u.UserID
+        WHERE  mpd.IsRequired=1
+        ORDER BY mp.PackageCode, mpd.DisplayOrder
 """;
-
         try (PreparedStatement stm = connection.prepareStatement(sql); ResultSet rs = stm.executeQuery()) {
-
             while (rs.next()) {
                 // Gói bảo dưỡng
                 MaintenancePackage mp = new MaintenancePackage();
@@ -315,7 +309,13 @@ public class MaintenancePackageDAO extends DBContext {
                 mp.setMonthMilestone(rs.getInt("MonthMilestone"));
                 mp.setBasePrice(rs.getBigDecimal("BasePrice"));
                 mp.setDiscountPercent(rs.getBigDecimal("DiscountPercent"));
-                mp.setFinalPrice(rs.getBigDecimal("FinalPrice"));
+
+                // Chuyển FinalPrice thành số nguyên
+                BigDecimal finalPrice = rs.getBigDecimal("FinalPrice");
+                if (finalPrice != null) {
+                    mp.setFinalPrice(new BigDecimal(finalPrice.intValue()));
+                }
+
                 mp.setEstimatedDurationHours(rs.getBigDecimal("EstimatedDurationHours"));
                 mp.setApplicableBrands(rs.getString("ApplicableBrands"));
                 mp.setImage(rs.getString("Image"));
@@ -332,6 +332,7 @@ public class MaintenancePackageDAO extends DBContext {
                 createdBy.setUserId(rs.getInt("CreatedBy"));
                 createdBy.setFullName(rs.getString("CreatedByFullName"));
                 mp.setCreatedBy(createdBy);
+
                 // Chi tiết gói
                 MaintenancePackageDetail detail = new MaintenancePackageDetail();
                 detail.setPackageDetailId(rs.getInt("PackageDetailID"));
@@ -341,11 +342,9 @@ public class MaintenancePackageDAO extends DBContext {
 
                 list.add(detail);
             }
-
         } catch (SQLException ex) {
             Logger.getLogger(MaintenancePackageDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-
         return list;
     }
 
@@ -390,7 +389,7 @@ public class MaintenancePackageDAO extends DBContext {
             throw new IOException("Lỗi thêm combo mới: " + e.getMessage());
         }
     }
-    
+
     // ✅ NEW: Search packages by keyword and status
     public List<MaintenancePackageDetail> searchPackages(String keyword, String statusFilter) {
         List<MaintenancePackageDetail> list = new ArrayList<>();
@@ -423,11 +422,11 @@ public class MaintenancePackageDAO extends DBContext {
             LEFT JOIN Users u ON mp.CreatedBy = u.UserID
             WHERE (mp.PackageCode LIKE ? OR mp.Name LIKE ? OR mp.Description LIKE ?)
         """);
-        
+
         if (statusFilter != null && !statusFilter.isEmpty()) {
             sql.append(" AND mp.IsActive = ?");
         }
-        
+
         sql.append(" ORDER BY mp.PackageCode, mpd.DisplayOrder");
 
         try (PreparedStatement stm = connection.prepareStatement(sql.toString())) {
@@ -435,11 +434,11 @@ public class MaintenancePackageDAO extends DBContext {
             stm.setString(1, searchPattern);
             stm.setString(2, searchPattern);
             stm.setString(3, searchPattern);
-            
+
             if (statusFilter != null && !statusFilter.isEmpty()) {
                 stm.setBoolean(4, Boolean.parseBoolean(statusFilter));
             }
-            
+
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
                     // Gói bảo dưỡng
@@ -469,7 +468,7 @@ public class MaintenancePackageDAO extends DBContext {
                     createdBy.setUserId(rs.getInt("CreatedBy"));
                     createdBy.setFullName(rs.getString("CreatedByFullName"));
                     mp.setCreatedBy(createdBy);
-                    
+
                     // Chi tiết gói
                     MaintenancePackageDetail detail = new MaintenancePackageDetail();
                     detail.setPackageDetailId(rs.getInt("PackageDetailID"));
@@ -485,7 +484,7 @@ public class MaintenancePackageDAO extends DBContext {
         }
         return list;
     }
-    
+
     // ✅ NEW: Get packages by status
     public List<MaintenancePackageDetail> getPackagesByStatus(String statusFilter) {
         List<MaintenancePackageDetail> list = new ArrayList<>();
@@ -551,7 +550,7 @@ public class MaintenancePackageDAO extends DBContext {
                     createdBy.setUserId(rs.getInt("CreatedBy"));
                     createdBy.setFullName(rs.getString("CreatedByFullName"));
                     mp.setCreatedBy(createdBy);
-                    
+
                     // Chi tiết gói
                     MaintenancePackageDetail detail = new MaintenancePackageDetail();
                     detail.setPackageDetailId(rs.getInt("PackageDetailID"));
@@ -567,31 +566,45 @@ public class MaintenancePackageDAO extends DBContext {
         }
         return list;
     }
-    
+
     // ✅ NEW: Update package
     public void updatePackage(MaintenancePackage mp) throws IOException {
-        String sql = """
+        // Build SQL dynamically based on whether image is being updated
+        StringBuilder sql = new StringBuilder("""
     UPDATE MaintenancePackage
     SET PackageCode = ?, Name = ?, Description = ?, KilometerMilestone = ?, MonthMilestone = ?,
         BasePrice = ?, DiscountPercent = ?, EstimatedDurationHours = ?,
         ApplicableBrands = ?, DisplayOrder = ?, IsActive = ?
-    WHERE PackageID = ?
-""";
+    """);
 
-        try (PreparedStatement stm = connection.prepareStatement(sql)) {
-            stm.setString(1, mp.getPackageCode());
-            stm.setString(2, mp.getName());
-            stm.setString(3, mp.getDescription());
-            stm.setInt(4, mp.getKilometerMilestone());
-            stm.setInt(5, mp.getMonthMilestone());
-            stm.setBigDecimal(6, mp.getBasePrice());
-            stm.setBigDecimal(7, mp.getDiscountPercent());
+        // Add Image to SET clause if provided
+        if (mp.getImage() != null && !mp.getImage().trim().isEmpty()) {
+            sql.append(", Image = ?");
+        }
+
+        sql.append(" WHERE PackageID = ?");
+
+        try (PreparedStatement stm = connection.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+            stm.setString(paramIndex++, mp.getPackageCode());
+            stm.setString(paramIndex++, mp.getName());
+            stm.setString(paramIndex++, mp.getDescription());
+            stm.setInt(paramIndex++, mp.getKilometerMilestone());
+            stm.setInt(paramIndex++, mp.getMonthMilestone());
+            stm.setBigDecimal(paramIndex++, mp.getBasePrice());
+            stm.setBigDecimal(paramIndex++, mp.getDiscountPercent());
             // ✅ FinalPrice không cần update vì là computed column
-            stm.setBigDecimal(8, mp.getEstimatedDurationHours());
-            stm.setString(9, mp.getApplicableBrands());
-            stm.setInt(10, mp.getDisplayOrder());
-            stm.setBoolean(11, mp.isIsActive());
-            stm.setInt(12, mp.getPackageId());
+            stm.setBigDecimal(paramIndex++, mp.getEstimatedDurationHours());
+            stm.setString(paramIndex++, mp.getApplicableBrands());
+            stm.setInt(paramIndex++, mp.getDisplayOrder());
+            stm.setBoolean(paramIndex++, mp.isIsActive());
+
+            // Add image if provided
+            if (mp.getImage() != null && !mp.getImage().trim().isEmpty()) {
+                stm.setString(paramIndex++, mp.getImage());
+            }
+
+            stm.setInt(paramIndex++, mp.getPackageId());
 
             stm.executeUpdate();
         } catch (SQLException e) {
