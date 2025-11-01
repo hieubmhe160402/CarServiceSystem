@@ -15,7 +15,7 @@ import model.MaintenancePackage;
 import model.User;
 import model.Car;
 import model.Appointment;
-    
+
 @WebServlet(name = "bookingAppoitments", urlPatterns = {"/bookingAppoitments"})
 public class bookingAppoitments extends HttpServlet {
 
@@ -73,7 +73,9 @@ public class bookingAppoitments extends HttpServlet {
             if (selectedCar != null) {
                 String brand = selectedCar.getBrand();
                 Integer currentKm = selectedCar.getCurrentOdometer();
-                if (currentKm == null) currentKm = 0;
+                if (currentKm == null) {
+                    currentKm = 0;
+                }
 
                 recommendedPackage = packageDao.getRecommendedPackage(brand, currentKm);
 
@@ -112,19 +114,19 @@ public class bookingAppoitments extends HttpServlet {
         try {
             // ====== KIỂM TRA LOẠI ĐẶT LỊCH ======
             String appointmentType = request.getParameter("appointmentType");
-            
+
             // Nếu là đặt lịch tùy chọn
             if ("custom".equals(appointmentType)) {
                 handleCustomAppointment(request, response, user);
                 return;
             }
-            
+
             // Lấy dữ liệu từ form đặt lịch thường
             int carId = Integer.parseInt(request.getParameter("carId"));
             int packageId = Integer.parseInt(request.getParameter("packageId"));
             String appointmentDate = request.getParameter("appointmentDate");
             String appointmentTime = request.getParameter("appointmentTime");
-            
+
             String notes = request.getParameter("notes");
 
             // Kiểm tra dữ liệu bắt buộc
@@ -156,7 +158,7 @@ public class bookingAppoitments extends HttpServlet {
             // Kiểm tra xe có thuộc về user không
             CarDAO carDao = new CarDAO();
             List<Car> userCars = carDao.getCarsByUserIdWithOwnerInfo(user.getUserId());
-            
+
             Car selectedCar = null;
             for (Car car : userCars) {
                 if (car.getCarId() == carId) {
@@ -164,7 +166,7 @@ public class bookingAppoitments extends HttpServlet {
                     break;
                 }
             }
-            
+
             if (selectedCar == null) {
                 request.setAttribute("errorMessage", "Xe không tồn tại hoặc không thuộc về bạn!");
                 doGet(request, response);
@@ -173,10 +175,10 @@ public class bookingAppoitments extends HttpServlet {
 
             // ====== KIỂM TRA GÓI CÓ PHÙ HỢP VỚI HÃNG XE KHÔNG ======
             if (!isPackageCompatibleWithCar(selectedPackage, selectedCar)) {
-                request.setAttribute("errorMessage", 
-                    "⚠️ Gói bảo dưỡng \"" + selectedPackage.getName() + 
-                    "\" không phù hợp với xe " + selectedCar.getBrand() + " của bạn! " +
-                    "Gói này chỉ áp dụng cho: " + selectedPackage.getApplicableBrands());
+                request.setAttribute("errorMessage",
+                        "⚠️ Gói bảo dưỡng \"" + selectedPackage.getName()
+                        + "\" không phù hợp với xe " + selectedCar.getBrand() + " của bạn! "
+                        + "Gói này chỉ áp dụng cho: " + selectedPackage.getApplicableBrands());
                 doGet(request, response);
                 return;
             }
@@ -189,7 +191,7 @@ public class bookingAppoitments extends HttpServlet {
             appointment.setNotes(notes != null ? notes : "");
             appointment.setRequestedPackage(selectedPackage);
             appointment.setCreatedBy(user);
-            appointment.setStatus("Pending"); // chờ xác nhận
+            appointment.setStatus("PENDING"); // chờ xác nhận
 
             // Lưu vào DB
             AppointmentDAO appointmentDAO = new AppointmentDAO();
@@ -220,6 +222,7 @@ public class bookingAppoitments extends HttpServlet {
     // ==================== KIỂM TRA GÓI PHÙ HỢP VỚI XE ====================
     /**
      * Kiểm tra gói bảo dưỡng có phù hợp với hãng xe không
+     *
      * @param pkg Gói bảo dưỡng
      * @param car Xe cần kiểm tra
      * @return true nếu phù hợp, false nếu không phù hợp
@@ -238,15 +241,15 @@ public class bookingAppoitments extends HttpServlet {
         }
 
         // Nếu có "All" hoặc "Tất cả" -> cho phép tất cả hãng
-        if (applicableBrands.toLowerCase().contains("all") || 
-            applicableBrands.toLowerCase().contains("tất cả")) {
+        if (applicableBrands.toLowerCase().contains("all")
+                || applicableBrands.toLowerCase().contains("tất cả")) {
             return true;
         }
 
         // Kiểm tra carBrand có trong danh sách ApplicableBrands không
         // Xử lý nhiều format: "Toyota, Honda, BMW" hoặc "Toyota; Honda; BMW"
         String[] brandArray = applicableBrands.split("[,;]+");
-        
+
         for (String brand : brandArray) {
             brand = brand.trim().toLowerCase();
             if (carBrand != null && carBrand.toLowerCase().contains(brand)) {
@@ -263,13 +266,14 @@ public class bookingAppoitments extends HttpServlet {
     // ==================== XỬ LÝ ĐẶT LỊCH TÙY CHỌN ====================
     /**
      * Xử lý đặt lịch hẹn tùy chọn với gói PKG-EMPTY
+     *
      * @param request HttpServletRequest
      * @param response HttpServletResponse
      * @param user User hiện tại
      */
     private void handleCustomAppointment(HttpServletRequest request, HttpServletResponse response, User user)
             throws ServletException, IOException {
-        
+
         try {
             // Lấy dữ liệu từ form đặt lịch tùy chọn
             int carId = Integer.parseInt(request.getParameter("carId"));
@@ -293,14 +297,13 @@ public class bookingAppoitments extends HttpServlet {
             }
 
             // BỎ QUA kiểm tra mô tả dịch vụ tùy chọn
-
             // Ghép ngày và giờ thành datetime
             String fullDateTime = appointmentDate + " " + appointmentTime + ":00";
 
             // Kiểm tra xe có thuộc về user không
             CarDAO carDao = new CarDAO();
             List<Car> userCars = carDao.getCarsByUserIdWithOwnerInfo(user.getUserId());
-            
+
             Car selectedCar = null;
             for (Car car : userCars) {
                 if (car.getCarId() == carId) {
@@ -308,7 +311,7 @@ public class bookingAppoitments extends HttpServlet {
                     break;
                 }
             }
-            
+
             if (selectedCar == null) {
                 request.setAttribute("errorMessage", "Xe không tồn tại hoặc không thuộc về bạn!");
                 doGet(request, response);
@@ -318,18 +321,18 @@ public class bookingAppoitments extends HttpServlet {
             // Tạo lịch hẹn tùy chọn với gói PKG-EMPTY
             AppointmentDAO appointmentDAO = new AppointmentDAO();
             boolean success = appointmentDAO.createCustomAppointmentWithPackageCode(
-                carId, 
-                fullDateTime, 
-                customServices, 
-                notes != null ? notes.trim() : "", 
-                user.getUserId(), 
-                "PKG-EMPTY"
+                    carId,
+                    fullDateTime,
+                    customServices,
+                    notes != null ? notes.trim() : "",
+                    user.getUserId(),
+                    "PKG-EMPTY"
             );
 
             if (success) {
-                request.setAttribute("successMessage", 
-                    "✅ Đặt lịch hẹn tùy chọn thành công! " +
-                    "Chúng tôi sẽ liên hệ với bạn để xác nhận chi tiết dịch vụ và báo giá.");
+                request.setAttribute("successMessage",
+                        "✅ Đặt lịch hẹn tùy chọn thành công! "
+                        + "Chúng tôi sẽ liên hệ với bạn để xác nhận chi tiết dịch vụ và báo giá.");
             } else {
                 request.setAttribute("errorMessage", "Có lỗi xảy ra khi đặt lịch tùy chọn. Vui lòng thử lại!");
             }
