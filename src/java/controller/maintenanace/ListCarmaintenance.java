@@ -68,27 +68,47 @@ public class ListCarmaintenance extends HttpServlet {
         String action = request.getParameter("action");
 
         try {
-            // ✅ Nếu bấm "Chọn" (mở danh sách nhân viên)
             if ("assign".equals(action)) {
                 int maintenanceId = Integer.parseInt(request.getParameter("maintenanceId"));
                 CarMaintenance detail = dao.getDetailServiceMaintenanceById(maintenanceId);
                 List<User> technicians = dao.getTechnicians();
-                List<CarMaintenance> maintenances = dao.getAllCarMaintenances();
-                List<Map<String, Object>> products = dao.getMaintenanceProducts(maintenanceId);
-                request.setAttribute("products", products);
 
+                // Khi mở modal, vẫn nên load danh sách hiện tại theo param (nếu có)
+                String statusForList = request.getParameter("status");
+                String searchForList = request.getParameter("search");
+                List<CarMaintenance> maintenances = dao.getAllCarMaintenances(
+                        statusForList != null ? statusForList : "",
+                        searchForList != null ? searchForList : "");
+
+                List<Map<String, Object>> products = dao.getMaintenanceProducts(maintenanceId);
+
+                request.setAttribute("products", products);
                 request.setAttribute("maintenances", maintenances);
                 request.setAttribute("detail", detail);
                 request.setAttribute("technicians", technicians);
                 request.setAttribute("openModal", true);
+
                 request.getRequestDispatcher("/view/carmaintenance/managerCarmaintenanace.jsp")
                         .forward(request, response);
                 return;
             }
 
-            // ✅ Nếu không có action (hiển thị danh sách chung)
-            List<CarMaintenance> maintenances = dao.getAllCarMaintenances();
+            // Lấy param filter & search (có thể null)
+            String status = request.getParameter("status");
+            String search = request.getParameter("search");
+
+            // Nếu null -> chuyền chuỗi rỗng để DAO xử lý dễ hơn
+            String statusParam = (status != null) ? status : "";
+            String searchParam = (search != null) ? search.trim() : "";
+
+            // Gọi DAO luôn (DAO sẽ decide có thêm WHERE cho search/status hay không)
+            List<CarMaintenance> maintenances = dao.getAllCarMaintenances(statusParam, searchParam);
+
+            // Trả lại view, giữ lại giá trị người dùng nhập
             request.setAttribute("maintenances", maintenances);
+            request.setAttribute("selectedStatus", statusParam);
+            request.setAttribute("searchKeyword", searchParam);
+
             request.getRequestDispatcher("/view/carmaintenance/managerCarmaintenanace.jsp")
                     .forward(request, response);
 

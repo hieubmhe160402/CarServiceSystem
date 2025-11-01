@@ -387,4 +387,170 @@ public class CarMaintenanceDAO extends DBContext {
         return list;
     }
 
+    public List<CarMaintenance> getAllCarMaintenances(String statusFilter, String technicianFilter, String dateFilter) {
+        List<CarMaintenance> list = new ArrayList<>();
+        try {
+            StringBuilder sql = new StringBuilder("""
+            SELECT 
+                cm.MaintenanceID,
+                a.AppointmentID,
+                u.FullName AS CustomerName,
+                c.LicensePlate,
+                c.Brand,
+                c.Model,
+                CONVERT(VARCHAR(10), cm.MaintenanceDate, 103) AS MaintenanceDate,
+                cm.Status,
+                tech.FullName AS TechnicianName
+            FROM CarMaintenance cm
+            LEFT JOIN Appointments a ON cm.AppointmentID = a.AppointmentID
+            LEFT JOIN Cars c ON cm.CarID = c.CarID
+            LEFT JOIN Users u ON c.OwnerID = u.UserID
+            LEFT JOIN Users tech ON cm.AssignedTechnicianID = tech.UserID
+            WHERE 1=1
+        """);
+
+            List<Object> params = new ArrayList<>();
+
+            // 🔹 Thêm điều kiện lọc nếu có
+            if (statusFilter != null && !statusFilter.isEmpty()) {
+                sql.append(" AND cm.Status = ? ");
+                params.add(statusFilter);
+            }
+
+            if (technicianFilter != null && !technicianFilter.isEmpty()) {
+                sql.append(" AND tech.FullName LIKE ? ");
+                params.add("%" + technicianFilter + "%");
+            }
+
+            if (dateFilter != null && !dateFilter.isEmpty()) {
+                sql.append(" AND CONVERT(VARCHAR(10), cm.MaintenanceDate, 103) = ? ");
+                params.add(dateFilter);
+            }
+
+            sql.append(" ORDER BY cm.MaintenanceDate DESC");
+
+            PreparedStatement stm = connection.prepareStatement(sql.toString());
+
+            // Set tham số
+            for (int i = 0; i < params.size(); i++) {
+                stm.setObject(i + 1, params.get(i));
+            }
+
+            ResultSet rs = stm.executeQuery();
+
+            while (rs.next()) {
+                CarMaintenance cm = new CarMaintenance();
+                cm.setMaintenanceId(rs.getInt("MaintenanceID"));
+                cm.setStatus(rs.getString("Status"));
+                cm.setMaintenanceDate(rs.getString("MaintenanceDate"));
+
+                // Appointment
+                Appointment appointment = new Appointment();
+                appointment.setAppointmentId(rs.getInt("AppointmentID"));
+                cm.setAppointment(appointment);
+
+                // Car
+                Car car = new Car();
+                car.setLicensePlate(rs.getString("LicensePlate"));
+                car.setBrand(rs.getString("Brand"));
+                car.setModel(rs.getString("Model"));
+
+                // Chủ xe
+                User owner = new User();
+                owner.setFullName(rs.getString("CustomerName"));
+                car.setOwner(owner);
+                cm.setCar(car);
+
+                // Kỹ thuật viên
+                User technician = new User();
+                String techName = rs.getString("TechnicianName");
+                technician.setFullName((techName == null || techName.trim().isEmpty()) ? "None" : techName);
+                cm.setAssignedTechnician(technician);
+
+                list.add(cm);
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(CarMaintenanceDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return list;
+    }
+
+    public List<CarMaintenance> getAllCarMaintenances(String status, String search) {
+        List<CarMaintenance> list = new ArrayList<>();
+        try {
+            StringBuilder sql = new StringBuilder("""
+            SELECT 
+                cm.MaintenanceID,
+                a.AppointmentID,
+                u.FullName AS CustomerName,
+                c.LicensePlate,
+                c.Brand,
+                c.Model,
+                CONVERT(VARCHAR(10), cm.MaintenanceDate, 103) AS MaintenanceDate,
+                cm.Status,
+                tech.FullName AS TechnicianName
+            FROM CarMaintenance cm
+            LEFT JOIN Appointments a ON cm.AppointmentID = a.AppointmentID
+            LEFT JOIN Cars c ON cm.CarID = c.CarID
+            LEFT JOIN Users u ON c.OwnerID = u.UserID
+            LEFT JOIN Users tech ON cm.AssignedTechnicianID = tech.UserID
+            WHERE 1=1
+        """);
+
+            List<Object> params = new ArrayList<>();
+
+            if (status != null && !status.isEmpty()) {
+                sql.append(" AND cm.Status = ? ");
+                params.add(status);
+            }
+
+            if (search != null && !search.isEmpty()) {
+                sql.append(" AND u.FullName LIKE ? ");
+                params.add("%" + search + "%");
+            }
+
+            sql.append(" ORDER BY cm.MaintenanceDate DESC");
+
+            PreparedStatement stm = connection.prepareStatement(sql.toString());
+            for (int i = 0; i < params.size(); i++) {
+                stm.setObject(i + 1, params.get(i));
+            }
+
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                CarMaintenance cm = new CarMaintenance();
+                cm.setMaintenanceId(rs.getInt("MaintenanceID"));
+                cm.setStatus(rs.getString("Status"));
+                cm.setMaintenanceDate(rs.getString("MaintenanceDate"));
+
+                Appointment appointment = new Appointment();
+                appointment.setAppointmentId(rs.getInt("AppointmentID"));
+                cm.setAppointment(appointment);
+
+                Car car = new Car();
+                car.setLicensePlate(rs.getString("LicensePlate"));
+                car.setBrand(rs.getString("Brand"));
+                car.setModel(rs.getString("Model"));
+
+                User owner = new User();
+                owner.setFullName(rs.getString("CustomerName"));
+                car.setOwner(owner);
+                cm.setCar(car);
+
+                User technician = new User();
+                String techName = rs.getString("TechnicianName");
+                technician.setFullName((techName == null || techName.trim().isEmpty()) ? "None" : techName);
+                cm.setAssignedTechnician(technician);
+
+                list.add(cm);
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return list;
+    }
+
 }

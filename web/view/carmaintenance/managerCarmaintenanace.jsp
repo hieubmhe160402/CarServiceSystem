@@ -442,18 +442,21 @@
                     <h2>Quản lý lịch bảo dưỡng</h2>
 
                     <div class="top-bar">
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <input type="text" class="search-box" placeholder="Tìm kiếm theo tên..." id="searchInput">
-                            <select id="statusFilter" class="status-filter">
+                        <form action="listCarmaintenance" method="get" style="display:flex; align-items:center; gap:10px;">
+                            <input type="text" name="search" placeholder="Tìm kiếm theo tên khách hàng..." 
+                                   value="${searchKeyword}" class="search-box">
+
+                            <select name="status" class="status-filter">
                                 <option value="">Tất cả</option>
-                                <option value="true">Hoạt động</option>
-                                <option value="false">Ngừng hoạt động</option>
+                                <option value="WAITING" ${selectedStatus == 'WAITING' ? 'selected' : ''}>WAITING</option>
+                                <option value="PROCESSING" ${selectedStatus == 'PROCESSING' ? 'selected' : ''}>PROCESSING</option>
+                                <option value="COMPLETE" ${selectedStatus == 'COMPLETE' ? 'selected' : ''}>COMPLETE</option>
+                                <option value="CANCELLED" ${selectedStatus == 'CANCELLED' ? 'selected' : ''}>CANCELLED</option>
                             </select>
-                            <button type="button" class="btn btn-reload" onclick="window.location.href = 'listCarmaintenance'">
-                                🔁 Tải lại
-                            </button>
-                        </div>
-                    </div> <!-- ✅ Đóng top-bar ở đây -->
+                            </select>
+                            <button type="button" class="btn btn-reload" onclick="window.location.href = 'listCarmaintenance'">🔁 Tải lại</button>
+                        </form>
+                    </div>
 
                     <table class="table table-bordered">
                         <thead>
@@ -499,7 +502,13 @@
                                                     <c:when test="${m.status eq 'CANCELLED'}">
                                                         <span class="text-muted">Đã hủy</span>
                                                     </c:when>
-
+                                                    <c:when test="${m.status eq 'COMPLETE'}">
+                                                        <form method="get" action="listCarmaintenance" style="display:inline;">
+                                                            <input type="hidden" name="action" value="assign" />
+                                                            <input type="hidden" name="maintenanceId" value="${m.maintenanceId}" />
+                                                            <button type="submit" class="btn btn-primary btn-sm">Details</button>
+                                                        </form>
+                                                    </c:when>
                                                     <c:otherwise>
                                                         <!-- Gửi request đến servlet để hiển thị chi tiết -->
                                                         <form method="get" action="listCarmaintenance" style="display:inline;">
@@ -517,6 +526,7 @@
                                                     </c:otherwise>
                                                 </c:choose>
                                             </td>
+
                                         </tr>
                                     </c:forEach>
                                 </c:when>
@@ -930,6 +940,24 @@
                     document.getElementById('btnSelectTech').style.display = 'inline-block';
                     document.getElementById('btnResetTech').style.display = 'none';
                 }
+            </script>
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const statusSelect = document.querySelector("select[name='status']");
+                    const searchInput = document.querySelector("input[name='search']");
+
+                    // 🔹 Khi chọn trạng thái → submit form tự động
+                    statusSelect.addEventListener("change", function () {
+                        this.form.submit();
+                    });
+
+                    // 🔹 Khi gõ tìm kiếm → submit sau 0.6s không gõ nữa
+                    let typingTimer;
+                    searchInput.addEventListener("input", function () {
+                        clearTimeout(typingTimer);
+                        typingTimer = setTimeout(() => this.form.submit(), 1500);
+                    });
+                });
             </script>
         </body>
     </html>
