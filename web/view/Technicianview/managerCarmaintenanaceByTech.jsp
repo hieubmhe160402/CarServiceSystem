@@ -6,6 +6,7 @@
 
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="vi">
     <head>
@@ -197,6 +198,110 @@
             .close:hover {
                 color: #000;
             }
+
+            /* --- MODAL PHIẾU DỊCH VỤ --- */
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 2000;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                overflow-y: auto;
+            }
+
+            /* Hộp nội dung chính */
+            .modal-content {
+                background: #fff;
+                margin: 3% auto;
+                border-radius: 10px;
+                width: 75%;
+                max-width: 1000px;
+                box-shadow: 0 5px 25px rgba(0,0,0,0.25);
+                animation: fadeIn 0.3s ease-in-out;
+            }
+
+            /* Header của phiếu */
+            .modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background: #e6f0ff;
+                padding: 15px 25px;
+                border-radius: 10px 10px 0 0;
+                border-bottom: 1px solid #cbd5e1;
+            }
+            .modal-header h2 {
+                font-size: 20px;
+                font-weight: 600;
+                color: #1e3a8a;
+            }
+            .status-badge {
+                display: inline-block;
+                padding: 6px 12px;
+                border-radius: 6px;
+                font-weight: bold;
+                font-size: 13px;
+                text-transform: uppercase;
+            }
+
+            /* Trạng thái WAITING - nền vàng nhạt */
+            .status-badge.waiting {
+                background-color: #fff9e6;
+                color: #b38b00;
+                border: 1px solid #ffe58f;
+            }
+
+            /* Trạng thái PROCESSING - nền xanh nhạt + viền */
+            .status-badge.processing {
+                background-color: #e6f0ff;
+                color: #004085;
+                border: 1px solid #b3d1ff;
+            }
+
+            /* Nội dung body */
+            .modal-body {
+                padding: 20px;
+            }
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;
+                margin-bottom: 20px;
+            }
+            .form-group {
+                margin-bottom: 15px;
+            }
+            .form-group label {
+                font-weight: 600;
+                margin-bottom: 6px;
+                color: #111827;
+                display: block;
+            }
+            .form-group input, .form-group textarea, .form-group select {
+                width: 100%;
+                padding: 8px 10px;
+                border: 1px solid #d1d5db;
+                border-radius: 6px;
+                font-size: 14px;
+            }
+            .form-group.full {
+                grid-column: 1 / 4;
+            }
+
+            /* Animation */
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
         </style>
     </head>
     <body>
@@ -212,7 +317,6 @@
                             <input type="text" class="search-box" placeholder="Tìm kiếm theo xe..." id="searchInput">
                             <select id="statusFilter" class="status-filter">
                                 <option value="">Tất cả</option>
-                                <option value="PENDING">Chờ xử lý</option>
                                 <option value="PROCESSING">Đang xử lý</option>
                                 <option value="COMPLETED">Hoàn thành</option>
                                 <option value="CANCELLED">Hủy</option>
@@ -249,7 +353,11 @@
                                             <td class="description-cell">${item.notes}</td>
                                             <td>${item.createdDate}</td>
                                             <td>
-                                                <button class="btn btn-edit" onclick="viewDetails(${item.maintenanceID})">Chi tiết</button>
+                                                <form method="GET" action="listcarmaintenanacebytech" style="display: inline-block;">
+                                                    <input type="hidden" name="action" value="detail">
+                                                    <input type="hidden" name="maintenanceId" value="${item.maintenanceID}">
+                                                    <button type="submit" class="btn btn-edit">Chi tiết</button>
+                                                </form>
                                                 <c:if test="${item.status != 'CANCELLED' && item.status != 'COMPLETED'}">
                                                     <form method="POST" action="listcarmaintenanacebytech" style="display: inline-block; margin-left: 5px;">
                                                         <input type="hidden" name="action" value="cancel">
@@ -276,40 +384,187 @@
                             </c:choose>
                         </tbody>
                     </table>
+                    <!-- POPUP PHIẾU DỊCH VỤ -->
+                    <c:if test="${not empty detail}">
+                        <div id="serviceModal" class="modal" style="display:block;">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h2>Phiếu dịch vụ</h2>
+                                    <span class="status-badge
+                                          ${detail.status eq 'WAITING' ? 'waiting' : 
+                                            (detail.status eq 'PROCESSING' ? 'processing' : '')}">
+                                              ${detail.status}
+                                          </span>
+                                          <a href="listcarmaintenanacebytech" class="close">&times;</a>
+                                    </div>
+
+                                    <div class="modal-body">
+                                        <div class="grid">
+                                            <div class="form-group">
+                                                <label>Mã phiếu dịch vụ</label>
+                                                <input type="text" value="${detail.maintenanceId}" readonly />
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Mã lịch hẹn</label>
+                                                <input type="text" value="${detail.appointment.appointmentId}" readonly />
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Ngày bảo trì</label>
+                                                <input type="text" value="${detail.maintenanceDate}" readonly />
+                                            </div>
+                                        </div>
+
+                                        <div class="grid">
+                                            <div class="form-group">
+                                                <label>Tên khách hàng</label>
+                                                <input type="text" value="${detail.car.owner.fullName}" readonly />
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Số điện thoại</label>
+                                                <input type="text" value="${detail.car.owner.phone}" readonly />
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Email</label>
+                                                <input type="text" value="${detail.car.owner.email}" readonly />
+                                            </div>
+                                        </div>
+
+                                        <div class="grid">
+                                            <div class="form-group">
+                                                <label>Thông tin xe</label>
+                                                <input type="text" value="${detail.car.brand} ${detail.car.model}" readonly />
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Odometer</label>
+                                                <input type="text" value="${detail.odometer}" readonly />
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Người tạo</label>
+                                                <input type="text" value="${detail.createdBy.fullName}" readonly />
+                                            </div>
+                                        </div>
+
+
+
+                                        <div class="form-group full">
+                                            <label>Ghi chú</label>
+                                            <textarea readonly>${detail.notes}</textarea>
+                                        </div>
+
+                                        <!-- ===================== DANH SÁCH DỊCH VỤ SỬ DỤNG ===================== -->
+                                        <div class="form-group full">
+                                            <h3 style="margin-bottom: 10px;">Danh sách dịch vụ sử dụng</h3>
+                                            <table border="1" cellspacing="0" cellpadding="8"
+                                                   style="width:100%; border-collapse:collapse; text-align:left;">
+                                                <thead style="background:#f5f5f5;">
+                                                    <tr>
+                                                        <th>Mã SP</th>
+                                                        <th>Tên linh kiện/Dịch vụ</th>
+                                                        <th>Số lượng</th>
+                                                        <th>Đơn giá</th>
+                                                        <th>Giảm giá</th>
+                                                        <th>Thành tiền</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <c:choose>
+                                                        <c:when test="${not empty products}">
+                                                            <c:set var="prevPackage" value="" />
+                                                            <c:set var="rowCount" value="0" />
+
+                                                            <c:forEach var="item" items="${products}" varStatus="loop">
+                                                                <!-- Khi gặp packageCode mới, đếm số hàng có cùng mã -->
+                                                                <c:if test="${item.packageCode ne prevPackage}">
+                                                                    <c:set var="rowCount" value="0" />
+                                                                    <c:forEach var="inner" items="${products}">
+                                                                        <c:if test="${inner.packageCode eq item.packageCode}">
+                                                                            <c:set var="rowCount" value="${rowCount + 1}" />
+                                                                        </c:if>
+                                                                    </c:forEach>
+                                                                </c:if>
+
+                                                                <tr>
+                                                                    <!-- Mã SP -->
+                                                                    <c:if test="${item.packageCode ne prevPackage}">
+                                                                        <td rowspan="${rowCount}">${item.packageCode}</td>
+                                                                    </c:if>
+
+                                                                    <!-- Tên sản phẩm -->
+                                                                    <td>${item.productName}</td>
+                                                                    <td>${item.quantity}</td>
+
+                                                                    <!-- Các cột giá chỉ hiển thị 1 lần / nhóm -->
+                                                                    <c:if test="${item.packageCode ne prevPackage}">
+                                                                        <td rowspan="${rowCount}">
+                                                                            <fmt:formatNumber value="${item.basePrice}" type="number" groupingUsed="true"/> VND
+                                                                        </td>
+                                                                        <td rowspan="${rowCount}">
+                                                                            ${item.discountPercent}%
+                                                                        </td>
+                                                                        <td rowspan="${rowCount}">
+                                                                            <fmt:formatNumber value="${item.finalPrice}" type="number" groupingUsed="true"/> VND
+                                                                        </td>
+                                                                    </c:if>
+                                                                </tr>
+
+                                                                <c:set var="prevPackage" value="${item.packageCode}" />
+                                                            </c:forEach>
+                                                        </c:when>
+
+                                                        <c:otherwise>
+                                                            <tr>
+                                                                <td colspan="6" style="text-align:center;">Không có sản phẩm nào trong phiếu bảo dưỡng này</td>
+                                                            </tr>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </tbody>
+                                            </table>
+
+                                            <div style="text-align:right; margin-top:10px; font-weight:bold;">
+                                                Tổng tiền:
+                                                <fmt:formatNumber value="${detail.finalAmount}" type="number" groupingUsed="true"/> VND
+                                            </div>
+
+                                            <div style="text-align:right; margin-top:30px;">
+                                                <a href="listcarmaintenanacebytech" class="btn btn-danger" 
+                                                   style="background-color:#dc3545; border:none; padding:8px 18px; border-radius:6px; color:white; text-decoration:none;">
+                                                    Đóng
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </c:if>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <script>
-            // --- Filter ---
-            const searchInput = document.getElementById("searchInput");
-            const statusFilter = document.getElementById("statusFilter");
-            const rows = document.querySelectorAll("#maintenanceTable tbody tr");
+            <script>
+                // --- Filter ---
+                const searchInput = document.getElementById("searchInput");
+                const statusFilter = document.getElementById("statusFilter");
+                const rows = document.querySelectorAll("#maintenanceTable tbody tr");
 
-            function filterTable() {
-                const searchText = searchInput.value.toLowerCase();
-                const status = statusFilter.value;
-                rows.forEach(row => {
-                    // Bỏ qua hàng "Không có dữ liệu"
-                    if (row.cells.length === 1) {
-                        return;
-                    }
-                    const carInfo = row.cells[1].textContent.toLowerCase();
-                    const statusText = row.cells[5].textContent.toLowerCase();
-                    const matchName = carInfo.includes(searchText);
-                    const matchStatus = !status || statusText.includes(status.toLowerCase());
-                    row.style.display = matchName && matchStatus ? "" : "none";
-                });
-            }
+                function filterTable() {
+                    const searchText = searchInput.value.toLowerCase();
+                    const status = statusFilter.value;
+                    rows.forEach(row => {
+                        // Bỏ qua hàng "Không có dữ liệu"
+                        if (row.cells.length === 1) {
+                            return;
+                        }
+                        const carInfo = row.cells[1].textContent.toLowerCase();
+                        const statusText = row.cells[5].textContent.toLowerCase();
+                        const matchName = carInfo.includes(searchText);
+                        const matchStatus = !status || statusText.includes(status.toLowerCase());
+                        row.style.display = matchName && matchStatus ? "" : "none";
+                    });
+                }
 
-            searchInput.addEventListener("input", filterTable);
-            statusFilter.addEventListener("change", filterTable);
-
-            // --- Action handlers ---
-            function viewDetails(maintenanceId) {
-                // TODO: Implement chi tiết bảo dưỡng
-                alert("Chi tiết bảo dưỡng ID: " + maintenanceId);
-            }
-        </script>
-    </body>
-</html>
+                searchInput.addEventListener("input", filterTable);
+                statusFilter.addEventListener("change", filterTable);
+            </script>
+        </body>
+    </html>

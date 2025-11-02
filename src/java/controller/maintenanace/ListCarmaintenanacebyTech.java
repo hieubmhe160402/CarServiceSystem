@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import model.CarMaintenance;
 import model.User;
 
 /**
@@ -41,6 +42,26 @@ public class ListCarmaintenanacebyTech extends HttpServlet {
         if (user == null) {
             response.sendRedirect("authController?action=login");
             return;
+        }
+
+        String action = request.getParameter("action");
+        
+        // Xử lý action detail - load dữ liệu chi tiết
+        if ("detail".equals(action)) {
+            String maintenanceIdParam = request.getParameter("maintenanceId");
+            if (maintenanceIdParam != null) {
+                try {
+                    int maintenanceId = Integer.parseInt(maintenanceIdParam);
+                    CarMaintenanaceByTechDAO dao = new CarMaintenanaceByTechDAO();
+                    CarMaintenance detail = dao.getDetailServiceMaintenanceById(maintenanceId);
+                    List<Map<String, Object>> products = dao.getMaintenanceProducts(maintenanceId);
+                    
+                    request.setAttribute("detail", detail);
+                    request.setAttribute("products", products);
+                } catch (NumberFormatException e) {
+                    // Ignore
+                }
+            }
         }
 
         // Lấy technician ID từ user đã đăng nhập
