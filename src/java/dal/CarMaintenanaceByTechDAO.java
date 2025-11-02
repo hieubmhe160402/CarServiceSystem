@@ -78,4 +78,25 @@ public class CarMaintenanaceByTechDAO extends DBContext {
 
         return list;
     }
+
+    public boolean updateStatus(int maintenanceId, String newStatus) {
+        String sql;
+        if ("COMPLETED".equals(newStatus) || "CANCELLED".equals(newStatus)) {
+            // Khi COMPLETED hoặc CANCELLED thì cập nhật cả CompletedDate
+            sql = "UPDATE CarMaintenance SET Status = ?, CompletedDate = GETDATE() WHERE MaintenanceID = ?";
+        } else {
+            // Các status khác thì chỉ update status
+            sql = "UPDATE CarMaintenance SET Status = ?, CompletedDate = GETDATE() WHERE MaintenanceID = ?";
+        }
+
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setString(1, newStatus);
+            stm.setInt(2, maintenanceId);
+            int rowsAffected = stm.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(CarMaintenanaceByTechDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
 }

@@ -249,7 +249,19 @@
                                             <td class="description-cell">${item.notes}</td>
                                             <td>${item.createdDate}</td>
                                             <td>
-                                                <button class="btn btn-edit">Chi tiết</button>
+                                                <button class="btn btn-edit" onclick="viewDetails(${item.maintenanceID})">Chi tiết</button>
+                                                <c:if test="${item.status != 'CANCELLED' && item.status != 'COMPLETED'}">
+                                                    <form method="POST" action="listcarmaintenanacebytech" style="display: inline-block; margin-left: 5px;">
+                                                        <input type="hidden" name="action" value="cancel">
+                                                        <input type="hidden" name="maintenanceId" value="${item.maintenanceID}">
+                                                        <button type="submit" class="btn btn-delete">Hủy</button>
+                                                    </form>
+                                                    <form method="POST" action="listcarmaintenanacebytech" style="display: inline-block; margin-left: 5px;">
+                                                        <input type="hidden" name="action" value="complete">
+                                                        <input type="hidden" name="maintenanceId" value="${item.maintenanceID}">
+                                                        <button type="submit" class="btn" style="background: #10b981; color: white; padding: 6px 12px;">Hoàn thành</button>
+                                                    </form>
+                                                </c:if>
                                             </td>
                                         </tr>
                                     </c:forEach>
@@ -292,6 +304,12 @@
 
             searchInput.addEventListener("input", filterTable);
             statusFilter.addEventListener("change", filterTable);
+
+            // --- Action handlers ---
+            function viewDetails(maintenanceId) {
+                // TODO: Implement chi tiết bảo dưỡng
+                alert("Chi tiết bảo dưỡng ID: " + maintenanceId);
+            }
         </script>
     </body>
 </html>

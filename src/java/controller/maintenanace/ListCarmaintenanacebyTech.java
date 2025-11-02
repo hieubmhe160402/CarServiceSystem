@@ -64,7 +64,40 @@ public class ListCarmaintenanacebyTech extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        doGet(request, response);
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+
+        // Kiểm tra đăng nhập
+        if (user == null) {
+            response.sendRedirect("authController?action=login");
+            return;
+        }
+
+        String action = request.getParameter("action");
+        String maintenanceIdParam = request.getParameter("maintenanceId");
+
+        if (action == null || maintenanceIdParam == null) {
+            response.sendRedirect("listcarmaintenanacebytech");
+            return;
+        }
+
+        try {
+            int maintenanceId = Integer.parseInt(maintenanceIdParam);       
+            CarMaintenanaceByTechDAO dao = new CarMaintenanaceByTechDAO();
+            boolean success = false;
+
+            if ("cancel".equals(action)) {
+                success = dao.updateStatus(maintenanceId, "CANCELLED");
+            } else if ("complete".equals(action)) {
+                success = dao.updateStatus(maintenanceId, "COMPLETED");
+            }
+
+            // Redirect về trang danh sách sau khi update
+            response.sendRedirect("listcarmaintenanacebytech");
+
+        } catch (NumberFormatException e) {
+            response.sendRedirect("listcarmaintenanacebytech");
+        }
     }
 
     /**
