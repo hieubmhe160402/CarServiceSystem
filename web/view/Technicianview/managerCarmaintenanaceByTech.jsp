@@ -453,7 +453,23 @@
 
                                         <!-- ===================== DANH SÁCH DỊCH VỤ SỬ DỤNG ===================== -->
                                         <div class="form-group full">
-                                            <h3 style="margin-bottom: 10px;">Danh sách dịch vụ sử dụng</h3>
+                                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                                <h3 style="margin: 0;">Danh sách dịch vụ sử dụng</h3>
+                                                <c:if test="${detail.status != 'CANCELLED' && detail.status != 'COMPLETED'}">
+                                                    <div style="display: flex; gap: 10px;">
+                                                        <form method="GET" action="listcarmaintenanacebytech" style="display: inline-block;">
+                                                            <input type="hidden" name="action" value="addService">
+                                                            <input type="hidden" name="maintenanceId" value="${detail.maintenanceId}">
+                                                            <button type="submit" class="btn-add-service" style="background: #3b82f6; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">+ Dịch vụ</button>
+                                                        </form>
+                                                        <form method="GET" action="listcarmaintenanacebytech" style="display: inline-block;">
+                                                            <input type="hidden" name="action" value="addPart">
+                                                            <input type="hidden" name="maintenanceId" value="${detail.maintenanceId}">
+                                                            <button type="submit" class="btn-add-part" style="background: #e5e7eb; color: #374151; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">+ Linh kiện</button>
+                                                        </form>
+                                                    </div>
+                                                </c:if>
+                                            </div>
                                             <table border="1" cellspacing="0" cellpadding="8"
                                                    style="width:100%; border-collapse:collapse; text-align:left;">
                                                 <thead style="background:#f5f5f5;">
@@ -464,6 +480,7 @@
                                                         <th>Đơn giá</th>
                                                         <th>Giảm giá</th>
                                                         <th>Thành tiền</th>
+                                                        <th>Hành động</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -472,48 +489,71 @@
                                                             <c:set var="prevPackage" value="" />
                                                             <c:set var="rowCount" value="0" />
 
-                                                            <c:forEach var="item" items="${products}" varStatus="loop">
-                                                                <!-- Khi gặp packageCode mới, đếm số hàng có cùng mã -->
-                                                                <c:if test="${item.packageCode ne prevPackage}">
-                                                                    <c:set var="rowCount" value="0" />
-                                                                    <c:forEach var="inner" items="${products}">
-                                                                        <c:if test="${inner.packageCode eq item.packageCode}">
-                                                                            <c:set var="rowCount" value="${rowCount + 1}" />
+                                                            <c:forEach var="item" items="${products}">
+                                                                <c:choose>
+                                                                    <c:when test="${item.itemType == 'Dịch vụ combo'}">
+                                                                        <c:if test="${item.packageCode ne prevPackage}">
+                                                                            <c:set var="rowCount" value="0" />
+                                                                            <c:forEach var="inner" items="${products}">
+                                                                                <c:if test="${inner.itemType == 'Dịch vụ combo' && inner.packageCode == item.packageCode}">
+                                                                                    <c:set var="rowCount" value="${rowCount + 1}" />
+                                                                                </c:if>
+                                                                            </c:forEach>
                                                                         </c:if>
-                                                                    </c:forEach>
-                                                                </c:if>
+                                                                        <tr>
+                                                                            <c:if test="${item.packageCode ne prevPackage}">
+                                                                                <td rowspan="${rowCount}">${item.packageCode}</td>
+                                                                            </c:if>
+                                                                            <td>${item.productName}</td>
+                                                                            <td>${item.quantity}</td>
+                                                                            <c:if test="${item.packageCode ne prevPackage}">
+                                                                                <td rowspan="${rowCount}"><fmt:formatNumber value="${item.basePrice}" type="number" groupingUsed="true"/> VND</td>
+                                                                                <td rowspan="${rowCount}">${item.discountPercent}%</td>
+                                                                                <td rowspan="${rowCount}"><fmt:formatNumber value="${item.finalPrice}" type="number" groupingUsed="true"/> VND</td>
+                                                                                <td rowspan="${rowCount}"></td>
+                                                                            </c:if>
 
-                                                                <tr>
-                                                                    <!-- Mã SP -->
-                                                                    <c:if test="${item.packageCode ne prevPackage}">
-                                                                        <td rowspan="${rowCount}">${item.packageCode}</td>
-                                                                    </c:if>
-
-                                                                    <!-- Tên sản phẩm -->
-                                                                    <td>${item.productName}</td>
-                                                                    <td>${item.quantity}</td>
-
-                                                                    <!-- Các cột giá chỉ hiển thị 1 lần / nhóm -->
-                                                                    <c:if test="${item.packageCode ne prevPackage}">
-                                                                        <td rowspan="${rowCount}">
-                                                                            <fmt:formatNumber value="${item.basePrice}" type="number" groupingUsed="true"/> VND
-                                                                        </td>
-                                                                        <td rowspan="${rowCount}">
-                                                                            ${item.discountPercent}%
-                                                                        </td>
-                                                                        <td rowspan="${rowCount}">
-                                                                            <fmt:formatNumber value="${item.finalPrice}" type="number" groupingUsed="true"/> VND
-                                                                        </td>
-                                                                    </c:if>
-                                                                </tr>
-
-                                                                <c:set var="prevPackage" value="${item.packageCode}" />
+                                                                        </tr>
+                                                                        <c:set var="prevPackage" value="${item.packageCode}" />
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        <tr>
+                                                                            <td>${item.packageCode}</td>
+                                                                            <td>${item.productName}</td>
+                                                                            <td>${item.quantity}</td>
+                                                                            <td><fmt:formatNumber value="${item.basePrice}" type="number" groupingUsed="true"/> VND</td>
+                                                                            <td>${item.discountPercent}%</td>
+                                                                            <td><fmt:formatNumber value="${item.finalPrice}" type="number" groupingUsed="true"/> VND</td>
+                                                                            <td>
+                                                                                <c:if test="${detail.status != 'CANCELLED' && detail.status != 'COMPLETED'}">
+                                                                                    <c:if test="${item.itemType == 'Dịch vụ lẻ' && item.serviceDetailId != null}">
+                                                                                        <form method="POST" action="listcarmaintenanacebytech" style="display: inline-block;" 
+                                                                                              onsubmit="return confirm('Bạn có chắc chắn muốn xóa dịch vụ này?');">
+                                                                                            <input type="hidden" name="action" value="deleteService">
+                                                                                            <input type="hidden" name="maintenanceId" value="${detail.maintenanceId}">
+                                                                                            <input type="hidden" name="serviceDetailId" value="${item.serviceDetailId}">
+                                                                                            <button type="submit" style="background: #ef4444; color: white; padding: 4px 8px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">Xóa</button>
+                                                                                        </form>
+                                                                                    </c:if>
+                                                                                    <c:if test="${item.itemType == 'Phụ tùng thay thế' && item.servicePartDetailId != null}">
+                                                                                        <form method="POST" action="listcarmaintenanacebytech" style="display: inline-block;" 
+                                                                                              onsubmit="return confirm('Bạn có chắc chắn muốn xóa linh kiện này?');">
+                                                                                            <input type="hidden" name="action" value="deletePart">
+                                                                                            <input type="hidden" name="maintenanceId" value="${detail.maintenanceId}">
+                                                                                            <input type="hidden" name="servicePartDetailId" value="${item.servicePartDetailId}">
+                                                                                            <button type="submit" style="background: #ef4444; color: white; padding: 4px 8px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">Xóa</button>
+                                                                                        </form>
+                                                                                    </c:if>
+                                                                                </c:if>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </c:otherwise>
+                                                                </c:choose>
                                                             </c:forEach>
                                                         </c:when>
-
                                                         <c:otherwise>
                                                             <tr>
-                                                                <td colspan="6" style="text-align:center;">Không có sản phẩm nào trong phiếu bảo dưỡng này</td>
+                                                                <td colspan="7" style="text-align:center;">Không có sản phẩm nào trong phiếu bảo dưỡng này</td>
                                                             </tr>
                                                         </c:otherwise>
                                                     </c:choose>
@@ -537,10 +577,159 @@
                                 </div>
                             </div>
                         </c:if>
+
+                        <!-- POPUP THÊM DỊCH VỤ/LINH KIỆN -->
+                        <c:if test="${not empty addType}">
+                            <div id="addItemModal" class="add-item-modal" style="display:block;">
+                                <div class="add-item-modal-content">
+                                    <div class="add-item-modal-header">
+                                        <h3>
+                                            <c:choose>
+                                                <c:when test="${addType eq 'addService'}">Thêm dịch vụ</c:when>
+                                                <c:when test="${addType eq 'addPart'}">Thêm linh kiện</c:when>
+                                            </c:choose>
+                                        </h3>
+                                        <a href="listcarmaintenanacebytech?action=detail&maintenanceId=${maintenanceId}" class="close">&times;</a>
+                                    </div>
+                                    <div class="add-item-modal-body">
+                                        <form method="POST" action="listcarmaintenanacebytech" id="addItemForm">
+                                            <input type="hidden" name="action" value="${addType}">
+                                            <input type="hidden" name="maintenanceId" value="${maintenanceId}">
+
+                                            <div class="form-group">
+                                                <label>Chọn sản phẩm *</label>
+                                                <select name="productId" id="productSelect" required style="width: 100%; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                                                    <option value="">Chọn sản phẩm</option>
+                                                    <c:forEach var="product" items="${productList}">
+                                                        <option value="${product.productId}" data-price="${product.price}">${product.name}</option>
+                                                    </c:forEach>
+                                                </select>
+                                            </div>
+
+                                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                                                <div class="form-group">
+                                                    <label>Số lượng</label>
+                                                    <input type="number" name="quantity" id="quantityInput" step="0.01" min="0.01" required 
+                                                           onchange="calculateTotal()" style="width: 100%; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Đơn giá</label>
+                                                    <input type="number" name="unitPrice" id="unitPriceInput" step="0.01" min="0" required 
+                                                           onchange="calculateTotal()" style="width: 100%; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group" style="margin-top: 15px;">
+                                                <label>Notes</label>
+                                                <textarea name="notes" rows="3" placeholder="Ghi chú ngắn gọn" 
+                                                          style="width: 100%; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px;"></textarea>
+                                            </div>
+
+                                            <div class="form-group" style="margin-top: 15px;">
+                                                <label>Tổng tiền</label>
+                                                <input type="text" id="totalPriceInput" readonly 
+                                                       style="width: 100%; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; background: #f5f5f5;">
+                                            </div>
+
+                                            <div style="text-align: right; margin-top: 20px;">
+                                                <button type="button" onclick="window.location.href = 'listcarmaintenanacebytech?action=detail&maintenanceId=${maintenanceId}'" 
+                                                        style="background: #e5e7eb; color: #374151; padding: 8px 18px; border: none; border-radius: 6px; cursor: pointer; margin-right: 10px;">
+                                                    Hủy
+                                                </button>
+                                                <button type="submit" 
+                                                        style="background: #16a34a; color: white; padding: 8px 18px; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">
+                                                    Xác nhận
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </c:if>
                     </div>
                 </div>
             </div>
 
+            <style>
+                /* Modal thêm dịch vụ/linh kiện */
+                .add-item-modal {
+                    display: none;
+                    position: fixed;
+                    z-index: 3000;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.5);
+                    overflow-y: auto;
+                }
+
+                .add-item-modal-content {
+                    background: white;
+                    margin: 5% auto;
+                    padding: 30px;
+                    width: 500px;
+                    border-radius: 10px;
+                    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+                    animation: fadeIn 0.3s ease-in-out;
+                }
+
+                .add-item-modal-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 20px;
+                    padding-bottom: 15px;
+                    border-bottom: 1px solid #e5e7eb;
+                }
+
+                .add-item-modal-header h3 {
+                    margin: 0;
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: #111827;
+                }
+
+                .add-item-modal-body {
+                    margin-top: 20px;
+                }
+
+                .add-item-modal-body label {
+                    display: block;
+                    font-weight: 600;
+                    margin-bottom: 6px;
+                    color: #111827;
+                    font-size: 14px;
+                }
+            </style>
+
+            <script>
+                // Tính tổng tiền tự động
+                function calculateTotal() {
+                    const quantity = parseFloat(document.getElementById('quantityInput').value) || 0;
+                    const unitPrice = parseFloat(document.getElementById('unitPriceInput').value) || 0;
+                    const total = quantity * unitPrice;
+
+                    // Format số với dấu phẩy
+                    document.getElementById('totalPriceInput').value = total.toLocaleString('vi-VN') + ' VND';
+                }
+
+                // Tự động điền đơn giá khi chọn sản phẩm
+                document.addEventListener('DOMContentLoaded', function () {
+                    const productSelect = document.getElementById('productSelect');
+                    const unitPriceInput = document.getElementById('unitPriceInput');
+
+                    if (productSelect) {
+                        productSelect.addEventListener('change', function () {
+                            const selectedOption = this.options[this.selectedIndex];
+                            if (selectedOption && selectedOption.dataset.price) {
+                                unitPriceInput.value = selectedOption.dataset.price;
+                                calculateTotal();
+                            }
+                        });
+                    }
+                });
+            </script>
             <script>
                 // --- Filter ---
                 const searchInput = document.getElementById("searchInput");
