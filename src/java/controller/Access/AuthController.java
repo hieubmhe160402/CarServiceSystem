@@ -130,7 +130,7 @@ public class AuthController extends HttpServlet {
             String roleName = user.getRole().getRoleName();
             switch (roleName) {
                 case "Admin":
-                    response.sendRedirect("adminController");
+                    response.sendRedirect("dashboard");
                     break;
                 case "Staff":
                     response.sendRedirect("staffController");

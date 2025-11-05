@@ -116,7 +116,7 @@
             <nav class="nav">
                 <% if ("Admin".equals(roleName)) { %>
                 <div class="brand">Admin Car Care</div>
-                <a href="view/Admin/HomePageForAdmin.jsp"><span class="ico"></span> Dashboard</a>
+                <a href="/CarCareSystem/dashboard"><span class="ico"></span> Dashboard</a>
                 <a href="/CarCareSystem/listEmployees"><span class="ico"></span> Quản lý nhân viên</a>
                 <a href="/CarCareSystem/ManageCustomerController"><span class="ico"></span> Quản lý thông tin khách hàng</a>
                 <a href="/CarCareSystem/supplier"><span class="ico"></span> Quản lý nhà cung cấp</a>
