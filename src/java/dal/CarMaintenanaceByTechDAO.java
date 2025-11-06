@@ -106,50 +106,59 @@ public class CarMaintenanaceByTechDAO extends DBContext {
     }
 
     public CarMaintenance getDetailServiceMaintenanceById(int maintenanceId) {
+        // Cập nhật tổng tiền trước khi lấy chi tiết
+        getMaintenanceFinalAmount(maintenanceId);
+
         String sql = """
-                SELECT 
-                    m.MaintenanceID,
-                    m.AppointmentID,
-                    m.MaintenanceDate,
-                    m.Odometer,
-                    m.Status,
-                    m.Notes,
-                    m.AssignedTechnicianID,
-                    m.CompletedDate,
-                    ISNULL(m.FinalAmount, 0) AS FinalAmount,
-                    m.CreatedBy,
-
-                    -- Thông tin người tạo
-                    creator.UserID AS CreatedByID,
-                    creator.FullName AS CreatedByName,
-
-                    -- Thông tin khách hàng (chủ xe)
-                    u.UserID AS CustomerID,
-                    u.FullName AS CustomerName,
-                    u.Phone AS CustomerPhone,
-                    u.Email AS CustomerEmail,
-
-                    -- Thông tin kỹ thuật viên
-                    tech.UserID AS TechnicianID,
-                    tech.FullName AS TechnicianName,
-                    tech.Phone AS TechnicianPhone,
-                    tech.Email AS TechnicianEmail,
-
-                    -- Thông tin xe
-                    c.CarID,
-                    c.LicensePlate,
-                    c.Brand,
-                    c.Model,
-                    c.Color,
-                    CONCAT(c.Brand, ' ', c.Model, ' - ', c.Color) AS CarInfo
-
-                FROM CarMaintenance m
-                LEFT JOIN Appointments a ON m.AppointmentID = a.AppointmentID
-                LEFT JOIN Cars c ON a.CarID = c.CarID
-                LEFT JOIN Users u ON c.OwnerID = u.UserID
-                LEFT JOIN Users tech ON m.AssignedTechnicianID = tech.UserID
-                LEFT JOIN Users creator ON m.CreatedBy = creator.UserID
-                WHERE m.MaintenanceID = ?
+              					SELECT 
+                            m.MaintenanceID,
+                            m.AppointmentID,
+                            m.MaintenanceDate,
+                            m.Odometer,
+                            m.Status,
+                            m.Notes,
+                            m.AssignedTechnicianID,
+                            m.CompletedDate,
+                    		ISNULL(m.FinalAmount, 0) AS FinalAmount,
+                    
+                            -- ✅ Tính TotalAmount trực tiếp
+                            (
+                                SELECT 
+                                    ISNULL(SUM(DISTINCT mpu.AppliedPrice), 0)
+                                  + ISNULL(SUM(DISTINCT sd.TotalPrice), 0)
+                                  + ISNULL(SUM(DISTINCT spd.TotalPrice), 0)
+                                FROM CarMaintenance cm
+                                LEFT JOIN MaintenancePackageUsage mpu ON cm.MaintenanceID = mpu.MaintenanceID
+                                LEFT JOIN ServiceDetails sd ON cm.MaintenanceID = sd.MaintenanceID
+                                    AND (sd.Notes IS NULL OR (sd.Notes NOT LIKE '%[ĐÃ XÓA]%' AND sd.Notes NOT LIKE 'Từ gói %'))
+                                LEFT JOIN ServicePartDetails spd ON cm.MaintenanceID = spd.MaintenanceID
+                                    AND (spd.Notes IS NULL OR (spd.Notes NOT LIKE '%[ĐÃ XÓA]%' AND spd.Notes NOT LIKE 'Từ gói %'))
+                                WHERE cm.MaintenanceID = m.MaintenanceID
+                            ) AS TotalAmount,
+                            m.CreatedBy,
+                            creator.UserID AS CreatedByID,
+                            creator.FullName AS CreatedByName,
+                            u.UserID AS CustomerID,
+                            u.FullName AS CustomerName,
+                            u.Phone AS CustomerPhone,
+                            u.Email AS CustomerEmail,
+                            tech.UserID AS TechnicianID,
+                            tech.FullName AS TechnicianName,
+                            tech.Phone AS TechnicianPhone,
+                            tech.Email AS TechnicianEmail,
+                            c.CarID,
+                            c.LicensePlate,
+                            c.Brand,
+                            c.Model,
+                            c.Color,
+                            CONCAT(c.Brand, ' ', c.Model, ' - ', c.Color) AS CarInfo
+                        FROM CarMaintenance m
+                        LEFT JOIN Appointments a ON m.AppointmentID = a.AppointmentID
+                        LEFT JOIN Cars c ON a.CarID = c.CarID
+                        LEFT JOIN Users u ON c.OwnerID = u.UserID
+                        LEFT JOIN Users tech ON m.AssignedTechnicianID = tech.UserID
+                        LEFT JOIN Users creator ON m.CreatedBy = creator.UserID
+                        WHERE m.MaintenanceID = ?
             """;
 
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
@@ -162,7 +171,12 @@ public class CarMaintenanaceByTechDAO extends DBContext {
                 cm.setMaintenanceDate(rs.getString("MaintenanceDate"));
                 cm.setOdometer(rs.getInt("Odometer"));
                 cm.setStatus(rs.getString("Status"));
-                cm.setFinalAmount(rs.getBigDecimal("FinalAmount"));
+                BigDecimal totalAmount = rs.getBigDecimal("TotalAmount");
+                if (totalAmount != null) {
+                    cm.setFinalAmount(totalAmount);
+                } else {
+                    cm.setFinalAmount(rs.getBigDecimal("FinalAmount"));
+                }
                 cm.setNotes(rs.getString("Notes"));
                 cm.setCompletedDate(rs.getString("CompletedDate"));
 
@@ -250,7 +264,7 @@ public class CarMaintenanaceByTechDAO extends DBContext {
         try {
             // Lưu packageCode từ Appointment để loại trừ khi xử lý gói combo đã thêm
             String appointmentPackageCode = null;
-            
+
             // 🔹 Nếu có gói combo từ Appointment → lấy thông tin gói và sản phẩm
             if (packageId != null) {
                 // Lấy thông tin gói combo trước
@@ -264,7 +278,7 @@ public class CarMaintenanaceByTechDAO extends DBContext {
                 Double packageBasePrice = null;
                 Double packageDiscountPercent = null;
                 Double packageFinalPrice = null;
-                
+
                 try (PreparedStatement stm = connection.prepareStatement(sqlPackageInfo)) {
                     stm.setInt(1, packageId);
                     ResultSet rs = stm.executeQuery();
@@ -277,7 +291,7 @@ public class CarMaintenanaceByTechDAO extends DBContext {
                         packageFinalPrice = rs.getDouble("FinalPrice");
                     }
                 }
-                
+
                 // Thêm entry header cho gói combo
                 if (packageCode != null) {
                     Map<String, Object> headerMap = new HashMap<>();
@@ -290,7 +304,7 @@ public class CarMaintenanaceByTechDAO extends DBContext {
                     headerMap.put("itemType", "Dịch vụ combo");
                     list.add(headerMap);
                 }
-                
+
                 // Lấy các sản phẩm trong gói
                 String sqlCombo = """
                         SELECT 
@@ -342,7 +356,7 @@ public class CarMaintenanaceByTechDAO extends DBContext {
                     }
                 }
             }
-            
+
             // Với mỗi packageCode đã tìm được, lấy thông tin gói và tất cả sản phẩm từ MaintenancePackageDetail
             // Loại trừ packageCode từ Appointment (đã xử lý ở trên)
             for (String packageCode : addedPackageCodes.keySet()) {
@@ -361,7 +375,7 @@ public class CarMaintenanaceByTechDAO extends DBContext {
                     ResultSet rs = stm.executeQuery();
                     if (rs.next()) {
                         Integer pkgId = rs.getInt("PackageID");
-                        
+
                         // Entry header cho gói
                         Map<String, Object> headerMap = new HashMap<>();
                         headerMap.put("packageCode", rs.getString("PackageCode"));
@@ -372,7 +386,7 @@ public class CarMaintenanaceByTechDAO extends DBContext {
                         headerMap.put("finalPrice", rs.getDouble("FinalPrice"));
                         headerMap.put("itemType", "Dịch vụ combo");
                         list.add(headerMap);
-                        
+
                         // Lấy TẤT CẢ sản phẩm trong gói từ MaintenancePackageDetail (để hiển thị đầy đủ)
                         String sqlPackageProducts = """
                                 SELECT 
@@ -632,7 +646,7 @@ public class CarMaintenanaceByTechDAO extends DBContext {
         }
 
         if (anyInserted) {
-            updateMaintenanceFinalAmount(maintenanceId);
+            getMaintenanceFinalAmount(maintenanceId);
         }
         return anyInserted;
     }
@@ -660,7 +674,9 @@ public class CarMaintenanaceByTechDAO extends DBContext {
 
             // Cập nhật FinalAmount trong CarMaintenance
             if (rowsAffected > 0) {
-                updateMaintenanceFinalAmount(maintenanceId);
+                // Không update DB — chỉ đọc lại tổng
+                BigDecimal newTotal = getMaintenanceFinalAmount(maintenanceId);
+                System.out.println("FinalAmount mới: " + newTotal);
             }
 
             return rowsAffected > 0;
@@ -693,7 +709,8 @@ public class CarMaintenanaceByTechDAO extends DBContext {
 
             // Cập nhật FinalAmount trong CarMaintenance
             if (rowsAffected > 0) {
-                updateMaintenanceFinalAmount(maintenanceId);
+                BigDecimal newTotal = getMaintenanceFinalAmount(maintenanceId);
+                System.out.println(">>> FinalAmount sau khi thêm linh kiện: " + newTotal);
             }
 
             return rowsAffected > 0;
@@ -715,7 +732,8 @@ public class CarMaintenanaceByTechDAO extends DBContext {
             int rowsAffected = stm.executeUpdate();
 
             if (rowsAffected > 0) {
-                updateMaintenanceFinalAmount(maintenanceId);
+                BigDecimal newTotal = getMaintenanceFinalAmount(maintenanceId);
+                System.out.println(">>> FinalAmount sau khi xóa dịch vụ: " + newTotal);
             }
 
             return rowsAffected > 0;
@@ -737,7 +755,8 @@ public class CarMaintenanaceByTechDAO extends DBContext {
             int rowsAffected = stm.executeUpdate();
 
             if (rowsAffected > 0) {
-                updateMaintenanceFinalAmount(maintenanceId);
+                BigDecimal newTotal = getMaintenanceFinalAmount(maintenanceId);
+                System.out.println(">>> FinalAmount sau khi xóa dịch vụ: " + newTotal);
             }
 
             return rowsAffected > 0;
@@ -748,29 +767,45 @@ public class CarMaintenanaceByTechDAO extends DBContext {
     }
 
     /**
-     * Cập nhật FinalAmount trong CarMaintenance dựa trên tổng của
-     * ServiceDetails và ServicePartDetails (chỉ tính các item chưa xóa)
+     * Cập nhật FinalAmount trong CarMaintenance: TotalAmount = PackageAmount
+     * (từ MaintenancePackageUsage) + ServiceAmount (dịch vụ lẻ, không từ gói) +
+     * PartAmount (linh kiện lẻ, không từ gói)
      */
-    private void updateMaintenanceFinalAmount(int maintenanceId) {
+    public BigDecimal getMaintenanceFinalAmount(int maintenanceId) {
         String sql = """
-            UPDATE CarMaintenance
-            SET FinalAmount = (
-                SELECT 
-                    ISNULL((SELECT SUM(TotalPrice) FROM ServiceDetails 
-                            WHERE MaintenanceID = ? AND (Notes IS NULL OR Notes NOT LIKE '%[ĐÃ XÓA]%')), 0) +
-                    ISNULL((SELECT SUM(TotalPrice) FROM ServicePartDetails 
-                            WHERE MaintenanceID = ? AND (Notes IS NULL OR Notes NOT LIKE '%[ĐÃ XÓA]%')), 0)
-            )
-            WHERE MaintenanceID = ?
-        """;
+        SELECT 
+            ISNULL(SUM(DISTINCT mpu.AppliedPrice), 0) AS PackageAmount,
+            ISNULL(SUM(DISTINCT sd.TotalPrice), 0) AS ServiceAmount,
+            ISNULL(SUM(DISTINCT spd.TotalPrice), 0) AS PartAmount,
+            (ISNULL(SUM(DISTINCT mpu.AppliedPrice), 0)
+             + ISNULL(SUM(DISTINCT sd.TotalPrice), 0)
+             + ISNULL(SUM(DISTINCT spd.TotalPrice), 0)) AS TotalAmount
+        FROM CarMaintenance cm
+        LEFT JOIN MaintenancePackageUsage mpu 
+            ON cm.MaintenanceID = mpu.MaintenanceID
+        LEFT JOIN ServiceDetails sd 
+            ON cm.MaintenanceID = sd.MaintenanceID
+            AND (sd.Notes IS NULL OR (sd.Notes NOT LIKE '%[ĐÃ XÓA]%' AND sd.Notes NOT LIKE 'Từ gói %'))
+        LEFT JOIN ServicePartDetails spd 
+            ON cm.MaintenanceID = spd.MaintenanceID
+            AND (spd.Notes IS NULL OR (spd.Notes NOT LIKE '%[ĐÃ XÓA]%' AND spd.Notes NOT LIKE 'Từ gói %'))
+        WHERE cm.MaintenanceID = ?
+        GROUP BY cm.MaintenanceID
+    """;
 
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setInt(1, maintenanceId);
-            stm.setInt(2, maintenanceId);
-            stm.setInt(3, maintenanceId);
-            stm.executeUpdate();
+            ResultSet rs = stm.executeQuery();
+
+            if (rs.next()) {
+                BigDecimal totalAmount = rs.getBigDecimal("TotalAmount");
+                return totalAmount != null ? totalAmount : BigDecimal.ZERO;
+            }
         } catch (SQLException ex) {
             Logger.getLogger(CarMaintenanaceByTechDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+        return BigDecimal.ZERO;
     }
+
 }

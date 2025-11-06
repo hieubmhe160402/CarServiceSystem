@@ -7,6 +7,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <!DOCTYPE html>
 <html lang="vi">
     <head>
@@ -384,7 +386,6 @@
                             </c:choose>
                         </tbody>
                     </table>
-                    <!-- POPUP PHIẾU DỊCH VỤ -->
                     <c:if test="${not empty detail}">
                         <div id="serviceModal" class="modal" style="display:block;">
                             <div class="modal-content">
@@ -451,7 +452,6 @@
                                             <textarea readonly>${detail.notes}</textarea>
                                         </div>
 
-                                        <!-- ===================== DANH SÁCH DỊCH VỤ SỬ DỤNG ===================== -->
                                         <div class="form-group full">
                                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                                                 <h3 style="margin: 0;">Danh sách dịch vụ sử dụng</h3>
@@ -562,7 +562,7 @@
 
                                             <div style="text-align:right; margin-top:10px; font-weight:bold;">
                                                 Tổng tiền:
-                                                <fmt:formatNumber value="${detail.finalAmount}" type="number" groupingUsed="true"/> VND
+                                                <fmt:formatNumber value="${detail.finalAmount}" type="number" maxFractionDigits="0" groupingUsed="true"/> VND
                                             </div>
 
                                             <div style="text-align:right; margin-top:30px;">
@@ -578,7 +578,6 @@
                             </div>
                         </c:if>
 
-                        <!-- POPUP THÊM DỊCH VỤ/LINH KIỆN -->
                         <c:if test="${not empty addType}">
                             <div id="addItemModal" class="add-item-modal" style="display:block;">
                                 <div class="add-item-modal-content">
