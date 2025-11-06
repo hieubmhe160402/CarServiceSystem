@@ -439,4 +439,125 @@ public class CarMaintenanceDAO extends DBContext {
         return list;
     }
 
+    /**
+     * 🔹 Tính tổng chi phí (FinalAmount) của một phiếu bảo dưỡng Gồm: Giá gói +
+     * dịch vụ lẻ + linh kiện thay thế (loại bỏ dòng đã xóa hoặc thuộc gói)
+     */
+    public BigDecimal getMaintenanceFinalAmount(int maintenanceId) {
+        String sql = """
+            SELECT 
+                ISNULL(SUM(DISTINCT mpu.AppliedPrice), 0) AS PackageAmount,
+                ISNULL(SUM(DISTINCT sd.TotalPrice), 0) AS ServiceAmount,
+                ISNULL(SUM(DISTINCT spd.TotalPrice), 0) AS PartAmount,
+                (ISNULL(SUM(DISTINCT mpu.AppliedPrice), 0)
+                 + ISNULL(SUM(DISTINCT sd.TotalPrice), 0)
+                 + ISNULL(SUM(DISTINCT spd.TotalPrice), 0)) AS TotalAmount
+            FROM CarMaintenance cm
+            LEFT JOIN MaintenancePackageUsage mpu 
+                ON cm.MaintenanceID = mpu.MaintenanceID
+            LEFT JOIN ServiceDetails sd 
+                ON cm.MaintenanceID = sd.MaintenanceID
+                AND (sd.Notes IS NULL OR (sd.Notes NOT LIKE '%[ĐÃ XÓA]%' AND sd.Notes NOT LIKE 'Từ gói %'))
+            LEFT JOIN ServicePartDetails spd 
+                ON cm.MaintenanceID = spd.MaintenanceID
+                AND (spd.Notes IS NULL OR (spd.Notes NOT LIKE '%[ĐÃ XÓA]%' AND spd.Notes NOT LIKE 'Từ gói %'))
+            WHERE cm.MaintenanceID = ?
+            GROUP BY cm.MaintenanceID
+        """;
+
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setInt(1, maintenanceId);
+            ResultSet rs = stm.executeQuery();
+
+            if (rs.next()) {
+                BigDecimal totalAmount = rs.getBigDecimal("TotalAmount");
+                return totalAmount != null ? totalAmount : BigDecimal.ZERO;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CarMaintenanceDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return BigDecimal.ZERO;
+    }
+
+    /**
+     * Tạo giao dịch thanh toán tiền mặt cho một phiếu bảo dưỡng
+     * Theo yêu cầu, tính Amount bằng tổng: AppliedPrice (gói) + sd.TotalPrice + spd.TotalPrice
+     * Status khởi tạo là PENDING, PaymentDate = GETDATE(), ProcessedBy = cm.CreatedBy
+     */
+    public int createCashPaymentTransaction(int maintenanceId) {
+        String sql = """
+                INSERT INTO PaymentTransactions (MaintenanceID, PaymentMethod, Amount, PaymentDate, Status, ProcessedBy)
+                SELECT 
+                    cm.MaintenanceID,
+                    'CASH' AS PaymentMethod,
+                    (
+                        ISNULL(SUM(DISTINCT mpu.AppliedPrice), 0)
+                        + ISNULL(SUM(DISTINCT sd.TotalPrice), 0)
+                        + ISNULL(SUM(DISTINCT spd.TotalPrice), 0)
+                    ) AS Amount,
+                    GETDATE() AS PaymentDate,
+                    'PENDING' AS Status,
+                    cm.CreatedBy AS ProcessedBy
+                FROM CarMaintenance cm
+                LEFT JOIN MaintenancePackageUsage mpu 
+                    ON cm.MaintenanceID = mpu.MaintenanceID
+                LEFT JOIN ServiceDetails sd 
+                    ON cm.MaintenanceID = sd.MaintenanceID
+                    AND (sd.Notes IS NULL OR (sd.Notes NOT LIKE '%[ĐÃ XÓA]%' AND sd.Notes NOT LIKE 'Từ gói %'))
+                LEFT JOIN ServicePartDetails spd 
+                    ON cm.MaintenanceID = spd.MaintenanceID
+                    AND (spd.Notes IS NULL OR (spd.Notes NOT LIKE '%[ĐÃ XÓA]%' AND spd.Notes NOT LIKE 'Từ gói %'))
+                WHERE cm.MaintenanceID = ?
+                GROUP BY cm.MaintenanceID, cm.CreatedBy
+            """;
+
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setInt(1, maintenanceId);
+            return stm.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(CarMaintenanceDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
+
+    /**
+     * Tạo giao dịch thanh toán chuyển khoản cho một phiếu bảo dưỡng
+     */
+    public int createTransferPaymentTransaction(int maintenanceId) {
+        String sql = """
+                INSERT INTO PaymentTransactions (MaintenanceID, PaymentMethod, Amount, PaymentDate, Status, ProcessedBy)
+                SELECT 
+                    cm.MaintenanceID,
+                    'TRANSFER' AS PaymentMethod,
+                    (
+                        ISNULL(SUM(DISTINCT mpu.AppliedPrice), 0)
+                        + ISNULL(SUM(DISTINCT sd.TotalPrice), 0)
+                        + ISNULL(SUM(DISTINCT spd.TotalPrice), 0)
+                    ) AS Amount,
+                    GETDATE() AS PaymentDate,
+                    'PENDING' AS Status,
+                    cm.CreatedBy AS ProcessedBy
+                FROM CarMaintenance cm
+                LEFT JOIN MaintenancePackageUsage mpu 
+                    ON cm.MaintenanceID = mpu.MaintenanceID
+                LEFT JOIN ServiceDetails sd 
+                    ON cm.MaintenanceID = sd.MaintenanceID
+                    AND (sd.Notes IS NULL OR (sd.Notes NOT LIKE '%[ĐÃ XÓA]%' AND sd.Notes NOT LIKE 'Từ gói %'))
+                LEFT JOIN ServicePartDetails spd 
+                    ON cm.MaintenanceID = spd.MaintenanceID
+                    AND (spd.Notes IS NULL OR (spd.Notes NOT LIKE '%[ĐÃ XÓA]%' AND spd.Notes NOT LIKE 'Từ gói %'))
+                WHERE cm.MaintenanceID = ?
+                GROUP BY cm.MaintenanceID, cm.CreatedBy
+            """;
+
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setInt(1, maintenanceId);
+            return stm.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(CarMaintenanceDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
+
 }

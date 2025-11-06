@@ -73,18 +73,18 @@ public class ListMaintenancePackage extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         MaintenancePackageDAO dao = new MaintenancePackageDAO();
-        
+
         // Get filter and search parameters
         String statusFilter = request.getParameter("status");
         String keyword = request.getParameter("keyword");
         String reload = request.getParameter("reload");
-        
+
         // ✅ Handle reload - clear all filters
         if ("true".equals(reload)) {
             statusFilter = null;
             keyword = null;
         }
-        
+
         // Get filtered data
         List<MaintenancePackageDetail> listPackage;
         if (keyword != null && !keyword.trim().isEmpty()) {
@@ -97,13 +97,13 @@ public class ListMaintenancePackage extends HttpServlet {
             // Get all packages
             listPackage = dao.getAll();
         }
-        
+
         // Set attributes for JSP
         request.setAttribute("listPackage", listPackage);
         request.setAttribute("currentStatus", statusFilter);
         request.setAttribute("currentKeyword", keyword);
         request.setAttribute("totalCount", listPackage.size());
-        
+
         request.getRequestDispatcher("/view/Admin/MaintenancePackage.jsp").forward(request, response);
     }
 
@@ -147,28 +147,69 @@ public class ListMaintenancePackage extends HttpServlet {
                         return;
                     }
 
-                    // ✅ Sửa định dạng số để tránh lỗi SQL numeric overflow
-                    String basePriceStr = request.getParameter("basePrice").replace(".", "").replace(",", ".");
-                    String discountPercentStr = request.getParameter("discountPercent").replace(".", "").replace(",", ".");
-                    String estimatedDurationStr = request.getParameter("estimatedDurationHours").replace(".", "").replace(",", ".");
+                    // ✅ Định dạng số: chỉ thay đổi dấu phẩy (,) thành dấu chấm (.)
+                    String rawBasePrice = request.getParameter("basePrice");
+                    String rawDiscountPercent = request.getParameter("discountPercent");
+                    String rawEstimatedDuration = request.getParameter("estimatedDurationHours");
 
-                    String rawBasePrice = request.getParameter("basePrice").trim();
-                    rawBasePrice = rawBasePrice.replace(".", "").replace(",", ".");
+                    // Validate không null
+                    if (rawBasePrice == null || rawDiscountPercent == null || rawEstimatedDuration == null) {
+                        request.setAttribute("error", "Lỗi: Thiếu thông tin bắt buộc!");
+                        request.setAttribute("listPackage", dao.getAll());
+                        request.getRequestDispatcher("/view/Admin/MaintenancePackage.jsp").forward(request, response);
+                        return;
+                    }
+
+                    rawBasePrice = rawBasePrice.trim().replace(",", ".");
+                    rawDiscountPercent = rawDiscountPercent.trim().replace(",", ".");
+                    rawEstimatedDuration = rawEstimatedDuration.trim().replace(",", ".");
+
                     BigDecimal basePrice = new BigDecimal(rawBasePrice);
-                    BigDecimal discountPercent = new BigDecimal(discountPercentStr);
-                    BigDecimal estimatedDurationHours = new BigDecimal(estimatedDurationStr);
+                    BigDecimal discountPercent = new BigDecimal(rawDiscountPercent);
+                    BigDecimal estimatedDurationHours = new BigDecimal(rawEstimatedDuration);
+
+                    // ✅ DEBUG: Log giá trị trước khi lưu
+                    System.out.println("===== DEBUG UPDATE COMBO =====");
+                    System.out.println("discountPercent input: " + request.getParameter("discountPercent"));
+                    System.out.println("discountPercent processed: " + rawDiscountPercent);
+                    System.out.println("discountPercent BigDecimal: " + discountPercent);
+                    System.out.println("===============================");
 
                     String applicableBrand = request.getParameter("applicableBrand");
-                    int displayOrder = Integer.parseInt(request.getParameter("displayOrder"));
+
+                    // ✅ Validate displayOrder (optional field)
+                    String displayOrderParam = request.getParameter("displayOrder");
+                    int displayOrder = 1; // Default value
+                    if (displayOrderParam != null && !displayOrderParam.trim().isEmpty()) {
+                        try {
+                            displayOrder = Integer.parseInt(displayOrderParam);
+                        } catch (NumberFormatException e) {
+                            request.setAttribute("error", "Thứ tự hiển thị không hợp lệ!");
+                            request.setAttribute("listPackage", dao.getAll());
+                            request.getRequestDispatcher("/view/Admin/MaintenancePackage.jsp").forward(request, response);
+                            return;
+                        }
+                    }
+
                     boolean isActive = Boolean.parseBoolean(request.getParameter("isActive"));
-                    int createdById = Integer.parseInt(request.getParameter("createdBy"));
+
+                    // ✅ Validate createdBy parameter
+                    String createdByParam = request.getParameter("createdBy");
+                    if (createdByParam == null || createdByParam.trim().isEmpty()) {
+                        request.setAttribute("error", "Lỗi: Không xác định được người tạo. Vui lòng đăng nhập lại!");
+                        request.setAttribute("listPackage", dao.getAll());
+                        request.getRequestDispatcher("/view/Admin/MaintenancePackage.jsp").forward(request, response);
+                        return;
+                    }
+                    int createdById = Integer.parseInt(createdByParam);
 
                     // Xử lý ảnh upload (optional)
                     Part imagePart = request.getPart("image");
-                    String fileName = Paths.get(imagePart.getSubmittedFileName()).getFileName().toString();
                     String imagePath = null;
-                    
-                    if (!fileName.isEmpty()) {
+
+                    if (imagePart != null && imagePart.getSubmittedFileName() != null
+                            && !imagePart.getSubmittedFileName().isEmpty()) {
+                        String fileName = Paths.get(imagePart.getSubmittedFileName()).getFileName().toString();
                         String uploadPath = request.getServletContext().getRealPath("/uploads");
                         File uploadDir = new File(uploadPath);
                         if (!uploadDir.exists()) {
@@ -231,21 +272,54 @@ public class ListMaintenancePackage extends HttpServlet {
                         return;
                     }
 
-                    // ✅ Sửa định dạng số để tránh lỗi SQL numeric overflow
-                    String basePriceStr = request.getParameter("basePrice").replace(".", "").replace(",", ".");
-                    String discountPercentStr = request.getParameter("discountPercent").replace(".", "").replace(",", ".");
-                    String estimatedDurationStr = request.getParameter("estimatedDurationHours").replace(".", "").replace(",", ".");
+                    // ✅ Định dạng số: chỉ thay đổi dấu phẩy (,) thành dấu chấm (.)
+                    String rawBasePrice = request.getParameter("basePrice");
+                    String rawDiscountPercent = request.getParameter("discountPercent");
+                    String rawEstimatedDuration = request.getParameter("estimatedDurationHours");
 
-                    String rawBasePrice = request.getParameter("basePrice").trim();
-                    rawBasePrice = rawBasePrice.replace(".", "").replace(",", ".");
+                    // Validate không null
+                    if (rawBasePrice == null || rawDiscountPercent == null || rawEstimatedDuration == null) {
+                        request.setAttribute("error", "Lỗi: Thiếu thông tin bắt buộc!");
+                        request.setAttribute("listPackage", dao.getAll());
+                        request.getRequestDispatcher("/view/Admin/MaintenancePackage.jsp").forward(request, response);
+                        return;
+                    }
+
+                    rawBasePrice = rawBasePrice.trim().replace(",", ".");
+                    rawDiscountPercent = rawDiscountPercent.trim().replace(",", ".");
+                    rawEstimatedDuration = rawEstimatedDuration.trim().replace(",", ".");
+
                     BigDecimal basePrice = new BigDecimal(rawBasePrice);
-                    BigDecimal discountPercent = new BigDecimal(discountPercentStr);
-                    BigDecimal estimatedDurationHours = new BigDecimal(estimatedDurationStr);
-                    
+                    BigDecimal discountPercent = new BigDecimal(rawDiscountPercent);
+                    BigDecimal estimatedDurationHours = new BigDecimal(rawEstimatedDuration);
+
                     String applicableBrand = request.getParameter("applicableBrand");
-                    int displayOrder = Integer.parseInt(request.getParameter("displayOrder"));
+
+                    // ✅ Validate displayOrder (optional field)
+                    String displayOrderParam = request.getParameter("displayOrder");
+                    int displayOrder = 1; // Default value
+                    if (displayOrderParam != null && !displayOrderParam.trim().isEmpty()) {
+                        try {
+                            displayOrder = Integer.parseInt(displayOrderParam);
+                        } catch (NumberFormatException e) {
+                            request.setAttribute("error", "Thứ tự hiển thị không hợp lệ!");
+                            request.setAttribute("listPackage", dao.getAll());
+                            request.getRequestDispatcher("/view/Admin/MaintenancePackage.jsp").forward(request, response);
+                            return;
+                        }
+                    }
+
                     boolean isActive = Boolean.parseBoolean(request.getParameter("isActive"));
-                    int createdById = Integer.parseInt(request.getParameter("createdBy"));
+
+                    // ✅ Validate createdBy parameter
+                    String createdByParam = request.getParameter("createdBy");
+                    if (createdByParam == null || createdByParam.trim().isEmpty()) {
+                        request.setAttribute("error", "Lỗi: Không xác định được người tạo. Vui lòng đăng nhập lại!");
+                        request.setAttribute("listPackage", dao.getAll());
+                        request.getRequestDispatcher("/view/Admin/MaintenancePackage.jsp").forward(request, response);
+                        return;
+                    }
+                    int createdById = Integer.parseInt(createdByParam);
 
                     System.out.println("===== DEBUG ADD COMBO =====");
                     System.out.println("packageCode: " + packageCode);
@@ -262,16 +336,17 @@ public class ListMaintenancePackage extends HttpServlet {
                     System.out.println("============================");
 
                     // Xử lý ảnh upload
+                    String imagePath = "";
                     Part imagePart = request.getPart("image");
-                    String fileName = Paths.get(imagePart.getSubmittedFileName()).getFileName().toString();
-                    String uploadPath = request.getServletContext().getRealPath("/uploads");
-                    File uploadDir = new File(uploadPath);
-                    if (!uploadDir.exists()) {
-                        uploadDir.mkdir();
-                    }
-
-                    String imagePath = "uploads/" + fileName;
-                    if (!fileName.isEmpty()) {
+                    if (imagePart != null && imagePart.getSubmittedFileName() != null
+                            && !imagePart.getSubmittedFileName().isEmpty()) {
+                        String fileName = Paths.get(imagePart.getSubmittedFileName()).getFileName().toString();
+                        String uploadPath = request.getServletContext().getRealPath("/uploads");
+                        File uploadDir = new File(uploadPath);
+                        if (!uploadDir.exists()) {
+                            uploadDir.mkdir();
+                        }
+                        imagePath = "uploads/" + fileName;
                         imagePart.write(uploadPath + File.separator + fileName);
                     }
 

@@ -63,17 +63,17 @@ public class ListCarmaintenance extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         CarMaintenanceDAO dao = new CarMaintenanceDAO();
         String action = request.getParameter("action");
-        
+
         try {
             // --- 1. Lấy tham số lọc & phân trang (Dùng chung) ---
             String status = request.getParameter("status");
             String search = request.getParameter("search");
             String statusParam = (status != null) ? status : "";
             String searchParam = (search != null) ? search.trim() : "";
-            
+
             int page = 1;
             int pageSize = 5; // Chỉ cần định nghĩa pageSize ở 1 nơi
             try {
@@ -86,11 +86,13 @@ public class ListCarmaintenance extends HttpServlet {
             // Chỉ làm những việc "thêm"
             if ("assign".equals(action)) {
                 int maintenanceId = Integer.parseInt(request.getParameter("maintenanceId"));
-                
+
                 CarMaintenance detail = dao.getDetailServiceMaintenanceById(maintenanceId);
+                BigDecimal finalAmount = dao.getMaintenanceFinalAmount(maintenanceId);
+                detail.setFinalAmount(finalAmount);
                 List<User> technicians = dao.getTechnicians();
                 List<Map<String, Object>> products = dao.getMaintenanceProducts(maintenanceId);
-                
+
                 request.setAttribute("products", products);
                 request.setAttribute("detail", detail);
                 request.setAttribute("technicians", technicians);
@@ -113,7 +115,7 @@ public class ListCarmaintenance extends HttpServlet {
             // --- 5. Chuyển tiếp (Forward 1 lần) ---
             request.getRequestDispatcher("/view/carmaintenance/managerCarmaintenanace.jsp")
                     .forward(request, response);
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Đã xảy ra lỗi khi tải dữ liệu: " + e.getMessage());
@@ -133,10 +135,10 @@ public class ListCarmaintenance extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         String action = request.getParameter("action");
         CarMaintenanceDAO dao = new CarMaintenanceDAO();
-        
+
         if ("cancel".equals(action)) {
             int maintenanceId = Integer.parseInt(request.getParameter("maintenanceId"));
             dao.updateStatus(maintenanceId, "CANCELLED");
@@ -151,10 +153,23 @@ public class ListCarmaintenance extends HttpServlet {
             return;
         }
 
-        // Sau khi update xong, load lại danh sách
-        List<CarMaintenance> list = dao.getAllCarMaintenances(action, action, 0, 0);
-        request.setAttribute("maintenances", list);
-        request.getRequestDispatcher("/view/carmaintenance/managerCarmaintenanace.jsp").forward(request, response);
+        if ("payCash".equals(action)) {
+            int maintenanceId = Integer.parseInt(request.getParameter("maintenanceId"));
+            int inserted = dao.createCashPaymentTransaction(maintenanceId);
+            // Có thể set message nếu cần
+            response.sendRedirect("listCarmaintenance");
+            return;
+        }
+
+        if ("payTransfer".equals(action)) {
+            int maintenanceId = Integer.parseInt(request.getParameter("maintenanceId"));
+            int inserted = dao.createTransferPaymentTransaction(maintenanceId);
+            response.sendRedirect("listCarmaintenance");
+            return;
+        }
+
+        // Mặc định quay lại danh sách
+        response.sendRedirect("listCarmaintenance");
     }
 
     /**

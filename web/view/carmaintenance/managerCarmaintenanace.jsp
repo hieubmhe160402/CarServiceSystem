@@ -816,18 +816,47 @@
                                                 </c:choose>
                                             </tbody>
                                         </table>
-
                                         <div style="text-align:right; margin-top:10px; font-weight:bold;">
                                             Tổng tiền:
                                             <fmt:formatNumber value="${detail.finalAmount}" type="number" groupingUsed="true"/> VND
                                         </div>
-
                                         <div style="text-align:right; margin-top:30px;">
-                                            <a href="listCarmaintenance" class="btn btn-danger" 
-                                               style="background-color:#dc3545; border:none; padding:8px 18px; border-radius:6px; color:white;">
-                                                Đóng
-                                            </a>
+                                            <c:choose>
+                                                <c:when test="${detail.status eq 'COMPLETE' || detail.status eq 'COMPLETED'}">
+                                                    <form action="listCarmaintenance" method="post" style="display:inline;">
+                                                        <input type="hidden" name="action" value="payCash" />
+                                                        <input type="hidden" name="maintenanceId" value="${detail.maintenanceId}" />
+                                                        <button type="submit" class="btn btn-success"
+                                                                style="background-color:#28a745; border:none; padding:8px 18px; border-radius:6px; color:white;">
+                                                            💵 Thanh toán tiền mặt
+                                                        </button>
+                                                    </form>
+
+                                                    <form action="listCarmaintenance" method="post" style="display:inline;">
+                                                        <input type="hidden" name="action" value="payTransfer" />
+                                                        <input type="hidden" name="maintenanceId" value="${detail.maintenanceId}" />
+                                                        <button type="submit" class="btn btn-primary"
+                                                                style="background-color:#007bff; border:none; padding:8px 18px; border-radius:6px; color:white;">
+                                                            💳 Chuyển khoản
+                                                        </button>
+                                                    </form>
+
+                                                    <a href="listCarmaintenance" class="btn btn-danger"
+                                                       style="background-color:#dc3545; border:none; padding:8px 18px; border-radius:6px; color:white;">
+                                                        Đóng
+                                                    </a>
+                                                </c:when>
+
+                                                <c:otherwise>
+                                                    <a href="listCarmaintenance" class="btn btn-danger"
+                                                       style="background-color:#dc3545; border:none; padding:8px 18px; border-radius:6px; color:white;">
+                                                        Đóng
+                                                    </a>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </div>
+
+
                                     </div>
 
                                 </div>
