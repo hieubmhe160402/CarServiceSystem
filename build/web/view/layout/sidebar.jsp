@@ -127,6 +127,7 @@
                 <a href="/CarCareSystem/roleManage"><span class="ico"></span> Quản lý Vai Trò(Role)</a>
                 <a href="/CarCareSystem/managerPackage"><span class="ico"></span> Dách chi tiết trong gói combo </a>
                 <a href="/CarCareSystem/maintenancePackage"><span class="ico"></span> Danh sách gói combo </a>
+                <a href="/CarCareSystem/payments"><span class="ico"></span> Lịch sử sửa xe</a>
                 <a href="SystemLog.jsp"><span class="ico"></span> Log hệ thống</a>
                 <a href="Reports.jsp"><span class="ico"></span> Báo cáo</a>
 
