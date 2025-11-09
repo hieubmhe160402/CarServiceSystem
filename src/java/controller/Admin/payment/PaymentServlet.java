@@ -132,10 +132,59 @@ public class PaymentServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    @Override
+   @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            PaymentDAO paymentDAO = new PaymentDAO();
+            String action = request.getParameter("action");
+            
+            // Xử lý action "markAsDone" - Đã nhận tiền
+            if ("markAsDone".equals(action)) {
+                try {
+                    int transactionId = Integer.parseInt(request.getParameter("transactionId"));
+                    boolean success = paymentDAO.updatePaymentStatus(transactionId, "DONE");
+                    
+                    // Lấy lại các tham số search và filter để giữ lại khi redirect
+                    String search = request.getParameter("search");
+                    String status = request.getParameter("status");
+                    
+                    HttpSession session = request.getSession();
+                    if (success) {
+                        session.setAttribute("successMessage", "Đã cập nhật trạng thái thành công");
+                    } else {
+                        session.setAttribute("errorMessage", "Không thể cập nhật trạng thái");
+                    }
+                    
+                    // Tạo URL redirect với các tham số search và filter
+                    StringBuilder redirectUrl = new StringBuilder("payments");
+                    if (search != null && !search.trim().isEmpty()) {
+                        redirectUrl.append("?search=").append(java.net.URLEncoder.encode(search.trim(), "UTF-8"));
+                        if (status != null && !status.trim().isEmpty()) {
+                            redirectUrl.append("&status=").append(status);
+                        }
+                    } else if (status != null && !status.trim().isEmpty()) {
+                        redirectUrl.append("?status=").append(status);
+                    }
+                    
+                    response.sendRedirect(redirectUrl.toString());
+                    return;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    HttpSession session = request.getSession();
+                    session.setAttribute("errorMessage", "Đã xảy ra lỗi: " + e.getMessage());
+                    response.sendRedirect("payments");
+                    return;
+                }
+            }
+            
+            doGet(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            HttpSession session = request.getSession();
+            session.setAttribute("errorMessage", "Đã xảy ra lỗi: " + e.getMessage());
+            response.sendRedirect("payments");
+        }
     }
 
     /**

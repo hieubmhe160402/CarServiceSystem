@@ -391,4 +391,20 @@ public class PaymentDAO extends DBContext {
 
         return list;
     }
+    public boolean updatePaymentStatus(int transactionId, String status) {
+        try {
+            String sql = "UPDATE PaymentTransactions SET Status = ? WHERE TransactionID = ?";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, status);
+            stm.setInt(2, transactionId);
+
+            int rowsAffected = stm.executeUpdate();
+            stm.close();
+
+            return rowsAffected > 0;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
 }
