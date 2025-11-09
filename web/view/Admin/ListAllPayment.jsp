@@ -4,6 +4,10 @@
     Author     : phamp
 --%>
 
+<%-- Document : ListAllPayment Created on : Nov 6, 2025, 11:34:47 PM Author : MinHeee --%>
+
+<%-- Document : managerCarmaintenanaceByTech Created on : Nov 2, 2025, 1:57:40 PM Author : nxtru --%>
+
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -18,7 +22,7 @@
         <style>
             /* --- RESET & BASE --- */
             * {
-                margin: 0; 
+                margin: 0;
                 padding: 0;
                 box-sizing: border-box;
             }
@@ -532,7 +536,7 @@
 
                                             <div class="form-group">
                                                 <label>Phương thức</label>
-                                                <input type="text" value="${detail.appointment.appointmentId}" readonly />
+                                                <input type="text" value="${paymentDetail.paymentMethod}" readonly />
                                             </div>
 
                                             <div class="form-group">
@@ -575,7 +579,8 @@
 
                                             <div class="form-group">
                                                 <label>Tổng số tiền</label>
-                                                <input type="text" value="${detail.assignedTechnician.userId}" readonly />
+                                                <fmt:formatNumber var="paidAmountFormatted" value="${paymentDetail.paidAmount}" type="number" groupingUsed="true"/>
+                                                <input type="text" value="${paidAmountFormatted} VND" readonly />
                                             </div>
 
                                         </div>
@@ -640,16 +645,12 @@
                                                 </tbody>
                                             </table>
 
-                                            <div style="text-align:right; margin-top:10px; font-weight:bold;">
-                                                Tổng tiền:
-                                                <fmt:formatNumber value="${detail.finalAmount}" type="number" groupingUsed="true"/> VND
-                                            </div>
 
                                             <div style="text-align:right; margin-top:30px;">
-                                                 <a href="${closePaymentsUrl}" class="btn btn-danger"
-                                                    style="background-color:#dc3545; border:none; padding:8px 18px; border-radius:6px; color:white;">
-                                                     Đóng
-                                                 </a>
+                                                <a href="${closePaymentsUrl}" class="btn btn-danger"
+                                                   style="background-color:#dc3545; border:none; padding:8px 18px; border-radius:6px; color:white;">
+                                                    Đóng
+                                                </a>
                                             </div>
 
                                         </div>
