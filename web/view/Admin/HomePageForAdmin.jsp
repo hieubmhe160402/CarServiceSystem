@@ -6,7 +6,7 @@
     This is a standalone HTML/CSS/JS mockup for the Admin Dashboard.
     To use in your JSP page, you can replace the <body> content of your JSP
     with the <body> content below (and move the <style> and <script> blocks
-    into your JSP layout or keep them inline).
+    into your JSP layout or keep them inline).//key
 --%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>

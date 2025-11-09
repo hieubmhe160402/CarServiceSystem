@@ -143,7 +143,15 @@
                 box-shadow: 0 4px 10px rgba(0,0,0,0.25);
                 animation: fadeIn 0.3s ease;
             }
-            
+            .form-row {
+                display: grid;
+                grid-template-columns: 1fr 1fr; /* Chia thành 2 cột bằng nhau */
+                gap: 0 20px; /* 0px cho khoảng cách dọc, 20px cho ngang */
+            }
+
+            .form-full-width {
+                grid-column: 1 / -1; /* Làm cho trường này rộng hết 2 cột */
+            }
             /* ✅ Form styling theo pattern MaintenancePackageDetails */
             .form-group {
                 display: flex;
@@ -169,7 +177,7 @@
                 font-size: 12px;
                 margin-top: 3px;
             }
-            
+
             /* ✅ Enhanced form styling */
             .form-group input:focus,
             .form-group select:focus,
@@ -178,12 +186,12 @@
                 border-color: #007bff;
                 box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
             }
-            
+
             .form-group input[readonly] {
                 background-color: #f8f9fa !important;
                 cursor: not-allowed;
             }
-            
+
             .form-group small {
                 color: #6c757d;
                 font-size: 12px;
@@ -245,32 +253,32 @@
                     transform: translateY(0);
                 }
             }
-            
+
             .error-message {
                 color: #dc3545;
                 font-size: 12px;
                 margin-top: 2px;
             }
-            
+
             .success-message {
                 color: #28a745;
                 font-size: 12px;
                 margin-top: 2px;
             }
         </style>
-        
+
         <script>
             // ✅ PackageCode validation
             function validatePackageCode() {
                 const packageCodeInput = document.getElementById('packageCode');
                 const packageCode = packageCodeInput.value.trim().toUpperCase();
-                
+
                 // Remove existing error message
                 const existingError = document.getElementById('packageCodeError');
                 if (existingError) {
                     existingError.textContent = '';
                 }
-                
+
                 if (packageCode && !packageCode.startsWith('PKG-')) {
                     if (existingError) {
                         existingError.textContent = 'Package Code phải bắt đầu bằng "PKG-"';
@@ -283,54 +291,54 @@
                     return true;
                 }
             }
-            
+
             // ✅ FinalPrice được tính tự động từ database (computed column)
-            
+
             // ✅ Form validation before submit
             function validateForm() {
                 const packageCodeValid = validatePackageCode();
                 const basePrice = document.getElementById('basePrice').value;
                 const name = document.querySelector('input[name="name"]').value;
-                
+
                 if (!packageCodeValid) {
                     alert('Vui lòng kiểm tra Package Code!');
                     return false;
                 }
-                
+
                 if (!basePrice || parseFloat(basePrice) <= 0) {
                     alert('BasePrice phải lớn hơn 0!');
                     return false;
                 }
-                
+
                 if (!name.trim()) {
                     alert('Package Name không được để trống!');
                     return false;
                 }
-                
+
                 return true;
             }
-            
-        // ✅ Auto-calculate on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            // FinalPrice sẽ được tính tự động từ DB, không cần calculate ở frontend
-        });
-            
+
+            // ✅ Auto-calculate on page load
+            document.addEventListener('DOMContentLoaded', function () {
+                // FinalPrice sẽ được tính tự động từ DB, không cần calculate ở frontend
+            });
+
             // ✅ Update modal functions - FinalPrice được tính tự động từ database
-            
+
             function validateUpdateForm(packageCode) {
                 const basePrice = document.getElementById('updateBasePrice_' + packageCode).value;
                 const name = document.getElementById('updateName_' + packageCode).value;
-                
+
                 if (!basePrice || parseFloat(basePrice) <= 0) {
                     alert('BasePrice phải lớn hơn 0!');
                     return false;
                 }
-                
+
                 if (!name.trim()) {
                     alert('Package Name không được để trống!');
                     return false;
                 }
-                
+
                 return true;
             }
         </script>
@@ -341,7 +349,7 @@
 
             <main class="main">
                 <h2 style="margin-bottom: 20px">Quản lý Combo</h2>
-                
+
                 <!-- ✅ Error/Success Messages -->
                 <c:if test="${not empty error}">
                     <div style="background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
@@ -369,7 +377,7 @@
                         <button type="button" class="btn btn-active" onclick="window.location.href = 'maintenancePackage'">Tải lại</button>
                     </form>
                     <button class="btn btn-add" onclick="document.getElementById('addComboModal').style.display = 'flex'">+ Thêm Combo</button>
-                    </div>
+                </div>
 
                 <br/><br/>
 
@@ -499,111 +507,107 @@
 
                                 <form action="maintenancePackage" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
                                     <input type="hidden" name="action" value="addCombo">
-                                    
-                                    <!-- Package Code -->
-                                    <div class="form-group">
-                                        <label>Mã gói *</label>
-                                        <input type="text" name="packageCode" id="packageCode" required 
-                                               placeholder="PKG-001" onblur="validatePackageCode()">
-                                        <span class="error" id="packageCodeError"></span>
-                                    </div>
 
-                                    <!-- Package Name -->
-                                    <div class="form-group">
-                                        <label>Tên gói *</label>
-                                        <input type="text" name="name" required>
-                                    </div>
+                                    <%-- Bọc các trường trong form-row --%>
+                                    <div class="form-row">
 
-                                    <!-- Description -->
-                                    <div class="form-group">
+                                        <%-- CỘT BÊN TRÁI --%>
+                                        <div>
+                                            <div class="form-group">
+                                                <label>Mã gói *</label>
+                                                <input type="text" name="packageCode" id="packageCode" required 
+                                                       placeholder="PKG-001" onblur="validatePackageCode()">
+                                                <span class="error" id="packageCodeError"></span>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Tên gói *</label>
+                                                <input type="text" name="name" required>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Cột mốc km *</label>
+                                                <input type="number" name="kilometerMilestone" required>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Cột mốc tháng *</label>
+                                                <input type="number" name="monthMilestone" required>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Giá gốc *</label>
+                                                <input type="number" name="basePrice" id="basePrice" required 
+                                                       title="FinalPrice sẽ được tính tự động từ BasePrice và DiscountPercent">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Trạng thái</label>
+                                                <select name="isActive">
+                                                    <option value="true" selected>Hoạt động</option>
+                                                    <option value="false">Không hoạt động</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <%-- CỘT BÊN PHẢI --%>
+                                        <div>
+                                            <div class="form-group">
+                                                <label>Phần trăm giảm giá (%)</label>
+                                                <input type="number" name="discountPercent" id="discountPercent" 
+                                                       min="0" max="100" value="0" 
+                                                       title="FinalPrice sẽ được tính tự động từ BasePrice và DiscountPercent">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Giá cuối cùng</label>
+                                                <input type="text" name="finalPrice" id="finalPrice" 
+                                                       readonly style="background-color:#f8f9fa;" 
+                                                       placeholder="Sẽ được tính tự động từ DB" 
+                                                       title="FinalPrice được tính tự động từ BasePrice và DiscountPercent trong database">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Thời gian ước tính (giờ) *</label>
+                                                <input type="number" name="estimatedDurationHours" required>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Thương hiệu áp dụng *</label>
+                                                <input type="text" name="applicableBrand" required>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Thứ tự hiển thị</label>
+                                                <input type="number" name="displayOrder" min="1">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Người tạo</label>
+                                                <input type="text" name="createdBy" value="${sessionScope.user.userId}" readonly>
+                                            </div>
+                                        </div>
+                                    </div> <%-- Kết thúc .form-row --%>
+
+                                    <%-- CÁC TRƯỜNG FULL-WIDTH --%>
+                                    <div class="form-group form-full-width">
                                         <label>Mô tả</label>
                                         <textarea name="description" rows="3"></textarea>
                                     </div>
 
-                                    <!-- Kilometer Milestone -->
-                                    <div class="form-group">
-                                        <label>Cột mốc km *</label>
-                                        <input type="number" name="kilometerMilestone" required>
-                                    </div>
-
-                                    <!-- Month Milestone -->
-                                    <div class="form-group">
-                                        <label>Cột mốc tháng *</label>
-                                        <input type="number" name="monthMilestone" required>
-                                    </div>
-
-                                    <!-- Base Price -->
-                                    <div class="form-group">
-                                        <label>Giá gốc *</label>
-                                        <input type="number" name="basePrice" id="basePrice" required 
-                                               title="FinalPrice sẽ được tính tự động từ BasePrice và DiscountPercent">
-                                    </div>
-
-                                    <!-- Discount Percent -->
-                                    <div class="form-group">
-                                        <label>Phần trăm giảm giá (%)</label>
-                                        <input type="number" name="discountPercent" id="discountPercent" 
-                                               min="0" max="100" value="0" 
-                                               title="FinalPrice sẽ được tính tự động từ BasePrice và DiscountPercent">
-                                    </div>
-
-                                    <!-- Final Price (Readonly) -->
-                                    <div class="form-group">
-                                        <label>Giá cuối cùng</label>
-                                        <input type="text" name="finalPrice" id="finalPrice" 
-                                               readonly style="background-color:#f8f9fa;" 
-                                               placeholder="Sẽ được tính tự động từ DB" 
-                                               title="FinalPrice được tính tự động từ BasePrice và DiscountPercent trong database">
-                                    </div>
-
-                                    <!-- Estimated Duration -->
-                                    <div class="form-group">
-                                        <label>Thời gian ước tính (giờ) *</label>
-                                        <input type="number" name="estimatedDurationHours" required>
-                                    </div>
-
-                                    <!-- Applicable Brand -->
-                                    <div class="form-group">
-                                        <label>Thương hiệu áp dụng *</label>
-                                        <input type="text" name="applicableBrand" required>
-                                    </div>
-
-                                    <!-- Display Order -->
-                                    <div class="form-group">
-                                        <label>Thứ tự hiển thị</label>
-                                        <input type="number" name="displayOrder" min="1">
-                                    </div>
-
-                                    <!-- Status -->
-                                    <div class="form-group">
-                                        <label>Trạng thái</label>
-                                        <select name="isActive">
-                                            <option value="true" selected>Hoạt động</option>
-                                            <option value="false">Không hoạt động</option>
-                                        </select>
-                                    </div>
-
-                                    <!-- Created By -->
-                                    <div class="form-group">
-                                        <label>Người tạo</label>
-                                        <input type="text" name="createdBy" value="${sessionScope.user.userId}" readonly>
-                                    </div>
-
-                                    <!-- Image Upload -->
-                                    <div class="form-group">
+                                    <div class="form-group form-full-width">
                                         <label>Hình ảnh</label>
                                         <input type="file" name="image" accept="image/*">
                                     </div>
 
-                                    <!-- Submit Buttons -->
-                                    <div style="display:flex;justify-content:flex-end;gap:10px;">
+                                    <div style="display:flex;justify-content:flex-end;gap:10px; margin-top: 15px;">
                                         <button type="submit" class="btn btn-add">Lưu</button>
                                         <button type="button" class="btn btn-delete" onclick="document.getElementById('addComboModal').style.display = 'none'">Hủy</button>
                                     </div>
                                 </form>
                             </div>
-                        </div>         
-                        
+                        </div       
+
                         <!-- ✅ UPDATE MODAL -->
                         <div id="update_${d.maintenancePackage.packageCode}" class="modal">
                             <div class="modal-content" style="width: 800px;">
@@ -613,118 +617,108 @@
                                 <form action="maintenancePackage" method="post" enctype="multipart/form-data" onsubmit="return validateUpdateForm('${d.maintenancePackage.packageCode}')">
                                     <input type="hidden" name="action" value="updateCombo">
                                     <input type="hidden" name="packageId" value="${d.maintenancePackage.packageId}">
-                                    
-                                    <!-- Package Code (Readonly) -->
-                                    <div class="form-group">
-                                        <label>Mã gói</label>
-                                        <input type="text" name="packageCode" id="updatePackageCode_${d.maintenancePackage.packageCode}" 
-                                               value="${d.maintenancePackage.packageCode}" readonly 
-                                               style="background-color:#f8f9fa;">
-                                    </div>
 
-                                    <!-- Package Name -->
-                                    <div class="form-group">
-                                        <label>Tên gói *</label>
-                                        <input type="text" name="name" id="updateName_${d.maintenancePackage.packageCode}" 
-                                               value="${d.maintenancePackage.name}" required>
-                                    </div>
+                                    <div class="form-row">
 
-                                    <!-- Description -->
-                                    <div class="form-group">
-                                        <label>Mô tả</label>
-                                        <textarea name="description" rows="3">${d.maintenancePackage.description}</textarea>
-                                    </div>
+                                        <div>
+                                            <div class="form-group">
+                                                <label>PackageCode</label>
+                                                <input type="text" name="packageCode" id="updatePackageCode_${d.maintenancePackage.packageCode}" 
+                                                       value="${d.maintenancePackage.packageCode}" readonly 
+                                                       style="background-color:#f8f9fa;">
+                                            </div>
 
-                                    <!-- Kilometer Milestone -->
-                                    <div class="form-group">
-                                        <label>Cột mốc km *</label>
-                                        <input type="number" name="kilometerMilestone" id="updateKm_${d.maintenancePackage.packageCode}" 
-                                               value="${d.maintenancePackage.kilometerMilestone}" required>
-                                    </div>
+                                            <div class="form-group">
+                                                <label>PackageName *</label>
+                                                <input type="text" name="name" id="updateName_${d.maintenancePackage.packageCode}" 
+                                                       value="${d.maintenancePackage.name}" required>
+                                            </div>
 
-                                    <!-- Month Milestone -->
-                                    <div class="form-group">
-                                        <label>Cột mốc tháng *</label>
-                                        <input type="number" name="monthMilestone" id="updateMonth_${d.maintenancePackage.packageCode}" 
-                                               value="${d.maintenancePackage.monthMilestone}" required>
-                                    </div>
+                                            <div class="form-group">
+                                                <label>KilometerMilestone *</label>
+                                                <input type="number" name="kilometerMilestone" id="updateKm_${d.maintenancePackage.packageCode}" 
+                                                       value="${d.maintenancePackage.kilometerMilestone}" required>
+                                            </div>
 
-                                    <!-- Base Price -->
-                                    <div class="form-group">
-                                        <label>Giá gốc *</label>
-                                        <input type="number" name="basePrice" id="updateBasePrice_${d.maintenancePackage.packageCode}" 
-                                               value="${d.maintenancePackage.basePrice}" required 
-                                               title="FinalPrice sẽ được tính tự động từ BasePrice và DiscountPercent">
-                                    </div>
+                                            <div class="form-group">
+                                                <label>MonthMilestone *</label>
+                                                <input type="number" name="monthMilestone" id="updateMonth_${d.maintenancePackage.packageCode}" 
+                                                       value="${d.maintenancePackage.monthMilestone}" required>
+                                            </div>
 
-                                    <!-- Discount Percent -->
-                                    <div class="form-group">
-                                        <label>Phần trăm giảm giá (%)</label>
-                                        <input type="number" name="discountPercent" id="updateDiscountPercent_${d.maintenancePackage.packageCode}" 
-                                               value="${d.maintenancePackage.discountPercent}" min="0" max="100" 
-                                               title="FinalPrice sẽ được tính tự động từ BasePrice và DiscountPercent">
-                                    </div>
+                                            <div class="form-group">
+                                                <label>BasePrice *</label>
+                                                <input type="number" name="basePrice" id="updateBasePrice_${d.maintenancePackage.packageCode}" 
+                                                       value="${d.maintenancePackage.basePrice}" required>
+                                            </div>
+                                        </div>
 
-                                    <!-- Final Price (Readonly) -->
-                                    <div class="form-group">
-                                        <label>Giá cuối cùng</label>
-                                        <input type="text" name="finalPrice" id="updateFinalPrice_${d.maintenancePackage.packageCode}" 
-                                               readonly style="background-color:#f8f9fa;" 
-                                               value="${d.maintenancePackage.finalPrice}"
-                                               title="FinalPrice được tính tự động từ BasePrice và DiscountPercent trong database">
-                                    </div>
+                                        <div>
+                                            <div class="form-group">
+                                                <label>FinalPrice</label>
+                                                <input type="text" name="finalPrice" id="updateFinalPrice_${d.maintenancePackage.packageCode}" 
+                                                       readonly style="background-color:#f8f9fa;" 
+                                                       value="${d.maintenancePackage.finalPrice}">
+                                            </div>
 
-                                    <!-- Estimated Duration -->
-                                    <div class="form-group">
-                                        <label>Thời gian ước tính (giờ) *</label>
-                                        <input type="number" name="estimatedDurationHours" id="updateDuration_${d.maintenancePackage.packageCode}" 
-                                               value="${d.maintenancePackage.estimatedDurationHours}" required>
-                                    </div>
+                                            <div class="form-group">
+                                                <label>EstimatedDuration *</label>
+                                                <input type="number" name="estimatedDurationHours" id="updateDuration_${d.maintenancePackage.packageCode}" 
+                                                       value="${d.maintenancePackage.estimatedDurationHours}" required>
+                                            </div>
 
-                                    <!-- Applicable Brand -->
-                                    <div class="form-group">
-                                        <label>Thương hiệu áp dụng *</label>
-                                        <input type="text" name="applicableBrand" id="updateBrand_${d.maintenancePackage.packageCode}" 
-                                               value="${d.maintenancePackage.applicableBrands}" required>
-                                    </div>
+                                            <div class="form-group">
+                                                <label>ApplicableBrand *</label>
+                                                <input type="text" name="applicableBrand" id="updateBrand_${d.maintenancePackage.packageCode}" 
+                                                       value="${d.maintenancePackage.applicableBrands}" required>
+                                            </div>
 
-                                    <!-- Display Order -->
-                                    <div class="form-group">
-                                        <label>Thứ tự hiển thị</label>
-                                        <input type="number" name="displayOrder" id="updateOrder_${d.maintenancePackage.packageCode}" 
-                                               value="${d.maintenancePackage.displayOrder}" min="1">
-                                    </div>
+                                            <div class="form-group">
+                                                <label>DisplayOrder</label>
+                                                <input type="number" name="displayOrder" id="updateOrder_${d.maintenancePackage.packageCode}" 
+                                                       value="${d.maintenancePackage.displayOrder}" min="1">
+                                            </div>
 
-                                    <!-- Status -->
-                                    <div class="form-group">
+                                            <div class="form-group">
+                                                <label>DiscountPercent</label>
+                                                <input type="number" name="discountPercent" id="updateDiscountPercent_${d.maintenancePackage.packageCode}" 
+                                                       value="${d.maintenancePackage.discountPercent}" min="0" max="100">
+                                            </div>
+                                        </div>
+                                    </div> <div class="form-group form-full-width">
                                         <label>Trạng thái</label>
                                         <select name="isActive" id="updateStatus_${d.maintenancePackage.packageCode}">
-                                            <option value="true" ${d.maintenancePackage.isActive ? 'selected' : ''}>Hoạt động</option>
-                                            <option value="false" ${!d.maintenancePackage.isActive ? 'selected' : ''}>Không hoạt động</option>
+                                            <option value="true" ${d.maintenancePackage.isActive ? 'selected' : ''}>Active</option>
+                                            <option value="false" ${!d.maintenancePackage.isActive ? 'selected' : ''}>Inactive</option>
                                         </select>
                                     </div>
 
-                                    <!-- Created By -->
-                                    <div class="form-group">
+                                    <div class="form-group form-full-width">
                                         <label>Người tạo</label>
-                                        <input type="text" name="createdBy" value="${sessionScope.user.userId}" readonly>
+                                        <input type="text" name="createdBy" value="${sessionScope.user.userId}" readonly style="background-color:#f8f9fa;">
                                     </div>
 
-                                    <!-- Image Upload -->
-                                    <div class="form-group">
+                                    <div class="form-group form-full-width">
+                                        <label>Description</label>
+                                        <textarea name="description" rows="3">${d.maintenancePackage.description}</textarea>
+                                    </div>
+
+                                    <div class="form-group image-upload-section form-full-width">
                                         <label>Hình ảnh</label>
                                         <input type="file" name="image" accept="image/*">
                                         <small style="color: #666;">Để trống nếu không muốn thay đổi ảnh</small>
+                                        <c:if test="${not empty d.maintenancePackage.image}">
+                                            <img src="${d.maintenancePackage.image}" alt="Current image" class="image-preview">
+                                        </c:if>
                                     </div>
 
-                                    <!-- Submit Buttons -->
-                                    <div style="display:flex;justify-content:flex-end;gap:10px;">
-                                        <button type="submit" class="btn btn-edit">Lưu</button>
+                                    <div style="display:flex;justify-content:flex-end;gap:10px; margin-top: 15px;">
+                                        <button type="submit" class="btn btn-edit">💾 Lưu thay đổi</button>
                                         <button type="button" class="btn btn-delete" onclick="document.getElementById('update_${d.maintenancePackage.packageCode}').style.display = 'none'">Đóng</button>
                                     </div>
                                 </form>
                             </div>
-                        </div>         
+                        </div>  
 
                     </c:if>
                 </c:forEach>
