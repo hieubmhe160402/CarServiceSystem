@@ -123,6 +123,23 @@
                 color: white;
             }
 
+            .alert {
+                padding: 12px 16px;
+                border-radius: 6px;
+                margin-bottom: 16px;
+                font-size: 14px;
+            }
+            .alert-success {
+                background: #dcfce7;
+                color: #166534;
+                border: 1px solid #bbf7d0;
+            }
+            .alert-error {
+                background: #fee2e2;
+                color: #b91c1c;
+                border: 1px solid #fecaca;
+            }
+
             /* --- TABLE --- */
             table {
                 width: 100%;
@@ -440,6 +457,13 @@
             <div class="main">
                 <div class="container">
                     <h2>Quản lý lịch bảo dưỡng</h2>
+
+                    <c:if test="${not empty successMessage}">
+                        <div class="alert alert-success">${successMessage}</div>
+                    </c:if>
+                    <c:if test="${not empty errorMessage}">
+                        <div class="alert alert-error">${errorMessage}</div>
+                    </c:if>
 
                     <div class="top-bar">
                         <form action="listCarmaintenance" method="get" style="display:flex; align-items:center; gap:10px;">
@@ -824,8 +848,9 @@
                                             <c:choose>
                                                 <c:when test="${detail.status eq 'COMPLETE' || detail.status eq 'COMPLETED'}">
                                                     <form action="listCarmaintenance" method="post" style="display:inline;">
-                                                        <input type="hidden" name="action" value="payCash" />
+                                                        <input type="hidden" name="action" value="createPayment" />
                                                         <input type="hidden" name="maintenanceId" value="${detail.maintenanceId}" />
+                                                        <input type="hidden" name="method" value="CASH" />
                                                         <button type="submit" class="btn btn-success"
                                                                 style="background-color:#28a745; border:none; padding:8px 18px; border-radius:6px; color:white;">
                                                             💵 Thanh toán tiền mặt
@@ -833,8 +858,9 @@
                                                     </form>
 
                                                     <form action="listCarmaintenance" method="post" style="display:inline;">
-                                                        <input type="hidden" name="action" value="payTransfer" />
+                                                        <input type="hidden" name="action" value="createPayment" />
                                                         <input type="hidden" name="maintenanceId" value="${detail.maintenanceId}" />
+                                                        <input type="hidden" name="method" value="TRANSFER" />
                                                         <button type="submit" class="btn btn-primary"
                                                                 style="background-color:#007bff; border:none; padding:8px 18px; border-radius:6px; color:white;">
                                                             💳 Chuyển khoản

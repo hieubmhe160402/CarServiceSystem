@@ -5,6 +5,7 @@
 package controller.maintenanace;
 
 import dal.CarMaintenanceDAO;
+import dal.PaymentDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,6 +13,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -112,6 +114,21 @@ public class ListCarmaintenance extends HttpServlet {
             request.setAttribute("currentPage", page);
             request.setAttribute("totalPages", totalPages);
 
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                String successMessage = (String) session.getAttribute("successMessage");
+                String errorMessage = (String) session.getAttribute("errorMessage");
+
+                if (successMessage != null) {
+                    request.setAttribute("successMessage", successMessage);
+                    session.removeAttribute("successMessage");
+                }
+                if (errorMessage != null) {
+                    request.setAttribute("errorMessage", errorMessage);
+                    session.removeAttribute("errorMessage");
+                }
+            }
+
             // --- 5. Chuyển tiếp (Forward 1 lần) ---
             request.getRequestDispatcher("/view/carmaintenance/managerCarmaintenanace.jsp")
                     .forward(request, response);
@@ -142,6 +159,8 @@ public class ListCarmaintenance extends HttpServlet {
         if ("cancel".equals(action)) {
             int maintenanceId = Integer.parseInt(request.getParameter("maintenanceId"));
             dao.updateStatus(maintenanceId, "CANCELLED");
+            PaymentDAO paymentDAO = new PaymentDAO();
+            paymentDAO.createCancelPaymentTransaction(maintenanceId);
             response.sendRedirect("listCarmaintenance");
             return;
         }
@@ -153,23 +172,40 @@ public class ListCarmaintenance extends HttpServlet {
             return;
         }
 
-        if ("payCash".equals(action)) {
-            int maintenanceId = Integer.parseInt(request.getParameter("maintenanceId"));
-            int inserted = dao.createCashPaymentTransaction(maintenanceId);
-            // Có thể set message nếu cần
-            response.sendRedirect("listCarmaintenance");
-            return;
+        if ("createPayment".equals(action)) {
+            HttpSession session = request.getSession();
+            try {
+                int maintenanceId = Integer.parseInt(request.getParameter("maintenanceId"));
+                String method = request.getParameter("method");
+
+                PaymentDAO paymentDAO = new PaymentDAO();
+                boolean success;
+                if ("TRANSFER".equalsIgnoreCase(method)) {
+                    success = paymentDAO.createTransferPaymentTransaction(maintenanceId);
+                } else {
+                    success = paymentDAO.createCashPaymentTransaction(maintenanceId);
+                }
+
+                if (success) {
+                    session.setAttribute("successMessage", "Đã tạo/cập nhật giao dịch thanh toán (" + method + ") thành công.");
+                } else {
+                    session.setAttribute("errorMessage", "Không thể tạo giao dịch thanh toán cho phiếu bảo dưỡng này.");
+                }
+
+                response.sendRedirect("listCarmaintenance?action=assign&maintenanceId=" + maintenanceId);
+                return;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                session.setAttribute("errorMessage", "Lỗi tạo giao dịch thanh toán: " + ex.getMessage());
+                response.sendRedirect("listCarmaintenance");
+                return;
+            }
         }
 
-        if ("payTransfer".equals(action)) {
-            int maintenanceId = Integer.parseInt(request.getParameter("maintenanceId"));
-            int inserted = dao.createTransferPaymentTransaction(maintenanceId);
-            response.sendRedirect("listCarmaintenance");
-            return;
-        }
-
-        // Mặc định quay lại danh sách
-        response.sendRedirect("listCarmaintenance");
+        // Sau khi update xong, load lại danh sách
+        List<CarMaintenance> list = dao.getAllCarMaintenances(action, action, 0, 0);
+        request.setAttribute("maintenances", list);
+        request.getRequestDispatcher("/view/carmaintenance/managerCarmaintenanace.jsp").forward(request, response);
     }
 
     /**
