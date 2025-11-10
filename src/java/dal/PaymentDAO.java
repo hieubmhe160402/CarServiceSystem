@@ -20,10 +20,17 @@ import model.User;
 
 /**
  *
- * @author phamp
+ * @author MinHeee
  */
 public class PaymentDAO extends DBContext {
 
+    /**
+     * Lấy danh sách tất cả giao dịch thanh toán với filter và search
+     *
+     * @param search Từ khóa tìm kiếm theo biển số xe (LicensePlate)
+     * @param status Trạng thái thanh toán (PENDING, DONE)
+     * @return Danh sách giao dịch thanh toán dưới dạng List<Map>
+     */
     public List<Map<String, Object>> getAllPaymentTransactions(String search, String status) {
         List<Map<String, Object>> list = new ArrayList<>();
         try {
@@ -101,6 +108,36 @@ public class PaymentDAO extends DBContext {
         return list;
     }
 
+    /**
+     * Cập nhật trạng thái giao dịch thanh toán
+     *
+     * @param transactionId ID của giao dịch
+     * @param status Trạng thái mới (PENDING, DONE)
+     * @return true nếu cập nhật thành công, false nếu thất bại
+     */
+    public boolean updatePaymentStatus(int transactionId, String status) {
+        try {
+            String sql = "UPDATE PaymentTransactions SET Status = ? WHERE TransactionID = ?";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, status);
+            stm.setInt(2, transactionId);
+
+            int rowsAffected = stm.executeUpdate();
+            stm.close();
+
+            return rowsAffected > 0;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Lấy chi tiết giao dịch thanh toán theo TransactionID
+     *
+     * @param transactionId ID của giao dịch
+     * @return Map chứa thông tin chi tiết giao dịch
+     */
     public Map<String, Object> getPaymentTransactionDetails(int transactionId) {
         Map<String, Object> payment = null;
         try {
@@ -391,20 +428,250 @@ public class PaymentDAO extends DBContext {
 
         return list;
     }
-    public boolean updatePaymentStatus(int transactionId, String status) {
-        try {
-            String sql = "UPDATE PaymentTransactions SET Status = ? WHERE TransactionID = ?";
-            PreparedStatement stm = connection.prepareStatement(sql);
-            stm.setString(1, status);
-            stm.setInt(2, transactionId);
 
-            int rowsAffected = stm.executeUpdate();
-            stm.close();
+    public boolean createCashPaymentTransaction(int maintenanceId) {
+        final String paymentMethod = "CASH";
+        String amountSql = """
+                SELECT 
+                    ISNULL(SUM(DISTINCT mpu.AppliedPrice), 0)
+                    + ISNULL(SUM(DISTINCT sd.TotalPrice), 0)
+                    + ISNULL(SUM(DISTINCT spd.TotalPrice), 0) AS Amount,
+                    cm.CreatedBy
+                FROM CarMaintenance cm
+                LEFT JOIN MaintenancePackageUsage mpu 
+                    ON cm.MaintenanceID = mpu.MaintenanceID
+                LEFT JOIN ServiceDetails sd 
+                    ON cm.MaintenanceID = sd.MaintenanceID
+                    AND (sd.Notes IS NULL OR (sd.Notes NOT LIKE '%[ĐÃ XÓA]%' AND sd.Notes NOT LIKE 'Từ gói %'))
+                LEFT JOIN ServicePartDetails spd 
+                    ON cm.MaintenanceID = spd.MaintenanceID
+                    AND (spd.Notes IS NULL OR (spd.Notes NOT LIKE '%[ĐÃ XÓA]%' AND spd.Notes NOT LIKE 'Từ gói %'))
+                WHERE cm.MaintenanceID = ?
+                GROUP BY cm.CreatedBy
+                """;
 
-            return rowsAffected > 0;
+        try (PreparedStatement amountStm = connection.prepareStatement(amountSql)) {
+            amountStm.setInt(1, maintenanceId);
+            try (ResultSet rs = amountStm.executeQuery()) {
+                if (!rs.next()) {
+                    return false;
+                }
+
+                BigDecimal amount = rs.getBigDecimal("Amount");
+                if (amount == null) {
+                    amount = BigDecimal.ZERO;
+                }
+
+                int processedBy = rs.getInt("CreatedBy");
+                boolean processedByWasNull = rs.wasNull();
+
+                // If CreatedBy is null, keep the existing ProcessedBy if record exists
+                int existingTransactionId = -1;
+                int existingProcessedBy = 0;
+                String checkSql = "SELECT TransactionID, ProcessedBy FROM PaymentTransactions WHERE MaintenanceID = ?";
+                try (PreparedStatement checkStm = connection.prepareStatement(checkSql)) {
+                    checkStm.setInt(1, maintenanceId);
+                    try (ResultSet checkRs = checkStm.executeQuery()) {
+                        if (checkRs.next()) {
+                            existingTransactionId = checkRs.getInt("TransactionID");
+                            existingProcessedBy = checkRs.getInt("ProcessedBy");
+                            if (checkRs.wasNull()) {
+                                existingProcessedBy = 0;
+                            }
+                        }
+                    }
+                }
+
+                if (processedByWasNull && existingProcessedBy > 0) {
+                    processedBy = existingProcessedBy;
+                }
+
+                if (existingTransactionId > 0) {
+                    String updateSql = "UPDATE PaymentTransactions "
+                            + "SET PaymentMethod = ?, Amount = ?, PaymentDate = GETDATE(), Status = 'PENDING', ProcessedBy = ? "
+                            + "WHERE TransactionID = ?";
+                    try (PreparedStatement updateStm = connection.prepareStatement(updateSql)) {
+                        updateStm.setString(1, paymentMethod);
+                        updateStm.setBigDecimal(2, amount);
+                        if (processedBy > 0) {
+                            updateStm.setInt(3, processedBy);
+                        } else {
+                            updateStm.setNull(3, java.sql.Types.INTEGER);
+                        }
+                        updateStm.setInt(4, existingTransactionId);
+                        return updateStm.executeUpdate() > 0;
+                    }
+                } else {
+                    String insertSql = "INSERT INTO PaymentTransactions "
+                            + "(MaintenanceID, PaymentMethod, Amount, PaymentDate, Status, ProcessedBy) "
+                            + "VALUES (?, ?, ?, GETDATE(), 'PENDING', ?)";
+                    try (PreparedStatement insertStm = connection.prepareStatement(insertSql)) {
+                        insertStm.setInt(1, maintenanceId);
+                        insertStm.setString(2, paymentMethod);
+                        insertStm.setBigDecimal(3, amount);
+                        if (processedBy > 0) {
+                            insertStm.setInt(4, processedBy);
+                        } else {
+                            insertStm.setNull(4, java.sql.Types.INTEGER);
+                        }
+                        return insertStm.executeUpdate() > 0;
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public boolean createTransferPaymentTransaction(int maintenanceId) {
+        final String paymentMethod = "TRANSFER";
+        String amountSql = """
+                SELECT 
+                    ISNULL(SUM(DISTINCT mpu.AppliedPrice), 0)
+                    + ISNULL(SUM(DISTINCT sd.TotalPrice), 0)
+                    + ISNULL(SUM(DISTINCT spd.TotalPrice), 0) AS Amount,
+                    cm.CreatedBy
+                FROM CarMaintenance cm
+                LEFT JOIN MaintenancePackageUsage mpu 
+                    ON cm.MaintenanceID = mpu.MaintenanceID
+                LEFT JOIN ServiceDetails sd 
+                    ON cm.MaintenanceID = sd.MaintenanceID
+                    AND (sd.Notes IS NULL OR (sd.Notes NOT LIKE '%[ĐÃ XÓA]%' AND sd.Notes NOT LIKE 'Từ gói %'))
+                LEFT JOIN ServicePartDetails spd 
+                    ON cm.MaintenanceID = spd.MaintenanceID
+                    AND (spd.Notes IS NULL OR (spd.Notes NOT LIKE '%[ĐÃ XÓA]%' AND spd.Notes NOT LIKE 'Từ gói %'))
+                WHERE cm.MaintenanceID = ?
+                GROUP BY cm.CreatedBy
+                """;
+
+        try (PreparedStatement amountStm = connection.prepareStatement(amountSql)) {
+            amountStm.setInt(1, maintenanceId);
+            try (ResultSet rs = amountStm.executeQuery()) {
+                if (!rs.next()) {
+                    return false;
+                }
+
+                BigDecimal amount = rs.getBigDecimal("Amount");
+                if (amount == null) {
+                    amount = BigDecimal.ZERO;
+                }
+
+                int processedBy = rs.getInt("CreatedBy");
+                boolean processedByWasNull = rs.wasNull();
+
+                // If CreatedBy is null, keep the existing ProcessedBy if record exists
+                int existingTransactionId = -1;
+                int existingProcessedBy = 0;
+                String checkSql = "SELECT TransactionID, ProcessedBy FROM PaymentTransactions WHERE MaintenanceID = ?";
+                try (PreparedStatement checkStm = connection.prepareStatement(checkSql)) {
+                    checkStm.setInt(1, maintenanceId);
+                    try (ResultSet checkRs = checkStm.executeQuery()) {
+                        if (checkRs.next()) {
+                            existingTransactionId = checkRs.getInt("TransactionID");
+                            existingProcessedBy = checkRs.getInt("ProcessedBy");
+                            if (checkRs.wasNull()) {
+                                existingProcessedBy = 0;
+                            }
+                        }
+                    }
+                }
+
+                if (processedByWasNull && existingProcessedBy > 0) {
+                    processedBy = existingProcessedBy;
+                }
+
+                if (existingTransactionId > 0) {
+                    String updateSql = "UPDATE PaymentTransactions "
+                            + "SET PaymentMethod = ?, Amount = ?, PaymentDate = GETDATE(), Status = 'PENDING', ProcessedBy = ? "
+                            + "WHERE TransactionID = ?";
+                    try (PreparedStatement updateStm = connection.prepareStatement(updateSql)) {
+                        updateStm.setString(1, paymentMethod);
+                        updateStm.setBigDecimal(2, amount);
+                        if (processedBy > 0) {
+                            updateStm.setInt(3, processedBy);
+                        } else {
+                            updateStm.setNull(3, java.sql.Types.INTEGER);
+                        }
+                        updateStm.setInt(4, existingTransactionId);
+                        return updateStm.executeUpdate() > 0;
+                    }
+                } else {
+                    String insertSql = "INSERT INTO PaymentTransactions "
+                            + "(MaintenanceID, PaymentMethod, Amount, PaymentDate, Status, ProcessedBy) "
+                            + "VALUES (?, ?, ?, GETDATE(), 'PENDING', ?)";
+                    try (PreparedStatement insertStm = connection.prepareStatement(insertSql)) {
+                        insertStm.setInt(1, maintenanceId);
+                        insertStm.setString(2, paymentMethod);
+                        insertStm.setBigDecimal(3, amount);
+                        if (processedBy > 0) {
+                            insertStm.setInt(4, processedBy);
+                        } else {
+                            insertStm.setNull(4, java.sql.Types.INTEGER);
+                        }
+                        return insertStm.executeUpdate() > 0;
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public boolean createCancelPaymentTransaction(int maintenanceId) {
+        final String paymentMethod = "CANCELLED";
+
+        int existingTransactionId = -1;
+        Integer existingProcessedBy = null;
+        String checkSql = "SELECT TransactionID, ProcessedBy FROM PaymentTransactions WHERE MaintenanceID = ?";
+        try (PreparedStatement checkStm = connection.prepareStatement(checkSql)) {
+            checkStm.setInt(1, maintenanceId);
+            try (ResultSet checkRs = checkStm.executeQuery()) {
+                if (checkRs.next()) {
+                    existingTransactionId = checkRs.getInt("TransactionID");
+                    int processedByValue = checkRs.getInt("ProcessedBy");
+                    if (!checkRs.wasNull()) {
+                        existingProcessedBy = processedByValue;
+                    }
+                }
+            }
         } catch (SQLException ex) {
             ex.printStackTrace();
             return false;
+        }
+
+        if (existingTransactionId > 0) {
+            String updateSql = "UPDATE PaymentTransactions "
+                    + "SET PaymentMethod = ?, Amount = 0, PaymentDate = GETDATE(), Status = 'CANCELLED', ProcessedBy = ? "
+                    + "WHERE TransactionID = ?";
+            try (PreparedStatement updateStm = connection.prepareStatement(updateSql)) {
+                updateStm.setString(1, paymentMethod);
+                if (existingProcessedBy != null) {
+                    updateStm.setInt(2, existingProcessedBy);
+                } else {
+                    updateStm.setNull(2, java.sql.Types.INTEGER);
+                }
+                updateStm.setInt(3, existingTransactionId);
+                return updateStm.executeUpdate() > 0;
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                return false;
+            }
+        } else {
+            String insertSql = "INSERT INTO PaymentTransactions "
+                    + "(MaintenanceID, PaymentMethod, Amount, PaymentDate, Status, ProcessedBy) "
+                    + "VALUES (?, ?, 0, GETDATE(), 'CANCELLED', NULL)";
+            try (PreparedStatement insertStm = connection.prepareStatement(insertSql)) {
+                insertStm.setInt(1, maintenanceId);
+                insertStm.setString(2, paymentMethod);
+                return insertStm.executeUpdate() > 0;
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                return false;
+            }
         }
     }
 }

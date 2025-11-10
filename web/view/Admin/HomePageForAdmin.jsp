@@ -9,6 +9,8 @@
     into your JSP layout or keep them inline).//key
 --%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
 <html lang="vi">
     <head>
@@ -206,6 +208,14 @@
         </style>
     </head>
     <body>
+        <fmt:setLocale value="vi_VN"/>
+        <c:set var="totalCustomersVal" value="${empty totalCustomers ? 0 : totalCustomers}"/>
+        <c:set var="totalCarsProcessingVal" value="${empty totalCarsProcessing ? 0 : totalCarsProcessing}"/>
+        <c:set var="totalRevenueTodayVal" value="${empty totalRevenueToday ? 0 : totalRevenueToday}"/>
+        <c:set var="totalRevenueThisMonthVal" value="${empty totalRevenueThisMonth ? 0 : totalRevenueThisMonth}"/>
+        <c:set var="monthlyRevenueJson" value="${empty monthlyRevenueData ? '[]' : monthlyRevenueData}"/>
+        <c:set var="popularServiceLabelsJson" value="${empty popularServiceLabels ? '[]' : popularServiceLabels}"/>
+        <c:set var="popularServiceDataJson" value="${empty popularServiceData ? '[]' : popularServiceData}"/>
         <div class="app">
             <jsp:include page="/view/layout/sidebar.jsp"/>
 
@@ -214,28 +224,58 @@
                     <div class="search"><input placeholder="Tìm kiếm..." /></div>
                     <div class="top-actions">
                         <div>🔔</div>
-                        <div class="avatar"><div class="circle"></div><div>Admin</div></div>
+                        <div class="avatar">
+                            <div class="circle"></div>
+                            <div>
+                                <c:choose>
+                                    <c:when test="${not empty currentUser}">
+                                        <c:out value="${currentUser.fullName}"/>
+                                    </c:when>
+                                    <c:otherwise>Admin</c:otherwise>
+                                </c:choose>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <h2 style="margin-bottom:12px;">Dashboard</h2>
 
                 <div class="grid">
-                    <div class="card"><div class="value">462</div><div class="label">Khách hàng</div></div>
-                    <div class="card"><div class="value">85</div><div class="label">Xe đang bảo dưỡng</div></div>
-                    <div class="card"><div class="value">12.5M</div><div class="label">Doanh thu hôm nay</div></div>
-                    <div class="card"><div class="value">378.9M</div><div class="label">Doanh thu tháng này</div></div>
+                    <div class="card">
+                        <div class="value"><c:out value="${totalCustomersVal}"/></div>
+                        <div class="label">Khách hàng</div>
+                    </div>
+                    <div class="card">
+                        <div class="value"><c:out value="${totalCarsProcessingVal}"/></div>
+                        <div class="label">Xe đang bảo dưỡng</div>
+                    </div>
+                    <div class="card">
+                        <div class="value">
+                            <fmt:formatNumber value="${totalRevenueTodayVal}" type="number" groupingUsed="true"/>
+                            <span style="font-size:14px;color:#6b7280;">₫</span>
+                        </div>
+                        <div class="label">Doanh thu hôm nay</div>
+                    </div>
+                    <div class="card">
+                        <div class="value">
+                            <fmt:formatNumber value="${totalRevenueThisMonthVal}" type="number" groupingUsed="true"/>
+                            <span style="font-size:14px;color:#6b7280;">₫</span>
+                        </div>
+                        <div class="label">Doanh thu tháng này</div>
+                    </div>
                 </div>
 
                 <div class="panels">
                     <div class="card chart">
                         <h3 style="margin-bottom:12px;">Doanh thu theo tháng</h3>
-                        <div class="chart-placeholder">Biểu đồ cột (thay bằng Chart.js khi tích hợp)</div>
+                        <div class="chart-placeholder" data-placeholder="revenue-placeholder">Đang tải dữ liệu...</div>
+                        <canvas id="revenueChart" style="display:none;" aria-label="Biểu đồ doanh thu theo tháng"></canvas>
                     </div>
 
                     <div class="card chart">
                         <h3 style="margin-bottom:12px;">Dịch vụ phổ biến</h3>
-                        <div class="chart-placeholder">Biểu đồ tròn (thay bằng Chart.js khi tích hợp)</div>
+                        <div class="chart-placeholder" data-placeholder="service-placeholder">Đang tải dữ liệu...</div>
+                        <canvas id="serviceChart" style="display:none;" aria-label="Biểu đồ dịch vụ phổ biến"></canvas>
                     </div>
                 </div>
 
@@ -247,9 +287,20 @@
                                 <tr><th>#</th><th>Tên</th><th>SDT</th></tr>
                             </thead>
                             <tbody>
-                                <tr><td>1</td><td>Nguyễn Văn A</td><td>0912345678</td></tr>
-                                <tr><td>2</td><td>Trần Thị B</td><td>0912345579</td></tr>
-                                <tr><td>3</td><td>Lê Văn C</td><td>0912345670</td></tr>
+                                <c:choose>
+                                    <c:when test="${empty recentCustomers}">
+                                        <tr><td colspan="3" style="text-align:center;color:#6b7280;">Chưa có dữ liệu</td></tr>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <c:forEach var="customer" items="${recentCustomers}" varStatus="loop">
+                                            <tr>
+                                                <td><c:out value="${loop.index + 1}"/></td>
+                                                <td><c:out value="${customer.fullName}"/></td>
+                                                <td><c:out value="${customer.phone}"/></td>
+                                            </tr>
+                                        </c:forEach>
+                                    </c:otherwise>
+                                </c:choose>
                             </tbody>
                         </table>
                     </div>
@@ -261,9 +312,20 @@
                                 <tr><th>#</th><th>Người dùng</th><th>Dịch vụ</th></tr>
                             </thead>
                             <tbody>
-                                <tr><td>1</td><td>Nguyễn Văn con</td><td>Thay dầu</td></tr>
-                                <tr><td>2</td><td>Trần Thị D</td><td>Sửa chữa</td></tr>
-                                <tr><td>3</td><td>Lê Văn F</td><td>Thay phụ tùng</td></tr>
+                                <c:choose>
+                                    <c:when test="${empty recentAppointments}">
+                                        <tr><td colspan="3" style="text-align:center;color:#6b7280;">Chưa có dữ liệu</td></tr>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <c:forEach var="appointment" items="${recentAppointments}" varStatus="loop">
+                                            <tr>
+                                                <td><c:out value="${loop.index + 1}"/></td>
+                                                <td><c:out value="${appointment.customerName}"/></td>
+                                                <td><c:out value="${appointment.requestedServices}"/></td>
+                                            </tr>
+                                        </c:forEach>
+                                    </c:otherwise>
+                                </c:choose>
                             </tbody>
                         </table>
                     </div>
@@ -272,9 +334,107 @@
             </main>
         </div>
 
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>
-            // Placeholder JS: khi tích hợp vào dự án, thay chart-placeholder bằng Chart.js hoặc Recharts.
-            // Nếu bạn muốn, mình có thể cung cấp version kèm Chart.js CDN để hiển thị mock charts.
+            (function () {
+                const revenueData = ${monthlyRevenueJson};
+                const serviceLabels = ${popularServiceLabelsJson};
+                const serviceData = ${popularServiceDataJson};
+
+                const revenuePlaceholder = document.querySelector('[data-placeholder="revenue-placeholder"]');
+                const revenueCanvas = document.getElementById('revenueChart');
+                const servicePlaceholder = document.querySelector('[data-placeholder="service-placeholder"]');
+                const serviceCanvas = document.getElementById('serviceChart');
+
+                const hasRevenue = Array.isArray(revenueData) && revenueData.some(value => value > 0);
+                const hasService = Array.isArray(serviceData) && serviceData.some(value => value > 0);
+
+                if (hasRevenue && revenueCanvas) {
+                    revenuePlaceholder.style.display = 'none';
+                    revenueCanvas.style.display = 'block';
+                    new Chart(revenueCanvas.getContext('2d'), {
+                        type: 'bar',
+                        data: {
+                            labels: ['Th1', 'Th2', 'Th3', 'Th4', 'Th5', 'Th6', 'Th7', 'Th8', 'Th9', 'Th10', 'Th11', 'Th12'],
+                            datasets: [{
+                                    label: 'Doanh thu (₫)',
+                                    data: revenueData,
+                                    backgroundColor: 'rgba(37, 99, 235, 0.6)',
+                                    borderRadius: 6,
+                                    maxBarThickness: 32
+                                }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function (value) {
+                                            return value.toLocaleString('vi-VN');
+                                        }
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function (context) {
+                                            return context.parsed.y.toLocaleString('vi-VN') + ' ₫';
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                } else if (revenuePlaceholder) {
+                    revenuePlaceholder.textContent = 'Chưa có dữ liệu doanh thu.';
+                }
+
+                if (hasService && serviceCanvas && Array.isArray(serviceLabels) && serviceLabels.length === serviceData.length) {
+                    servicePlaceholder.style.display = 'none';
+                    serviceCanvas.style.display = 'block';
+                    new Chart(serviceCanvas.getContext('2d'), {
+                        type: 'doughnut',
+                        data: {
+                            labels: serviceLabels,
+                            datasets: [{
+                                    data: serviceData,
+                                    backgroundColor: [
+                                        '#2563eb',
+                                        '#34d399',
+                                        '#f97316',
+                                        '#fbbf24',
+                                        '#a855f7'
+                                    ],
+                                    borderWidth: 0
+                                }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom'
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function (context) {
+                                            return context.label + ': ' + context.parsed.toLocaleString('vi-VN');
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                } else if (servicePlaceholder) {
+                    servicePlaceholder.textContent = 'Chưa có dữ liệu dịch vụ.';
+                }
+            })();
         </script>
     </body>
 </html>
