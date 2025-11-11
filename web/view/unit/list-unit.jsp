@@ -13,8 +13,9 @@
             }
 
             body {
-                font-family: Arial, sans-serif;
-                background: #f5f5f5;
+                font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+                background: #f5f7fb;
+                color: #111827;
             }
 
             .app {
@@ -24,34 +25,38 @@
 
             /* Sidebar */
             .sidebar {
-                width: 240px;
-                background-color: #1e293b;
+                width: 260px;
+                height: 100vh;
+                background: linear-gradient(180deg,#0f2340,#0b1830);
                 color: #fff;
                 display: flex;
                 flex-direction: column;
-                padding: 20px;
+                padding: 28px 18px;
+                box-shadow: 4px 0 12px rgba(0, 0, 0, 0.1);
             }
 
-            .sidebar h2 {
-                font-size: 20px;
-                margin-bottom: 20px;
-                text-align: center;
+            .sidebar .nav {
+                margin-top: 12px;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
             }
 
-            .sidebar a {
-                color: #cbd5e1;
+            .sidebar .nav a {
+                color: rgba(255,255,255,0.9);
                 text-decoration: none;
                 padding: 10px 12px;
-                border-radius: 8px;
-                margin-bottom: 8px;
-                display: block;
-                transition: background 0.2s, color 0.2s;
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                transition: all 0.3s ease;
             }
 
-            .sidebar a:hover,
-            .sidebar a.active {
-                background: #334155;
-                color: #fff;
+            .sidebar .nav a:hover,
+            .sidebar .nav a.active {
+                background: rgba(255,255,255,0.15);
+                transform: translateX(4px);
             }
 
             /* Main content */
@@ -90,72 +95,75 @@
             .search-box,
             .filter-select {
                 padding: 8px 12px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
+                border: 1px solid #d1d5db;
+                border-radius: 6px;
                 font-size: 14px;
+                transition: border-color 0.2s, box-shadow 0.2s;
             }
 
             .search-box {
-                width: 250px;
+                width: 280px;
             }
 
             .filter-select {
                 width: 200px;
             }
 
-            /* Buttons */
-            .btn {
-                padding: 8px 16px;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-                font-size: 14px;
-                transition: background 0.3s;
+            .search-box:focus,
+            .filter-select:focus {
+                outline: none;
+                border-color: #2563eb;
+                box-shadow: 0 0 0 2px rgba(37,99,235,0.2);
             }
 
-            .btn-add {
-                background: #28a745;
-                color: white;
+            /* Buttons */
+            .btn {
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 14px;
+                padding: 8px 16px;
+                font-weight: 500;
+                transition: all 0.25s;
             }
-            .btn-add:hover {
-                background: #218838;
+
+            .btn-add,
+            .btn-save {
+                background: #16a34a;
+                color: #fff;
+            }
+            .btn-add:hover,
+            .btn-save:hover {
+                background: #15803d;
             }
 
             .btn-edit {
-                background: #007bff;
-                color: white;
+                background: #3b82f6;
+                color: #fff;
                 font-size: 13px;
                 padding: 6px 12px;
                 margin-right: 4px;
             }
             .btn-edit:hover {
-                background: #0056b3;
+                background: #2563eb;
             }
 
             .btn-delete {
-                background: #dc3545;
-                color: white;
+                background: #ef4444;
+                color: #fff;
                 font-size: 13px;
                 padding: 6px 12px;
             }
             .btn-delete:hover {
-                background: #c82333;
+                background: #dc2626;
             }
 
             .btn-cancel {
                 background: #6c757d;
-                color: white;
+                color: #fff;
             }
             .btn-cancel:hover {
-                background: #545b62;
-            }
-
-            .btn-save {
-                background: #28a745;
-                color: white;
-            }
-            .btn-save:hover {
-                background: #218838;
+                background: #565f67;
             }
 
             /* Table */

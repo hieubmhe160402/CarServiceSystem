@@ -40,11 +40,13 @@
             /* Sidebar */
             .sidebar {
                 width: 260px;
+                height: 100vh;
                 background: linear-gradient(180deg,#0f2340,#0b1830);
                 color:#fff;
                 padding:28px 18px;
                 display:flex;
                 flex-direction:column;
+                box-shadow: 4px 0 12px rgba(0,0,0,0.1);
             }
             .brand {
                 font-weight:800;
@@ -66,16 +68,11 @@
                 display:flex;
                 align-items:center;
                 gap:12px;
+                transition: all 0.3s ease;
             }
             .nav a.active, .nav a:hover {
-                background: rgba(255,255,255,0.04);
-            }
-            .nav a .ico {
-                width:12px;
-                height:12px;
-                background:#fff;
-                border-radius:2px;
-                opacity:0.9;
+                background: rgba(255,255,255,0.15);
+                transform: translateX(4px);
             }
 
             /* Main */

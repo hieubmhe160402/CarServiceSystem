@@ -9,8 +9,9 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
+            font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+            background: #f5f7fb;
+            color: #111827;
         }
 
         .app {
@@ -20,34 +21,38 @@
 
         /* Sidebar included */
         .sidebar {
-            width: 240px;
-            background-color: #1e293b;
+            width: 260px;
+            height: 100vh;
+            background: linear-gradient(180deg,#0f2340,#0b1830);
             color: #fff;
             display: flex;
             flex-direction: column;
-            padding: 20px;
+            padding: 28px 18px;
+            box-shadow: 4px 0 12px rgba(0, 0, 0, 0.1);
         }
 
-        .sidebar h2 {
-            font-size: 20px;
-            margin-bottom: 20px;
-            text-align: center;
+        .sidebar .nav {
+            margin-top: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
-        .sidebar a {
-            color: #cbd5e1;
+        .sidebar .nav a {
+            color: rgba(255,255,255,0.9);
             text-decoration: none;
             padding: 10px 12px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            display: block;
-            transition: background 0.2s, color 0.2s;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
         }
 
-        .sidebar a:hover,
-        .sidebar a.active {
-            background: #334155;
-            color: #fff;
+        .sidebar .nav a:hover,
+        .sidebar .nav a.active {
+            background: rgba(255,255,255,0.15);
+            transform: translateX(4px);
         }
 
         /* Main content */
@@ -74,22 +79,52 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
         .btn {
-            padding: 10px 20px;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 14px;
+            padding: 8px 16px;
+            font-weight: 500;
+            transition: all 0.25s;
         }
-        .btn-add { background: #28a745; color: white; }
-        .btn-edit { background: #007bff; color: white; margin-right: 5px; }
-        .btn-delete { background: #dc3545; color: white; }
-        .btn-cancel { background: #6c757d; color: white; }
-        .btn-save { background: #28a745; color: white; }
-
-        .btn-add:hover { background: #218838; }
+        .btn-add,
+        .btn-save {
+            background: #16a34a;
+            color: #fff;
+        }
+        .btn-add:hover,
+        .btn-save:hover {
+            background: #15803d;
+        }
+        .btn-edit {
+            background: #3b82f6;
+            color: #fff;
+            padding: 6px 12px;
+            margin-right: 5px;
+        }
+        .btn-edit:hover {
+            background: #2563eb;
+        }
+        .btn-delete {
+            background: #ef4444;
+            color: #fff;
+            padding: 6px 12px;
+        }
+        .btn-delete:hover {
+            background: #dc2626;
+        }
+        .btn-cancel {
+            background: #6c757d;
+            color: #fff;
+        }
+        .btn-cancel:hover {
+            background: #565f67;
+        }
 
         table {
             width: 100%;
@@ -215,10 +250,20 @@
         }
 
         .search-box {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
             width: 300px;
+            font-size: 14px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .search-box:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(37,99,235,0.2);
+        }
+        .top-bar select.search-box {
+            width: 200px;
         }
 
         /* Delete Modal */

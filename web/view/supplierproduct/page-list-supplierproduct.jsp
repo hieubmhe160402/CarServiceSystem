@@ -24,9 +24,9 @@
                 box-sizing: border-box;
             }
             body {
-                font-family: Arial, sans-serif;
-                background: #f5f6fa;
-                color: #333;
+                font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+                background: #f5f7fb;
+                color: #111827;
             }
             .app {
                 display: flex;
@@ -78,6 +78,7 @@
                 border-radius: 6px;
                 width: 300px;
                 font-size: 14px;
+                transition: border-color 0.2s, box-shadow 0.2s;
             }
             .search-box:focus {
                 outline: none;

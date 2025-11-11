@@ -133,7 +133,7 @@ public class AuthController extends HttpServlet {
                     response.sendRedirect("dashboard");
                     break;
                 case "Staff":
-                    response.sendRedirect("staffController");
+                    response.sendRedirect("listCarmaintenance");
                     break;
 
                 case "ServiceTechnician":

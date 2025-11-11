@@ -25,11 +25,13 @@
 
             .sidebar {
                 width: 260px;
+                height: 100vh;
                 background: linear-gradient(180deg,#0f2340,#0b1830);
                 color:#fff;
                 padding:28px 18px;
                 display:flex;
                 flex-direction:column;
+                box-shadow: 4px 0 12px rgba(0,0,0,0.1);
             }
 
             .main {
@@ -40,27 +42,96 @@
 
             h2 {
                 margin-bottom: 20px;
+                font-size: 22px;
+                font-weight: 600;
+                color: #222;
             }
 
             .btn {
-                padding: 6px 12px;
                 border: none;
                 border-radius: 6px;
-                margin: 0 3px;
                 cursor: pointer;
                 font-size: 14px;
+                padding: 8px 16px;
+                font-weight: 500;
+                transition: all 0.25s;
             }
             .btn-add {
-                background: #28a745;
-                color: white;
+                background: #16a34a;
+                color: #fff;
+            }
+            .btn-add:hover {
+                background: #15803d;
             }
             .btn-confirm {
-                background: #007bff;
-                color: white;
+                background: #3b82f6;
+                color: #fff;
+                padding: 6px 12px;
+                margin-right: 5px;
             }
-            .btn-cancel {
-                background: #dc3545;
-                color: white;
+            .btn-confirm:hover {
+                background: #2563eb;
+            }
+            .btn-cancel,
+            .btn-danger {
+                background: #ef4444;
+                color: #fff;
+                padding: 6px 12px;
+            }
+            .btn-cancel:hover,
+            .btn-danger:hover {
+                background: #dc2626;
+            }
+            .btn-reload {
+                background: #0ea5e9;
+                color: #fff;
+                border: none;
+                border-radius: 6px;
+                padding: 8px 14px;
+                cursor: pointer;
+                transition: background 0.2s;
+            }
+            .btn-reload:hover {
+                background: #0284c7;
+            }
+
+            .main form[action="listAppointmentServlet"] {
+                margin-top: 12px;
+                display: flex;
+                gap: 12px;
+                align-items: center;
+                flex-wrap: wrap;
+            }
+            .main form[action="listAppointmentServlet"] label {
+                font-size: 14px;
+                font-weight: 500;
+                color: #374151;
+            }
+            .main form[action="listAppointmentServlet"] select {
+                padding: 8px 12px;
+                border: 1px solid #d1d5db;
+                border-radius: 6px;
+                font-size: 14px;
+                transition: border-color 0.2s, box-shadow 0.2s;
+            }
+            .main form[action="listAppointmentServlet"] select:focus {
+                outline: none;
+                border-color: #2563eb;
+                box-shadow: 0 0 0 2px rgba(37,99,235,0.2);
+            }
+            .main form[action="listAppointmentServlet"] button[type="button"] {
+                background: #0ea5e9;
+                color: #fff;
+                border: none;
+                border-radius: 6px;
+                padding: 8px 16px;
+                font-size: 14px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.25s;
+            }
+            .main form[action="listAppointmentServlet"] button[type="button"]:hover {
+                background: #0284c7;
             }
 
             table {

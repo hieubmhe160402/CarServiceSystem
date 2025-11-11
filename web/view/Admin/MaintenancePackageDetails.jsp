@@ -68,31 +68,44 @@
 
             /* --- Buttons --- */
             .btn {
-                padding: 6px 12px;
                 border: none;
                 border-radius: 6px;
                 font-size: 14px;
                 cursor: pointer;
                 font-weight: 500;
+                padding: 8px 16px;
+                transition: all 0.25s;
             }
             .btn-add {
-                background: #28a745;
-                color: white;
+                background: #16a34a;
+                color: #fff;
+            }
+            .btn-add:hover {
+                background: #15803d;
             }
             .btn-edit {
-                background: #ffc107;
-                color: black;
+                background: #3b82f6;
+                color: #fff;
+                padding: 6px 12px;
+                margin-right: 5px;
+            }
+            .btn-edit:hover {
+                background: #2563eb;
             }
             .btn-delete {
-                background: #dc3545;
-                color: white;
+                background: #ef4444;
+                color: #fff;
+                padding: 6px 12px;
+            }
+            .btn-delete:hover {
+                background: #dc2626;
             }
             .btn-active {
-                background: #007bff;
-                color: white;
+                background: #3b82f6;
+                color: #fff;
             }
-            .btn:hover {
-                opacity: 0.9;
+            .btn-active:hover {
+                background: #2563eb;
             }
 
             /* --- Search & Filter --- */
@@ -101,16 +114,42 @@
                 justify-content: space-between;
                 align-items: center;
                 margin-bottom: 20px;
+                flex-wrap: wrap;
+                gap: 12px;
             }
             .search-form {
                 display: flex;
                 align-items: center;
                 gap: 10px;
+                flex-wrap: wrap;
             }
-            .search-form input, .search-form select {
-                padding: 8px 10px;
-                border: 1px solid #ccc;
+            .search-form input,
+            .search-form select {
+                padding: 8px 12px;
+                border: 1px solid #d1d5db;
                 border-radius: 6px;
+                font-size: 14px;
+                transition: border-color 0.2s, box-shadow 0.2s;
+            }
+            .search-form input:focus,
+            .search-form select:focus {
+                outline: none;
+                border-color: #2563eb;
+                box-shadow: 0 0 0 2px rgba(37,99,235,0.2);
+            }
+            .search-form button[type="submit"] {
+                background: #3b82f6;
+                color: #fff;
+            }
+            .search-form button[type="submit"]:hover {
+                background: #2563eb;
+            }
+            .search-form button[type="button"] {
+                background: #0ea5e9;
+                color: #fff;
+            }
+            .search-form button[type="button"]:hover {
+                background: #0284c7;
             }
 
             /* --- Modal --- */

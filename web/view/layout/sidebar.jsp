@@ -118,7 +118,6 @@
                 <div class="brand">Admin Car Care</div>
                 <a href="/CarCareSystem/dashboard"><span class="ico"></span> Dashboard</a>
                 <a href="/CarCareSystem/listEmployees"><span class="ico"></span> Quản lý nhân viên</a>
-                <a href="/CarCareSystem/ManageCustomerController"><span class="ico"></span> Quản lý thông tin khách hàng</a>
                 <a href="/CarCareSystem/supplier"><span class="ico"></span> Quản lý nhà cung cấp</a>
                 <a href="/CarCareSystem/supplierproduct"><span class="ico"></span> Quản lý nhà supplier-product</a>
                 <a href="/CarCareSystem/products"><span class="ico"></span> Quản lý phụ tùng</a>
@@ -128,26 +127,21 @@
                 <a href="/CarCareSystem/managerPackage"><span class="ico"></span> Dách chi tiết trong gói combo </a>
                 <a href="/CarCareSystem/maintenancePackage"><span class="ico"></span> Danh sách gói combo </a>
                 <a href="/CarCareSystem/payments"><span class="ico"></span> Lịch sử sửa xe</a>
-                <a href="SystemLog.jsp"><span class="ico"></span> Log hệ thống</a>
-                <a href="Reports.jsp"><span class="ico"></span> Báo cáo</a>
+                <a href="authController?action=changePassword" class="ico">Đổi mật khẩu</a>
 
                 <% } else if ("ServiceTechnician".equals(roleName)) { %>
                 <div class="brand">🔧 KỸ THUẬT VIÊN</div>
                 <a href="/CarCareSystem"><i class="fas fa-car"></i> Danh sách xe được giao</a>
-                <a href="/CarCareSystem"><i class="fas fa-clipboard-check"></i> Kiểm tra xe</a>
-                <a href="/CarCareSystem"><i class="fas fa-file-invoice-dollar"></i> Báo giá</a>
-                <a href="/CarCareSystem"><i class="fas fa-tools"></i> Sửa chữa</a>
-                <a href="/CarCareSystem"><i class="fas fa-warehouse"></i> Quản lý kho phụ tùng</a>
+                <a href="authController?action=changePassword" class="ico">Đổi mật khẩu</a>
+
 
                 <% } else if ("CarOwner".equals(roleName)) { %>
                 <div class="brand">🚗 CAR MANAGEMENT</div>
                 <a href="userProfileController"><i class="fas fa-user"></i> Hồ sơ cá nhân</a>
-
                 <a href="bookingAppoitments"><i class="fas fa-calendar-check"></i> Đặt lịch bảo dưỡng</a>
                 <a href="userAppoinmentsHistoryController"><i class="fas fa-history"></i> Lịch sử lịch hẹn</a>
-                <a href="#"><i class="fas fa-chart-line"></i> Theo dõi tiến độ</a>
-                <a href="#"><i class="fas fa-bell"></i> Thông báo</a>
-                <a href="#"><i class="fas fa-cog"></i> Cài đặt</a>
+                <a href="authController?action=changePassword" class="ico">Đổi mật khẩu</a>
+
 
                 <% } else if ("Accountant".equals(roleName)) { %>
                 <div class="brand">💰 KẾ TOÁN</div>
@@ -161,9 +155,6 @@
 
                 <a href="/CarCareSystem/listCarmaintenance"><span class="ico"></span> Quản lý bảo dưỡng </a>
                 <a href="/CarCareSystem/listAppointmentServlet"><span class="ico"></span> Quản lý yêu cầu</a>
-                <a href="/CarCareSystem"><span class="ico"></span> Tạo lịch hẹn</a>
-                <a href="/CarCareSystem"><span class="ico"></span> Trạng thái xe</a>
-                <a href="/CarCareSystem"><span class="ico"></span> Gửi hóa đơn</a>
                 <a href="authController?action=changePassword" class="ico">Đổi mật khẩu</a>
                 <% } else { %>
                 <div class="brand">🚗 CAR CARE</div>
