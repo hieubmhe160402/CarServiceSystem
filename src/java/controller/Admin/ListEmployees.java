@@ -66,31 +66,59 @@ public class ListEmployees extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         UserDAO db = new UserDAO();
         RoleDAO rdb = new RoleDAO();
+
         String roleParam = request.getParameter("roleId");
-        String key = request.getParameter("keyword");
+        String keywordParam = request.getParameter("keyword");
+        String pageParam = request.getParameter("page");
 
-        List<User> users;
-
-        if (key != null && !key.trim().isEmpty()) {
-            users = db.searchByEmail(key.trim());
-        } else if (roleParam != null && !roleParam.isEmpty()) {
-            try {
-                int roleId = Integer.parseInt(roleParam);
-                users = db.getByRole(roleId);
-            } catch (NumberFormatException e) {
-                users = db.getAll();
-            }
-        } else {
-            users = db.getAll();
+        String keyword = keywordParam != null ? keywordParam.trim() : null;
+        if (keyword != null && keyword.isEmpty()) {
+            keyword = null;
         }
+
+        Integer roleId = null;
+        if (roleParam != null && !roleParam.isEmpty()) {
+            try {
+                roleId = Integer.valueOf(roleParam);
+            } catch (NumberFormatException e) {
+                roleId = null;
+            }
+        }
+
+        int pageSize = 10;
+        int currentPage = 1;
+        if (pageParam != null && !pageParam.isEmpty()) {
+            try {
+                currentPage = Integer.parseInt(pageParam);
+                if (currentPage < 1) {
+                    currentPage = 1;
+                }
+            } catch (NumberFormatException e) {
+                currentPage = 1;
+            }
+        }
+
+        int totalRecords = db.countUsers(keyword, roleId);
+        int totalPages = totalRecords > 0 ? (int) Math.ceil((double) totalRecords / pageSize) : 0;
+        if (totalPages > 0 && currentPage > totalPages) {
+            currentPage = totalPages;
+        }
+
+        int offset = (currentPage - 1) * pageSize;
+        List<User> users = db.getUsersWithPaging(keyword, roleId, offset, pageSize);
+
         List<Role> roles = rdb.getAllRole();
         request.setAttribute("users", users);
         request.setAttribute("roles", roles);
-        request.setAttribute("selectedRoleId", roleParam);
-         if (users == null || users.isEmpty()) {
+        request.setAttribute("selectedRoleId", roleId);
+        request.setAttribute("keyword", keyword);
+        request.setAttribute("currentPage", currentPage);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("pageSize", pageSize);
+        request.setAttribute("totalRecords", totalRecords);
+
+        if (users == null || users.isEmpty()) {
             request.setAttribute("noEmployeesMessage", "Không tìm thấy nhân viên nào.");
-        } else {
-            request.setAttribute("users", users);
         }
 
         request.getRequestDispatcher("/view/Admin/ManageEmployees.jsp").forward(request, response);

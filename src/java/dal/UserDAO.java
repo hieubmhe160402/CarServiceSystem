@@ -56,6 +56,106 @@ public class UserDAO extends DBContext {
         return list;
     }
 
+    private User mapUser(ResultSet rs) throws SQLException {
+        Role role = new Role();
+        role.setRoleID(rs.getInt("RoleID"));
+        role.setRoleName(rs.getString("RoleName"));
+        role.setDescription(rs.getString("Description"));
+
+        User u = new User();
+        u.setUserId(rs.getInt("UserID"));
+        u.setUserCode(rs.getString("UserCode"));
+        u.setFullName(rs.getString("FullName"));
+        u.setUserName(rs.getString("Username"));
+        u.setEmail(rs.getString("Email"));
+        u.setPhone(rs.getString("Phone"));
+        u.setMale(rs.getBoolean("Male"));
+        Date dob = rs.getDate("DateOfBirth");
+        u.setDateOfBirth(dob != null ? dob.toString() : null);
+        u.setIsActive(rs.getBoolean("IsActive"));
+        u.setRole(role);
+        return u;
+    }
+
+    public int countUsers(String keyword, Integer roleId) {
+        StringBuilder sql = new StringBuilder("""
+                SELECT COUNT(*)
+                FROM Users u
+                JOIN Role r ON u.RoleID = r.RoleID
+                WHERE r.RoleName <> 'Admin'
+                """);
+        List<Object> params = new ArrayList<>();
+
+        if (keyword != null && !keyword.isEmpty()) {
+            sql.append(" AND (u.FullName LIKE ? OR u.Email LIKE ?)");
+            String like = "%" + keyword + "%";
+            params.add(like);
+            params.add(like);
+        }
+
+        if (roleId != null) {
+            sql.append(" AND u.RoleID = ?");
+            params.add(roleId);
+        }
+
+        try (PreparedStatement stm = connection.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                stm.setObject(i + 1, params.get(i));
+            }
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
+
+    public List<User> getUsersWithPaging(String keyword, Integer roleId, int offset, int pageSize) {
+        List<User> list = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("""
+                SELECT u.UserID, u.UserCode, u.FullName, u.Username,
+                       u.Email, u.Phone, u.Male, u.DateOfBirth, u.IsActive,
+                       r.RoleID, r.RoleName, r.Description
+                FROM Users u
+                JOIN Role r ON u.RoleID = r.RoleID
+                WHERE r.RoleName <> 'Admin'
+                """);
+        List<Object> params = new ArrayList<>();
+
+        if (keyword != null && !keyword.isEmpty()) {
+            sql.append(" AND (u.FullName LIKE ? OR u.Email LIKE ?)");
+            String like = "%" + keyword + "%";
+            params.add(like);
+            params.add(like);
+        }
+
+        if (roleId != null) {
+            sql.append(" AND u.RoleID = ?");
+            params.add(roleId);
+        }
+
+        sql.append(" ORDER BY u.UserID OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+        params.add(offset);
+        params.add(pageSize);
+
+        try (PreparedStatement stm = connection.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                stm.setObject(i + 1, params.get(i));
+            }
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapUser(rs));
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
+    }
+
     public User getUserByUsername(String username) {
         String sql = "SELECT * FROM Users WHERE Username = ?";
         try (Connection conn = connection; PreparedStatement ps = conn.prepareStatement(sql)) {

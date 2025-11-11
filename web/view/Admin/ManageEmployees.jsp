@@ -152,6 +152,42 @@
                 background: #0284c7;
             }
 
+            .pagination {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 6px;
+                margin-top: 20px;
+                flex-wrap: wrap;
+            }
+            .pagination a,
+            .pagination span {
+                padding: 8px 12px;
+                border-radius: 6px;
+                border: 1px solid #e5e7eb;
+                text-decoration: none;
+                color: #111827;
+                font-size: 14px;
+                transition: all 0.25s;
+                background: #fff;
+            }
+            .pagination a:hover {
+                background: #3b82f6;
+                color: #fff;
+                border-color: #3b82f6;
+            }
+            .pagination .active {
+                background: #3b82f6;
+                color: #fff;
+                border-color: #3b82f6;
+                font-weight: 600;
+                pointer-events: none;
+            }
+            .pagination .disabled {
+                opacity: 0.5;
+                pointer-events: none;
+            }
+
             .main form[action="listEmployees"] {
                 margin-bottom: 16px;
                 display: flex;
@@ -279,16 +315,16 @@
                     <div style="display: flex; gap: 10px; align-items: center;">
                         <label for="roleFilter">Filter by Role:</label>
                         <select name="roleId" id="roleFilter" onchange="this.form.submit()">
-                            <option value="" ${empty selectedRoleId ? "selected":""}>All Roles</option>
+                            <option value="" ${selectedRoleId == null ? "selected":""}>All Roles</option>
                             <c:forEach var="r" items="${roles}">
-                                <option value="${r.roleID}" ${param.roleId == r.roleID ? "selected" : ""}>
+                                <option value="${r.roleID}" ${selectedRoleId != null && selectedRoleId == r.roleID ? "selected" : ""}>
                                     ${r.roleName}
                                 </option>
                             </c:forEach>
                         </select>
 
 
-                        <input type="text" name="keyword" value="${param.keyword}" placeholder="Search by name/email..." 
+                        <input type="text" name="keyword" value="${keyword}" placeholder="Search by name/email..." 
                                style="padding: 5px;" />
                         <button type="submit">Search</button>
                     </div>
@@ -364,6 +400,65 @@
                         </c:forEach>
                     </tbody>
                 </table>
+                <c:if test="${totalPages > 1}">
+                    <div class="pagination">
+                        <c:choose>
+                            <c:when test="${currentPage > 1}">
+                                <c:url var="prevUrl" value="listEmployees">
+                                    <c:param name="page" value="${currentPage - 1}" />
+                                    <c:if test="${selectedRoleId != null}">
+                                        <c:param name="roleId" value="${selectedRoleId}" />
+                                    </c:if>
+                                    <c:if test="${not empty keyword}">
+                                        <c:param name="keyword" value="${keyword}" />
+                                    </c:if>
+                                </c:url>
+                                <a href="${prevUrl}">‹ Trước</a>
+                            </c:when>
+                            <c:otherwise>
+                                <span class="disabled">‹ Trước</span>
+                            </c:otherwise>
+                        </c:choose>
+
+                        <c:forEach begin="1" end="${totalPages}" var="i">
+                            <c:url var="pageUrl" value="listEmployees">
+                                <c:param name="page" value="${i}" />
+                                <c:if test="${selectedRoleId != null}">
+                                    <c:param name="roleId" value="${selectedRoleId}" />
+                                </c:if>
+                                <c:if test="${not empty keyword}">
+                                    <c:param name="keyword" value="${keyword}" />
+                                </c:if>
+                            </c:url>
+                            <c:choose>
+                                <c:when test="${i == currentPage}">
+                                    <span class="active">${i}</span>
+                                </c:when>
+                                <c:otherwise>
+                                    <a href="${pageUrl}">${i}</a>
+                                </c:otherwise>
+                            </c:choose>
+                        </c:forEach>
+
+                        <c:choose>
+                            <c:when test="${currentPage < totalPages}">
+                                <c:url var="nextUrl" value="listEmployees">
+                                    <c:param name="page" value="${currentPage + 1}" />
+                                    <c:if test="${selectedRoleId != null}">
+                                        <c:param name="roleId" value="${selectedRoleId}" />
+                                    </c:if>
+                                    <c:if test="${not empty keyword}">
+                                        <c:param name="keyword" value="${keyword}" />
+                                    </c:if>
+                                </c:url>
+                                <a href="${nextUrl}">Sau ›</a>
+                            </c:when>
+                            <c:otherwise>
+                                <span class="disabled">Sau ›</span>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+                </c:if>
                 <c:forEach var="u" items="${users}">
                     <!-- Modal Update cho user -->
                     <div id="modal-${u.userId}" class="modal">
@@ -420,7 +515,7 @@
 
 
                 <!-- Modal Add Employee -->
-                <div id="addModal" class="modal" style="${not empty showAddModal ? 'display:flex' : 'display:none'}">
+                <div id="addModal" class="modal" <c:if test="${not empty showAddModal}">style="display:flex"</c:if>>
                     <div class="modal-content" style="width:800px; max-height:90vh; overflow:auto;">
 
                         <h2 style="margin-bottom:16px;">Thêm Nhân viên</h2>
