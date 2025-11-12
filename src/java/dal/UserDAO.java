@@ -561,18 +561,18 @@ public class UserDAO extends DBContext {
     }
 
     public String generateUserCode() {
-        String sql = "SELECT MAX(CAST(SUBSTRING(UserCode, 2, LEN(UserCode)) AS INT)) FROM Users WHERE UserCode LIKE 'C%'";
+        String sql = "SELECT MAX(CAST(SUBSTRING(UserCode, 3, LEN(UserCode)) AS INT)) FROM Users WHERE UserCode LIKE 'CU%'";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 int maxNumber = rs.getInt(1);
-                return "C" + String.format("%03d", maxNumber + 1);
+                return "CU" + String.format("%03d", maxNumber + 1);
             }
         } catch (SQLException ex) {
             Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return "C001"; // Default first customer code
+        return "CU001"; // Default first customer code
     }
 
     public User getUserById(int userId) {
