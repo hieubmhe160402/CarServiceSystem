@@ -508,7 +508,7 @@ public class UserDAO extends DBContext {
 
     public boolean registerCustomer(String userCode, String fullName, String userName, String password, String email, String phone, Boolean male, String dateOfBirth) {
         String sql = "INSERT INTO Users (UserCode, FullName, Username, Password, Email, Phone, Male, DateOfBirth, RoleID, IsActive, CreatedDate) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, 3, 1, GETDATE())"; // RoleID = 3 for Customer
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, 4, 1, GETDATE())"; // RoleID = 4 for Customer
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, userCode);
