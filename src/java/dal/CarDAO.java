@@ -142,15 +142,22 @@ public Car getCarByIdWithOwner(int carId) {
     return null;
 }
     
-    
-    public Car getCarById(int carId) {
-        String sql = "SELECT * FROM Cars WHERE CarID = ?";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setInt(1, carId);
-            ResultSet rs = ps.executeQuery();
+    public Car getCarByUserCodeAndCarId(String userCode, int carId) throws Exception {
+    String sql = "SELECT c.CarID, c.LicensePlate, c.Brand, c.Model, c.Year, c.Color, " +
+                 "c.EngineNumber, c.ChassisNumber, c.OwnerID, c.PurchaseDate, " +
+                 "c.LastMaintenanceDate, c.NextMaintenanceDate, c.CurrentOdometer, c.CreatedDate, " +
+                 "u.UserID, u.UserCode, u.FullName, u.Email, u.Phone, u.Image " +
+                 "FROM Cars c " +
+                 "INNER JOIN Users u ON c.OwnerID = u.UserID " +
+                 "WHERE u.UserCode = ? AND c.CarID = ?";
+    try (
+         PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setString(1, userCode);
+        ps.setInt(2, carId);
+        try (ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
                 Car car = new Car();
+                // gán dữ liệu xe
                 car.setCarId(rs.getInt("CarID"));
                 car.setLicensePlate(rs.getString("LicensePlate"));
                 car.setBrand(rs.getString("Brand"));
@@ -159,15 +166,84 @@ public Car getCarByIdWithOwner(int carId) {
                 car.setColor(rs.getString("Color"));
                 car.setEngineNumber(rs.getString("EngineNumber"));
                 car.setChassisNumber(rs.getString("ChassisNumber"));
-                car.setPurchaseDate(rs.getString("PurchaseDate"));
+
+                java.sql.Date purchaseDate = rs.getDate("PurchaseDate");
+                car.setPurchaseDate(purchaseDate != null ? purchaseDate.toString() : null);
+                java.sql.Date lastMaintenanceDate = rs.getDate("LastMaintenanceDate");
+                car.setLastMaintenanceDate(lastMaintenanceDate != null ? lastMaintenanceDate.toString() : null);
+                java.sql.Date nextMaintenanceDate = rs.getDate("NextMaintenanceDate");
+                car.setNextMaintenanceDate(nextMaintenanceDate != null ? nextMaintenanceDate.toString() : null);
+                java.sql.Date createdDate = rs.getDate("CreatedDate");
+                car.setCreatedDate(createdDate != null ? createdDate.toString() : null);
+
+                Integer currentOdometer = rs.getObject("CurrentOdometer") != null ? rs.getInt("CurrentOdometer") : 0;
+                car.setCurrentOdometer(currentOdometer);
+
+                // gán owner
+                User owner = new User();
+                owner.setUserId(rs.getInt("UserID"));
+                owner.setUserCode(rs.getString("UserCode"));
+                owner.setFullName(rs.getString("FullName"));
+                owner.setEmail(rs.getString("Email"));
+                owner.setPhone(rs.getString("Phone"));
+                owner.setImage(rs.getString("Image"));
+                car.setOwner(owner);
+
                 return car;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        }
+    }
+    return null;
+}
+
+    public Car getCarById(int carId) throws Exception {
+        String sql = "SELECT c.CarID, c.LicensePlate, c.Brand, c.Model, c.Year, c.Color, " +
+                     "c.EngineNumber, c.ChassisNumber, c.OwnerID, c.PurchaseDate, " +
+                     "c.LastMaintenanceDate, c.NextMaintenanceDate, c.CurrentOdometer, c.CreatedDate, " +
+                     "u.UserID AS OwnerUserID, u.FullName AS OwnerName, u.Email AS OwnerEmail, " +
+                     "u.Phone AS OwnerPhone, u.Image AS OwnerImage " +
+                     "FROM Cars c " +
+                     "LEFT JOIN Users u ON c.OwnerID = u.UserID " +
+                     "WHERE c.CarID = ?";
+
+        try (
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setInt(1, carId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Car car = new Car();
+                    car.setCarId(rs.getInt("CarID"));
+                    car.setLicensePlate(rs.getString("LicensePlate"));
+                    car.setBrand(rs.getString("Brand"));
+                    car.setModel(rs.getString("Model"));
+                    car.setYear(rs.getInt("Year"));
+                    car.setColor(rs.getString("Color"));
+                    car.setEngineNumber(rs.getString("EngineNumber"));
+                    car.setChassisNumber(rs.getString("ChassisNumber"));
+                    car.setPurchaseDate(rs.getDate("PurchaseDate").toString());
+                    car.setLastMaintenanceDate(rs.getDate("LastMaintenanceDate").toString());
+                    car.setNextMaintenanceDate(rs.getDate("NextMaintenanceDate").toString());
+                    car.setCurrentOdometer(rs.getInt("CurrentOdometer"));
+                    car.setCreatedDate(rs.getDate("CreatedDate").toString());
+
+                    // 🧩 Gắn thông tin chủ xe (User)
+                    User owner = new User();
+                    owner.setUserId(rs.getInt("OwnerUserID"));
+                    owner.setFullName(rs.getString("OwnerName"));
+                    owner.setEmail(rs.getString("OwnerEmail"));
+                    owner.setPhone(rs.getString("OwnerPhone"));
+                    owner.setImage(rs.getString("OwnerImage"));
+                    car.setOwner(owner);
+
+                    return car;
+                }
+            }
         }
         return null;
     }
-
+    
+    
     public List<Car> getCarsByUserIdWithOwnerInfo(int userId) {
         List<Car> list = new ArrayList<>();
         String sql = "SELECT c.CarID, c.LicensePlate, c.Brand, c.Model, c.Year, c.Color, "
@@ -288,7 +364,36 @@ public Car getCarByIdWithOwner(int carId) {
         }
         return false;
     }
+    
+    public List<Car> getCarsByOwnerId(int ownerId) {
+    List<Car> cars = new ArrayList<>();
+    String sql = "SELECT CarID, LicensePlate, Brand, Model, Year, Color, OwnerID " +
+                 "FROM Cars WHERE OwnerID = ?";
+    try {
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setInt(1, ownerId);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            Car car = new Car();
+            car.setCarId(rs.getInt("CarID"));
+            car.setLicensePlate(rs.getString("LicensePlate"));
+            car.setBrand(rs.getString("Brand"));
+            car.setModel(rs.getString("Model"));
+            car.setYear(rs.getInt("Year"));
+            car.setColor(rs.getString("Color"));
 
+            // Set owner
+            User owner = new User();
+            owner.setUserId(rs.getInt("OwnerID"));
+            car.setOwner(owner);
+
+            cars.add(car);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return cars;
+}
     public static void main(String[] args) {
         CarDAO dao = new CarDAO();
 
@@ -305,4 +410,6 @@ public Car getCarByIdWithOwner(int carId) {
         cars2.forEach(c -> System.out.println("   - " + c.getBrand()
                 + " | Owner: " + c.getOwner().getFullName()));
     }
+
+    
 }

@@ -89,7 +89,7 @@ public class bookingAppoitments extends HttpServlet {
         }
 
         // ====== LẤY GÓI TÙY CHỌN PKG-EMPTY ======
-        MaintenancePackage customPackage = packageDao.getPackageByCode("PKG-EMPTY");
+        MaintenancePackage customPackage = packageDao.getPackageByCode("PKG-NONE");
         request.setAttribute("customPackage", customPackage);
 
         request.setAttribute("packageList", packageList);

@@ -141,8 +141,8 @@
                 
                 <a href="bookingAppoitments"><i class="fas fa-calendar-check"></i> Đặt lịch bảo dưỡng</a>
                 <a href="userAppoinmentsHistoryController"><i class="fas fa-history"></i> Lịch sử lịch hẹn</a>
-                <a href="#"><i class="fas fa-chart-line"></i> Theo dõi tiến độ</a>
-                <a href="#"><i class="fas fa-bell"></i> Thông báo</a>
+                <a href="maintenanceProgress"><i class="fas fa-chart-line"></i> Theo dõi tiến độ</a>
+                <a href="freeAiReminder"><i class="fas fa-bell"></i> Thông báo</a>
                 <a href="#"><i class="fas fa-cog"></i> Cài đặt</a>
 
                 <% } else if ("Accountant".equals(roleName)) { %>

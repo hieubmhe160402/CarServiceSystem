@@ -19,7 +19,7 @@
     <title>Đặt lịch bảo dưỡng - Car Management</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    
     <style>
         /* ===== GIỮ NGUYÊN CSS CŨ ===== */
         body {
@@ -611,15 +611,214 @@
                 height: 180px;
             }
         }
+    /* Nút AI Floating - Z-index cao hơn */
+    .ai-floating-btn {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 65px;
+        height: 65px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.5);
+        z-index: 9999; /* Tăng z-index rất cao */
+        transition: all 0.3s ease;
+        padding: 0;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .ai-floating-btn img {
+        width: 40px;
+        height: 40px;
+        object-fit: contain;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    }
+
+    .ai-floating-btn:hover {
+        transform: scale(1.15) rotate(5deg);
+        box-shadow: 0 8px 35px rgba(102, 126, 234, 0.8);
+    }
+
+    .ai-floating-btn:active {
+        transform: scale(1.05);
+    }
+
+    /* Pulse animation mạnh hơn */
+    @keyframes pulse {
+        0%, 100% {
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.5);
+            transform: scale(1);
+        }
+        50% {
+            box-shadow: 0 4px 40px rgba(102, 126, 234, 1);
+            transform: scale(1.05);
+        }
+    }
+
+    .ai-floating-btn.pulse {
+        animation: pulse 2s infinite;
+    }
+
+    /* Badge thông báo (optional) */
+    .ai-floating-btn::after {
+        content: '';
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        width: 12px;
+        height: 12px;
+        background: #ef4444;
+        border-radius: 50%;
+        border: 2px solid white;
+        animation: blink 1.5s infinite;
+    }
+
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.3; }
+    }
+
+    /* Container cho chatbox floating */
+    .ai-chatbox-container {
+        position: fixed;
+        bottom: 110px;
+        right: 30px;
+        width: 380px;
+        max-width: calc(100vw - 60px);
+        z-index: 9998; /* Cao nhưng thấp hơn nút */
+        display: none;
+        animation: slideUp 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    .ai-chatbox-container.show {
+        display: block;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px) scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    /* Style cho chatbox widget */
+    .ai-chatbox-container .ai-chat-widget {
+        box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+        border-radius: 16px;
+        border: 2px solid rgba(102, 126, 234, 0.3);
+    }
+
+    /* Fix: Row cards không bị sát mép */
+    .row {
+        margin-right: 0 !important;
+    }
+
+    .col-md-4 {
+        padding-right: 15px !important;
+    }
+
+    /* Responsive Mobile */
+    @media (max-width: 768px) {
+        .main {
+            padding-right: 20px !important; /* Bình thường trên mobile */
+        }
+
+        .ai-floating-btn {
+            bottom: 20px;
+            right: 20px;
+            width: 55px;
+            height: 55px;
+        }
+
+        .ai-floating-btn img {
+            width: 32px;
+            height: 32px;
+        }
+
+        .ai-floating-btn::after {
+            width: 10px;
+            height: 10px;
+        }
+
+        .ai-chatbox-container {
+            bottom: 90px;
+            right: 15px;
+            width: calc(100vw - 30px);
+        }
+
+        .ai-chatbox-container .ai-chat-widget {
+            height: 500px;
+        }
+    }
+
+    /* Tablet */
+    @media (max-width: 1024px) and (min-width: 769px) {
+        .main {
+            padding-right: 100px !important;
+        }
+    }
+
+    /* Tooltip cho nút */
+    .ai-floating-btn[title]:hover::before {
+        content: attr(title);
+        position: absolute;
+        bottom: 75px;
+        right: 0;
+        background: #1f2937;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 13px;
+        white-space: nowrap;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        animation: fadeIn 0.2s ease;
+    }
+
+    .ai-floating-btn[title]:hover::after {
+        content: '';
+        position: absolute;
+        bottom: 65px;
+        right: 20px;
+        width: 0;
+        height: 0;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-top: 6px solid #1f2937;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
     </style>
 </head>
 <body>
 <div class="app">
     <!-- Sidebar -->
     <jsp:include page="/view/layout/sidebar.jsp"/>
-
+    
     <!-- Main content -->
     <div class="main">
+        <!-- Nút Floating để mở chatbox -->
+<button class="ai-floating-btn pulse" onclick="toggleAIChatbox()" title="Chat với AI tư vấn">
+    <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" 
+         alt="AI Assistant"
+         onerror="this.src='https://cdn-icons-png.flaticon.com/512/8943/8943377.png'">
+</button>
+
+<!-- Container chứa chatbox (ẩn mặc định) -->
+<div class="ai-chatbox-container" id="aiChatboxContainer">
+    <jsp:include page="/view/Customer/aiReminder.jsp"/>
+</div>
         <div class="section-header">
             <h2><i class="fas fa-tools"></i> Gói bảo dưỡng</h2>
             <div class="d-flex gap-2">
@@ -628,7 +827,7 @@
                 </button>
             </div>
         </div>
-
+        
         <!-- ===== SUCCESS MESSAGE ===== -->
         <% if (successMessage != null) { %>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -848,7 +1047,7 @@
                 if (list != null && !list.isEmpty()) {
                     for (MaintenancePackage pkg : list) {
                         // Ẩn gói PKG-EMPTY khỏi danh sách combo
-                        if (pkg.getPackageCode() != null && pkg.getPackageCode().equals("PKG-EMPTY")) {
+                        if (pkg.getPackageCode() != null && pkg.getPackageCode().equals("PKG-NONE")) {
                             continue;
                         }
             %>
@@ -1080,6 +1279,62 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function toggleAIChatbox() {
+        const container = document.getElementById('aiChatboxContainer');
+        const btn = document.querySelector('.ai-floating-btn');
+        
+        if (container.classList.contains('show')) {
+            // Đóng chatbox
+            container.classList.remove('show');
+            btn.classList.add('pulse');
+            btn.style.transform = 'rotate(0deg)';
+        } else {
+            // Mở chatbox
+            container.classList.add('show');
+            btn.classList.remove('pulse');
+            btn.style.transform = 'rotate(360deg)';
+            
+            // Auto focus vào input sau khi mở
+            setTimeout(() => {
+                const input = container.querySelector('#aiChatInput');
+                if (input) input.focus();
+            }, 400);
+        }
+    }
+
+    // Đóng chatbox khi click bên ngoài
+    document.addEventListener('click', function(event) {
+        const container = document.getElementById('aiChatboxContainer');
+        const btn = document.querySelector('.ai-floating-btn');
+        
+        if (container && container.classList.contains('show') && 
+            !container.contains(event.target) && 
+            !btn.contains(event.target)) {
+            container.classList.remove('show');
+            btn.classList.add('pulse');
+            btn.style.transform = 'rotate(0deg)';
+        }
+    });
+
+    // Hiệu ứng khi scroll
+    let lastScrollTop = 0;
+    window.addEventListener('scroll', function() {
+        const btn = document.querySelector('.ai-floating-btn');
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        if (scrollTop > lastScrollTop && scrollTop > 300) {
+            // Scroll down - ẩn nhẹ
+            btn.style.transform = 'scale(0.9)';
+            btn.style.opacity = '0.7';
+        } else {
+            // Scroll up - hiện lại
+            btn.style.transform = 'scale(1)';
+            btn.style.opacity = '1';
+        }
+        lastScrollTop = scrollTop;
+    });
+</script>
 <script>
     // Auto-dismiss alerts after 5 seconds
     setTimeout(function() {
