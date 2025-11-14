@@ -40,13 +40,6 @@ public class roleManage extends HttpServlet {
             return;
         }
 
-        // ✅ Xử lý xóa
-        String action = request.getParameter("action");
-        if ("delete".equalsIgnoreCase(action)) {
-            deleteRole(request, response);
-            return;
-        }
-
         // ✅ Lấy từ khóa tìm kiếm (nếu có)
         String keyword = request.getParameter("keyword");
         request.setAttribute("keyword", keyword);
@@ -173,16 +166,6 @@ public class roleManage extends HttpServlet {
         roleDAO.updateRole(r);
 
         String success = URLEncoder.encode("Cập nhật vai trò thành công!", "UTF-8");
-        response.sendRedirect("roleManage?success=" + success);
-    }
-
-    private void deleteRole(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
-
-        int id = Integer.parseInt(request.getParameter("id"));
-        roleDAO.deleteRole(id);
-
-        String success = URLEncoder.encode("Xóa vai trò thành công!", "UTF-8");
         response.sendRedirect("roleManage?success=" + success);
     }
 

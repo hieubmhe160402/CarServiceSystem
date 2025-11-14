@@ -307,6 +307,13 @@
             <div class="container">
                 <h2>Quản lý Category</h2>
 
+                <c:if test="${not empty sessionScope.errorMsg}">
+                    <div style="padding: 15px; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 4px; margin-bottom: 20px;">
+                        ${sessionScope.errorMsg}
+                    </div>
+                    <c:remove var="errorMsg" scope="session"/>
+                </c:if>
+
                 <div class="top-bar">
                     <div style="display: flex; gap: 10px;">
                         <input type="text" class="search-box" placeholder="Tìm kiếm theo tên..." id="searchInput">

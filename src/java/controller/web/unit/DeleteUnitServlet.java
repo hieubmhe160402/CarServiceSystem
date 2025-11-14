@@ -6,6 +6,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebServlet(name = "DeleteUnitServlet", urlPatterns = {"/delete-unit"})
@@ -19,7 +20,11 @@ public class DeleteUnitServlet extends HttpServlet {
             try {
                 int id = Integer.parseInt(idParam);
                 UnitDAO dao = new UnitDAO();
-                dao.delete(id);
+                boolean success = dao.delete(id);
+                if (!success) {
+                    HttpSession session = request.getSession();
+                    session.setAttribute("errorMsg", "Không thể xóa Unit vì đang được sử dụng trong sản phẩm hoặc dữ liệu khác.");
+                }
             } catch (NumberFormatException e) {
                 // ignore invalid id
             }

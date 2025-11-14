@@ -104,18 +104,6 @@ public class RoleDAO extends DBContext {
         }
     }
 
-    //  DELETE
-    public boolean deleteRole(int id) {
-        String sql = "DELETE FROM Role WHERE RoleID = ?";
-        try (PreparedStatement stm = connection.prepareStatement(sql)) {
-            stm.setInt(1, id);
-            return stm.executeUpdate() > 0;
-        } catch (SQLException ex) {
-            Logger.getLogger(RoleDAO.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        }
-    }
-
     //  SEARCH
     public List<Role> searchRoles(String keyword) {
         List<Role> list = new ArrayList<>();

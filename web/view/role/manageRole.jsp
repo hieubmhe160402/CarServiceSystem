@@ -267,7 +267,6 @@
                                 <td>${r.description}</td>
                                 <td>
                                     <button class="btn btn-edit" onclick="openEditModal(${r.roleID}, '${r.roleName}', '${r.description}')">Sửa</button>
-                                    <a href="roleManage?action=delete&id=${r.roleID}" class="btn btn-delete" onclick="return confirm('Bạn có chắc muốn xóa role này?')">Xóa</a>
                                 </td>
                             </tr>
                         </c:forEach>

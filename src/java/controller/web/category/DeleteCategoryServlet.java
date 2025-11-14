@@ -12,6 +12,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  *
@@ -63,13 +64,12 @@ public class DeleteCategoryServlet extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
         boolean success = dao.delete(id);
 
-        response.setContentType("application/json");
-
         if (success) {
             response.sendRedirect("category");
         } else {
-            request.setAttribute("errorMsg", "Không thể xóa Category!");
-            request.getRequestDispatcher("view/category/list-category.jsp").forward(request, response);
+            HttpSession session = request.getSession();
+            session.setAttribute("errorMsg", "Không thể xóa Category vì đang được sử dụng trong sản phẩm hoặc dữ liệu khác.");
+            response.sendRedirect("category");
         }
     }
 

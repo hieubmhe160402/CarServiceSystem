@@ -72,9 +72,14 @@ public class ListCategoryServlet extends HttpServlet {
         String filterType = request.getParameter("type"); // lấy filter từ dropdown
 
         // Lấy danh sách phân trang + lọc
-        List<Category> categoryList = categoryDAO.getByPageAndType(currentPage, pageSize, filterType);
         int totalItems = categoryDAO.count(filterType);
         int totalPages = (int) Math.ceil((double) totalItems / pageSize);
+        if (totalPages == 0) {
+            currentPage = 1;
+        } else if (currentPage > totalPages) {
+            currentPage = totalPages;
+        }
+        List<Category> categoryList = categoryDAO.getByPageAndType(currentPage, pageSize, filterType);
 
         request.setAttribute("categoryList", categoryList);
         request.setAttribute("currentPage", currentPage);
