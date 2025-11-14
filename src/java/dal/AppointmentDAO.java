@@ -628,7 +628,7 @@ public class AppointmentDAO extends DBContext {
         appointment.setAppointmentDate(appointmentDate);
         appointment.setRequestedServices(customServices);
         appointment.setNotes(notes);
-        appointment.setStatus("Pending");
+        appointment.setStatus("PENDING");
         appointment.setRequestedPackage(customPackage);
 
         // Lưu vào database
