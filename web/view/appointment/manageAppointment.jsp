@@ -220,7 +220,24 @@
             .close:hover {
                 color: red;
             }
+            .ai-chat-widget {
+                width: 380px;
+                max-width: 100%;
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                height: 500px;
+                font-family: 'Segoe UI', Roboto, Arial, sans-serif;
 
+                /* === 4 DÒNG QUAN TRỌNG NHẤT === */
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                z-index: 9999;
+            }
         </style>
     </head>
     <body>
@@ -487,5 +504,8 @@
                 });
             });
         </script>
+
+        <!-- Create Appointment By AI widget (bottom-right) - include servlet so it prepares carList -->
+        <jsp:include page="/view/appointment/CreateAppointmentByAI.jsp" />
     </body>
 </html>

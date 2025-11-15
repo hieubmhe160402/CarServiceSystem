@@ -528,8 +528,8 @@
 
                             <select name="status" class="status-filter">
                                 <option value="">Tất cả</option>
-                                <option value="PENDING" ${selectedStatus=='PENDING' ? 'selected' : '' }>
-                                    PENDING</option>
+                                <option value="WAITING" ${selectedStatus=='WAITING' ? 'selected' : '' }>
+                                    WAITING</option>
                                 <option value="PROCESSING" ${selectedStatus=='PROCESSING' ? 'selected'
                                                              : '' }>PROCESSING</option>
                                 <option value="COMPLETED" ${selectedStatus=='COMPLETED' ? 'selected'

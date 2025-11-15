@@ -5,6 +5,7 @@
 package controller.appointment;
 
 import dal.AppointmentDAO;
+import dal.AppointmentByAI;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -73,8 +74,10 @@ public class ListAppointmentServlet extends HttpServlet {
         String pageStr = request.getParameter("page"); // ✅ lấy số trang hiện tại
 
         AppointmentDAO dao = new AppointmentDAO();
+        AppointmentByAI aiDao = new AppointmentByAI();
 
         List<Car> cars = dao.getAllCustomerCars();
+        List<Car> carList = aiDao.getCarsWithCustomerInfo();
         List<MaintenancePackage> packages = dao.getAllPackages();
 
         List<Appointment> list;
@@ -124,6 +127,7 @@ public class ListAppointmentServlet extends HttpServlet {
 
         // ✅ Gửi dữ liệu sang JSP
         request.setAttribute("cars", cars);
+        request.setAttribute("carList", carList);
         request.setAttribute("appointments", pagedAppointments);
 
         // 🔴 Nếu có flag noFilter (từ lỗi validation) → KHÔNG hiển thị filter
