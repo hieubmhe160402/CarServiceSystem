@@ -39,30 +39,30 @@ public class DashboardDAO extends DBContext {
 
     public int getTotalCarsProcessing() {
         int total = 0;
-        // Đếm số lượng CarID duy nhất đang có trạng thái 'PROCESSING'
-        String sql = "SELECT COUNT(DISTINCT CarID) AS TotalCarsProcessing "
+
+        String sql = "SELECT COUNT(*) AS TotalCarsProcessing "
                 + "FROM CarMaintenance "
                 + "WHERE Status = N'PROCESSING'";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                // Lấy kết quả từ cột alias "TotalCarsProcessing"
                 total = rs.getInt("TotalCarsProcessing");
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return total;
     }
 
     public double getTotalRevenueToday() {
         double total = 0.0;
 
-        // ISNULL đảm bảo trả về 0 nếu không có bản ghi nào
-        String sql = "SELECT ISNULL(SUM(FinalAmount), 0) AS TotalRevenueToday "
-                + "FROM CarMaintenance "
-                + "WHERE CAST(CompletedDate AS DATE) = CAST(GETDATE() AS DATE)";
+        String sql = "SELECT ISNULL(SUM(Amount), 0) AS TotalRevenueToday "
+                + "FROM PaymentTransactions "
+                + "WHERE Status = 'DONE' "
+                + "AND CAST(PaymentDate AS DATE) = CAST(GETDATE() AS DATE)";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
@@ -72,16 +72,18 @@ public class DashboardDAO extends DBContext {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return total;
     }
 
     public double getTotalRevenueThisMonth() {
         double total = 0.0;
 
-        String sql = "SELECT ISNULL(SUM(FinalAmount), 0) AS TotalRevenueThisMonth "
-                + "FROM CarMaintenance "
-                + "WHERE MONTH(CompletedDate) = MONTH(GETDATE()) "
-                + "AND YEAR(CompletedDate) = YEAR(GETDATE())";
+        String sql = "SELECT ISNULL(SUM(Amount), 0) AS TotalRevenueThisMonth "
+                + "FROM PaymentTransactions "
+                + "WHERE Status = 'DONE' "
+                + "AND MONTH(PaymentDate) = MONTH(GETDATE()) "
+                + "AND YEAR(PaymentDate) = YEAR(GETDATE())";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
@@ -91,6 +93,7 @@ public class DashboardDAO extends DBContext {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return total;
     }
 
