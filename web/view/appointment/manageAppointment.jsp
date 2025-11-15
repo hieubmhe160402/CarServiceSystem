@@ -196,6 +196,21 @@
                 border-radius: 5px;
             }
 
+            .error-message {
+                color: red;
+                font-size: 13px;
+                margin-top: 8px;
+                margin-bottom: 12px;
+                padding: 8px;
+                background-color: #ffe6e6;
+                border-left: 3px solid red;
+                border-radius: 3px;
+                width: 100%;
+                box-sizing: border-box;
+                display: block;
+                word-wrap: break-word;
+            }
+
             .close {
                 float: right;
                 font-size: 20px;
@@ -226,17 +241,17 @@
                       style="margin-top: 10px; display:flex; gap:15px; align-items:center;">
                     <label for="statusFilter">Trạng thái:</label>
                     <select name="status" id="statusFilter" onchange="this.form.submit()">
-                        <option value="" ${empty param.status ? 'selected' : ''}>Tất cả</option>
-                        <option value="PENDING" ${param.status == 'PENDING' ? 'selected' : ''}>Pending</option>
-                        <option value="CONFIRMED" ${param.status == 'CONFIRMED' ? 'selected' : ''}>Confirmed</option>
-                        <option value="CANCELLED" ${param.status == 'CANCELLED' ? 'selected' : ''}>Cancelled</option>
+                        <option value="" ${empty selectedStatus ? 'selected' : ''}>Tất cả</option>
+                        <option value="PENDING" ${selectedStatus == 'PENDING' ? 'selected' : ''}>Pending</option>
+                        <option value="CONFIRMED" ${selectedStatus == 'CONFIRMED' ? 'selected' : ''}>Confirmed</option>
+                        <option value="CANCELLED" ${selectedStatus == 'CANCELLED' ? 'selected' : ''}>Cancelled</option>
                     </select>
 
                     <label for="packageFilter">Gói bảo dưỡng:</label>
                     <select name="packageId" id="packageFilter" onchange="this.form.submit()">
-                        <option value="" ${empty param.packageId ? 'selected' : ''}>Tất cả</option>
+                        <option value="" ${empty selectedPackageId ? 'selected' : ''}>Tất cả</option>
                         <c:forEach var="pkg" items="${packages}">
-                            <option value="${pkg.packageId}" ${param.packageId == pkg.packageId ? 'selected' : ''}>
+                            <option value="${pkg.packageId}" ${selectedPackageId == pkg.packageId ? 'selected' : ''}>
                                 ${pkg.packageCode} - ${pkg.name}
                             </option>
                         </c:forEach>
@@ -378,7 +393,7 @@
                             <input type="datetime-local" name="appointmentDate" value="${enteredDate}" required>
 
                             <c:if test="${not empty errorTimeMessage}">
-                                <div style="color:red; font-size: 13px; margin-top: 4px;">
+                                <div class="error-message">
                                     ${errorTimeMessage}
                                 </div>
                             </c:if>

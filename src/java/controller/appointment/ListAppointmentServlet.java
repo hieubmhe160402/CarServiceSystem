@@ -79,8 +79,12 @@ public class ListAppointmentServlet extends HttpServlet {
 
         List<Appointment> list;
 
-        // ✅ Nếu có filter theo status hoặc package
-        if ((status != null && !status.isEmpty()) || (packageIdStr != null && !packageIdStr.isEmpty())) {
+        // 🔴 Nếu có flag noFilter (từ lỗi validation) → KHÔNG filter
+        boolean noFilter = request.getAttribute("noFilter") != null && 
+                          (boolean) request.getAttribute("noFilter");
+
+        // ✅ Nếu có filter theo status hoặc package (và không phải lỗi validation)
+        if (!noFilter && ((status != null && !status.isEmpty()) || (packageIdStr != null && !packageIdStr.isEmpty()))) {
             Integer packageId = (packageIdStr != null && !packageIdStr.isEmpty())
                     ? Integer.parseInt(packageIdStr)
                     : null;
@@ -121,8 +125,16 @@ public class ListAppointmentServlet extends HttpServlet {
         // ✅ Gửi dữ liệu sang JSP
         request.setAttribute("cars", cars);
         request.setAttribute("appointments", pagedAppointments);
-        request.setAttribute("selectedStatus", status);
-        request.setAttribute("selectedPackageId", packageIdStr);
+        
+        // 🔴 Nếu có flag noFilter (từ lỗi validation) → KHÔNG hiển thị filter
+        if (noFilter) {
+            request.setAttribute("selectedStatus", null);
+            request.setAttribute("selectedPackageId", null);
+        } else {
+            request.setAttribute("selectedStatus", status);
+            request.setAttribute("selectedPackageId", packageIdStr);
+        }
+        
         request.setAttribute("packages", packages);
 
         request.setAttribute("currentPage", page);
@@ -218,16 +230,20 @@ public class ListAppointmentServlet extends HttpServlet {
                         request.setAttribute("errorTimeMessage", "🚫 Xe này đã có lịch hẹn trong khoảng thời gian gần đó!");
                     }
 
-                    // Nếu có lỗi thì quay lại form
+                    // Nếu có lỗi thì quay lại form (KHÔNG FILTER)
                     if (request.getAttribute("errorTimeMessage") != null) {
                         // Giữ lại dữ liệu form
                         request.setAttribute("showAddModal", true);
                         request.setAttribute("selectedCarId", carId);
-                        request.setAttribute("selectedPackageId", packageId);
+                        // 🔴 XÓA selectedPackageId để dropdown bảo dưỡng reset về mặc định
+                        request.setAttribute("selectedPackageId", null);
                         request.setAttribute("enteredDate", appointmentDateStr);
                         request.setAttribute("enteredNotes", notes);
 
-                        // Gọi lại doGet để nạp lại dữ liệu danh sách
+                        // 🔴 Set flag để doGet() biết không filter
+                        request.setAttribute("noFilter", true);
+
+                        // Gọi lại doGet để nạp lại dữ liệu danh sách (show all, KHÔNG filter)
                         doGet(request, response);
                         return;
                     }
@@ -256,22 +272,9 @@ public class ListAppointmentServlet extends HttpServlet {
                 }
             }
 
-            // ✅ Quay lại trang danh sách
-            String status = request.getParameter("status");
-            String packageId = request.getParameter("packageId");
-
-            String redirectURL = "listAppointmentServlet";
-            boolean hasParam = false;
-
-            if (status != null && !status.isEmpty()) {
-                redirectURL += "?status=" + status;
-                hasParam = true;
-            }
-            if (packageId != null && !packageId.isEmpty()) {
-                redirectURL += (hasParam ? "&" : "?") + "packageId=" + packageId;
-            }
-
-            response.sendRedirect(redirectURL);
+            // ✅ Quay lại trang danh sách (KHÔNG giữ filter cũ, show all appointments)
+            request.getSession().setAttribute("successMessage", "Đã thêm lịch hẹn thành công!");
+            response.sendRedirect("listAppointmentServlet");
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "Đã xảy ra lỗi khi xử lý yêu cầu: " + e.getMessage());
