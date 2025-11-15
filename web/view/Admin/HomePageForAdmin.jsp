@@ -217,24 +217,7 @@
             <jsp:include page="/view/layout/sidebar.jsp"/>
 
             <main class="main">
-                <div class="topbar">
-                    <div class="search"><input placeholder="Tìm kiếm..." /></div>
-                    <div class="top-actions">
-                        <div>🔔</div>
-                        <div class="avatar">
-                            <div class="circle"></div>
-                            <div>
-                                <c:choose>
-                                    <c:when test="${not empty currentUser}">
-                                        <c:out value="${currentUser.fullName}"/>
-                                    </c:when>
-                                    <c:otherwise>Admin</c:otherwise>
-                                </c:choose>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+              
                 <h2 style="margin-bottom:12px;">Dashboard</h2>
 
                 <div class="grid">
