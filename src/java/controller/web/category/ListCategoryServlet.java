@@ -69,7 +69,12 @@ public class ListCategoryServlet extends HttpServlet {
         if (pageParam != null) {
             currentPage = Integer.parseInt(pageParam);
         }
-        String filterType = request.getParameter("type"); // lấy filter từ dropdown
+        
+        // 🔴 Nếu có lỗi → KHÔNG filter, lấy từ attribute
+        String filterType = (String) request.getAttribute("filterType");
+        if (filterType == null) {
+            filterType = request.getParameter("type");
+        }
 
         // Lấy danh sách phân trang + lọc
         int totalItems = categoryDAO.count(filterType);
@@ -112,6 +117,19 @@ public class ListCategoryServlet extends HttpServlet {
             String type = request.getParameter("type");
             String description = request.getParameter("description");
 
+            // ✅ Kiểm tra Name + Type trùng
+            if (dao.isNameAndTypeExists(name, type)) {
+                request.setAttribute("errorMsg", "⛔ Name '" + name + "' với Type '" + type + "' đã tồn tại!");
+                request.setAttribute("showAddModal", true);
+                request.setAttribute("formName", name);
+                request.setAttribute("formType", type);
+                request.setAttribute("formDescription", description);
+                // 🔴 XÓA filter khi có lỗi
+                request.setAttribute("filterType", "");
+                doGet(request, response);
+                return;
+            }
+
             Category category = new Category();
             category.setName(name);
             category.setType(type);
@@ -122,7 +140,7 @@ public class ListCategoryServlet extends HttpServlet {
             if (success) {
                 response.sendRedirect("category");
             } else {
-                request.setAttribute("errorMsg", "Không thể thêm Category!");
+                request.setAttribute("errorMsg", "❌ Không thể thêm Category!");
                 request.getRequestDispatcher("view/category/list-category.jsp").forward(request, response);
             }
 
@@ -132,6 +150,32 @@ public class ListCategoryServlet extends HttpServlet {
             String name = request.getParameter("name");
             String type = request.getParameter("type");
             String description = request.getParameter("description");
+
+            // ✅ Kiểm tra Category có đang được sử dụng không
+            if (dao.isCategoryInUse(id)) {
+                request.setAttribute("errorMsg", "⛔ Category này đang được sử dụng, không thể thay đổi!");
+                request.setAttribute("showEditModal", true);
+                request.setAttribute("editId", id);
+                request.setAttribute("formName", name);
+                request.setAttribute("formType", type);
+                request.setAttribute("formDescription", description);
+                request.setAttribute("filterType", "");
+                doGet(request, response);
+                return;
+            }
+
+            // ✅ Kiểm tra Name + Type trùng (trừ chính nó)
+            if (dao.isNameAndTypeExistsExcept(name, type, id)) {
+                request.setAttribute("errorMsg", "⛔ Name '" + name + "' với Type '" + type + "' đã tồn tại!");
+                request.setAttribute("showEditModal", true);
+                request.setAttribute("editId", id);
+                request.setAttribute("formName", name);
+                request.setAttribute("formType", type);
+                request.setAttribute("formDescription", description);
+                request.setAttribute("filterType", "");
+                doGet(request, response);
+                return;
+            }
 
             Category category = new Category();
             category.setCategoryId(id);
@@ -144,7 +188,7 @@ public class ListCategoryServlet extends HttpServlet {
             if (success) {
                 response.sendRedirect("category");
             } else {
-                request.setAttribute("errorMsg", "Không thể cập nhật Category!");
+                request.setAttribute("errorMsg", "❌ Không thể cập nhật Category!");
                 request.getRequestDispatcher("view/category/list-category.jsp").forward(request, response);
             }
 
@@ -158,7 +202,7 @@ public class ListCategoryServlet extends HttpServlet {
             if (success) {
                 response.sendRedirect("category");
             } else {
-                request.setAttribute("errorMsg", "Không thể xóa Category!");
+                request.setAttribute("errorMsg", "❌ Không thể xóa Category!");
                 request.getRequestDispatcher("view/category/list-category.jsp").forward(request, response);
             }
         }

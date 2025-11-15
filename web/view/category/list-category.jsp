@@ -266,6 +266,20 @@
             width: 200px;
         }
 
+        .required {
+            color: red;
+        }
+
+        .error-alert {
+            color: #721c24;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+            padding: 12px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
         /* Delete Modal */
         .modal-delete {
             background: white;
@@ -382,26 +396,34 @@
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
             <h3 id="modalTitle">Thêm Category</h3>
+            
+            <!-- 🔴 Error message trong modal -->
+            <c:if test="${not empty errorMsg}">
+                <div class="error-alert">
+                    ${errorMsg}
+                </div>
+            </c:if>
+            
             <form id="categoryForm" method="post" action="category">
                 <input type="hidden" id="categoryID" name="categoryID">
                 <input type="hidden" id="action" name="action" value="add">
 
                 <div class="form-group">
                     <label>Name *</label>
-                    <input type="text" id="name" name="name" required>
+                    <input type="text" id="name" name="name" value="${formName}" required>
                 </div>
 
                 <div class="form-group">
                     <label>Type *</label>
                     <select id="type" name="type" required>
-                        <option value="PART">PART</option>
-                        <option value="SERVICE">SERVICE</option>
+                        <option value="PART" ${formType=='PART' ? 'selected' : ''}>PART</option>
+                        <option value="SERVICE" ${formType=='SERVICE' ? 'selected' : ''}>SERVICE</option>
                     </select>
                 </div>
 
                 <div class="form-group">
                     <label>Description</label>
-                    <textarea id="description" name="description"></textarea>
+                    <textarea id="description" name="description">${formDescription}</textarea>
                 </div>
 
                 <div class="form-actions">
@@ -411,6 +433,28 @@
             </form>
         </div>
     </div>
+
+    <c:if test="${showAddModal}">
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                document.getElementById('categoryModal').style.display = 'block';
+                document.getElementById('modalTitle').textContent = 'Thêm Category';
+                document.getElementById('action').value = 'add';
+                document.getElementById('categoryID').value = '';
+            });
+        </script>
+    </c:if>
+
+    <c:if test="${showEditModal}">
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                document.getElementById('categoryModal').style.display = 'block';
+                document.getElementById('modalTitle').textContent = 'Sửa Category';
+                document.getElementById('action').value = 'edit';
+                document.getElementById('categoryID').value = '${editId}';
+            });
+        </script>
+    </c:if>
 
     <!-- Delete Modal -->
     <div id="deleteModal" class="modal">
@@ -441,7 +485,14 @@
             document.getElementById('categoryID').value = '';
         }
 
-        function closeModal() { document.getElementById('categoryModal').style.display = 'none'; }
+        function closeModal() {
+            document.getElementById('categoryModal').style.display = 'none';
+            // 🔴 Xóa error message khi đóng modal
+            const errorAlert = document.querySelector('.error-alert');
+            if (errorAlert) {
+                errorAlert.remove();
+            }
+        }
 
         function editCategory(id, name, type, desc) {
             document.getElementById('categoryModal').style.display = 'block';

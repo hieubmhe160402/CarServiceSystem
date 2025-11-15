@@ -12,12 +12,21 @@ public class CategoryDAO extends DBContext {
 
     public boolean add(Category category) {
         String sql = "INSERT INTO Category (Name, Type, Description) VALUES (?, ?, ?)";
-        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+        try (PreparedStatement stm = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             stm.setString(1, category.getName());
             stm.setString(2, category.getType());
             stm.setString(3, category.getDescription());
-            int rows = stm.executeUpdate();
-            return rows > 0;
+            int result = stm.executeUpdate();
+            
+            // Lấy ID được generate
+            if (result > 0) {
+                try (ResultSet rs = stm.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        category.setCategoryId(rs.getInt(1));
+                    }
+                }
+            }
+            return result > 0;
         } catch (SQLException ex) {
             Logger.getLogger(CategoryDAO.class.getName()).log(Level.SEVERE, null, ex);
             return false;
@@ -162,6 +171,61 @@ public class CategoryDAO extends DBContext {
         }
 
         return list;
+    }
+
+    // ✅ Kiểm tra Name + Type trùng (khi Add)
+    public boolean isNameAndTypeExists(String name, String type) {
+        String sql = "SELECT COUNT(1) FROM Category WHERE Name = ? AND Type = ?";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setString(1, name);
+            stm.setString(2, type);
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CategoryDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    // ✅ Kiểm tra Name + Type trùng (trừ chính nó - khi Update)
+    public boolean isNameAndTypeExistsExcept(String name, String type, int categoryId) {
+        String sql = "SELECT COUNT(1) FROM Category WHERE Name = ? AND Type = ? AND CategoryID <> ?";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setString(1, name);
+            stm.setString(2, type);
+            stm.setInt(3, categoryId);
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CategoryDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    // ✅ Kiểm tra Category có đang được sử dụng không (trong Product, MaintenancePackageDetail, etc.)
+    public boolean isCategoryInUse(int categoryId) {
+        String sql = "SELECT COUNT(1) FROM Product WHERE CategoryID = ? " +
+                     "UNION ALL SELECT COUNT(1) FROM MaintenancePackageDetail WHERE CategoryID = ?";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setInt(1, categoryId);
+            stm.setInt(2, categoryId);
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    if (rs.getInt(1) > 0) {
+                        return true;
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CategoryDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
 
 }
