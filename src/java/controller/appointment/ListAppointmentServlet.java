@@ -80,8 +80,8 @@ public class ListAppointmentServlet extends HttpServlet {
         List<Appointment> list;
 
         // 🔴 Nếu có flag noFilter (từ lỗi validation) → KHÔNG filter
-        boolean noFilter = request.getAttribute("noFilter") != null && 
-                          (boolean) request.getAttribute("noFilter");
+        boolean noFilter = request.getAttribute("noFilter") != null
+                && (boolean) request.getAttribute("noFilter");
 
         // ✅ Nếu có filter theo status hoặc package (và không phải lỗi validation)
         if (!noFilter && ((status != null && !status.isEmpty()) || (packageIdStr != null && !packageIdStr.isEmpty()))) {
@@ -125,7 +125,7 @@ public class ListAppointmentServlet extends HttpServlet {
         // ✅ Gửi dữ liệu sang JSP
         request.setAttribute("cars", cars);
         request.setAttribute("appointments", pagedAppointments);
-        
+
         // 🔴 Nếu có flag noFilter (từ lỗi validation) → KHÔNG hiển thị filter
         if (noFilter) {
             request.setAttribute("selectedStatus", null);
@@ -134,7 +134,7 @@ public class ListAppointmentServlet extends HttpServlet {
             request.setAttribute("selectedStatus", status);
             request.setAttribute("selectedPackageId", packageIdStr);
         }
-        
+
         request.setAttribute("packages", packages);
 
         request.setAttribute("currentPage", page);
