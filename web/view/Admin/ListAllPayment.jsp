@@ -464,7 +464,7 @@
                                                     <button type="submit" class="btn btn-edit">Chi
                                                         tiết</button>
                                                 </form>
-                                                <c:if test="${payment.status ne 'DONE'}">
+                                                      <c:if test="${payment.status ne 'DONE' and payment.status ne 'CANCELLED'}">
                                                     <form method="post" action="payments"
                                                           style="display:inline; margin-left: 5px;"
                                                           onsubmit="return confirm('Bạn có chắc chắn đã nhận đủ tiền?');">
