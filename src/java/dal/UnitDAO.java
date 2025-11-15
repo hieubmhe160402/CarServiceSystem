@@ -55,11 +55,21 @@ public class UnitDAO extends DBContext {
 
     public boolean add(Unit unit) {
         String sql = "INSERT INTO Unit (Name, Type, Description) VALUES (?, ?, ?)";
-        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+        try (PreparedStatement stm = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             stm.setString(1, unit.getName());
             stm.setString(2, unit.getType());
             stm.setString(3, unit.getDescription());
-            return stm.executeUpdate() > 0;
+            int result = stm.executeUpdate();
+            
+            // Lấy ID được generate
+            if (result > 0) {
+                try (ResultSet rs = stm.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        unit.setUnitId(rs.getInt(1));
+                    }
+                }
+            }
+            return result > 0;
         } catch (SQLException ex) {
             Logger.getLogger(UnitDAO.class.getName()).log(Level.SEVERE, null, ex);
             return false;
@@ -80,6 +90,41 @@ public class UnitDAO extends DBContext {
         }
     }
 
+    // ✅ Kiểm tra Name + Type trùng (khi Add)
+    public boolean isNameAndTypeExists(String name, String type) {
+        String sql = "SELECT COUNT(1) FROM Unit WHERE Name = ? AND Type = ?";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setString(1, name);
+            stm.setString(2, type);
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UnitDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    // ✅ Kiểm tra Name + Type trùng (trừ chính nó - khi Update)
+    public boolean isNameAndTypeExistsExcept(String name, String type, int unitId) {
+        String sql = "SELECT COUNT(1) FROM Unit WHERE Name = ? AND Type = ? AND UnitID <> ?";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setString(1, name);
+            stm.setString(2, type);
+            stm.setInt(3, unitId);
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UnitDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
     public boolean delete(int id) {
         String sql = "DELETE FROM Unit WHERE UnitID = ?";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
@@ -89,6 +134,28 @@ public class UnitDAO extends DBContext {
             Logger.getLogger(UnitDAO.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
+    }
+
+    // ✅ Kiểm tra Unit có đang được sử dụng không (trong Product, MaintenancePackageDetail, etc.)
+    public boolean isUnitInUse(int unitId) {
+        String sql = "SELECT COUNT(1) FROM Product WHERE UnitID = ? " +
+                     "UNION ALL SELECT COUNT(1) FROM MaintenancePackageDetail WHERE UnitID = ? " +
+                     "UNION ALL SELECT COUNT(1) FROM InventoryLot WHERE UnitID = ?";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setInt(1, unitId);
+            stm.setInt(2, unitId);
+            stm.setInt(3, unitId);
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    if (rs.getInt(1) > 0) {
+                        return true;
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UnitDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
 
     public int count(String typeFilter) {

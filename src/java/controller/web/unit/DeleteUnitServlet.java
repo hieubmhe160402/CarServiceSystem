@@ -20,10 +20,17 @@ public class DeleteUnitServlet extends HttpServlet {
             try {
                 int id = Integer.parseInt(idParam);
                 UnitDAO dao = new UnitDAO();
-                boolean success = dao.delete(id);
-                if (!success) {
+                
+                // ✅ Kiểm tra Unit có đang được sử dụng không
+                if (dao.isUnitInUse(id)) {
                     HttpSession session = request.getSession();
-                    session.setAttribute("errorMsg", "Không thể xóa Unit vì đang được sử dụng trong sản phẩm hoặc dữ liệu khác.");
+                    session.setAttribute("errorMsg", "⛔ Unit này đang được sử dụng, không thể xóa!");
+                } else {
+                    boolean success = dao.delete(id);
+                    if (!success) {
+                        HttpSession session = request.getSession();
+                        session.setAttribute("errorMsg", "❌ Không thể xóa Unit này.");
+                    }
                 }
             } catch (NumberFormatException e) {
                 // ignore invalid id

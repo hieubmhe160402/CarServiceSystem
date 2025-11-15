@@ -28,7 +28,12 @@ public class ListUnitServlet extends HttpServlet {
                 currentPage = 1;
             }
         }
-        String filterType = request.getParameter("type");
+        
+        // 🔴 Nếu có lỗi → KHÔNG filter, lấy từ attribute
+        String filterType = (String) request.getAttribute("filterType");
+        if (filterType == null) {
+            filterType = request.getParameter("type");
+        }
 
         List<Unit> unitList = unitDAO.getByPageAndType(currentPage, pageSize, filterType);
         int totalItems = unitDAO.count(filterType);
@@ -56,6 +61,19 @@ public class ListUnitServlet extends HttpServlet {
             String type = request.getParameter("type");
             String description = request.getParameter("description");
 
+            // ✅ Kiểm tra Name + Type trùng
+            if (dao.isNameAndTypeExists(name, type)) {
+                request.setAttribute("errorMsg", "⛔ Name '" + name + "' với Type '" + type + "' đã tồn tại!");
+                request.setAttribute("showAddModal", true);
+                request.setAttribute("formName", name);
+                request.setAttribute("formType", type);
+                request.setAttribute("formDescription", description);
+                // 🔴 XÓA filter khi có lỗi
+                request.setAttribute("filterType", "");
+                doGet(request, response);
+                return;
+            }
+
             Unit unit = new Unit();
             unit.setName(name);
             unit.setType(type);
@@ -72,6 +90,34 @@ public class ListUnitServlet extends HttpServlet {
 
             try {
                 int id = Integer.parseInt(idStr);
+                
+                // ✅ Kiểm tra Unit có đang được sử dụng không
+                if (dao.isUnitInUse(id)) {
+                    request.setAttribute("errorMsg", "⛔ Unit này đang được sử dụng, không thể thay đổi!");
+                    request.setAttribute("showEditModal", true);
+                    request.setAttribute("editId", id);
+                    request.setAttribute("formName", name);
+                    request.setAttribute("formType", type);
+                    request.setAttribute("formDescription", description);
+                    request.setAttribute("filterType", "");
+                    doGet(request, response);
+                    return;
+                }
+                
+                // ✅ Kiểm tra Name + Type trùng (trừ chính nó)
+                if (dao.isNameAndTypeExistsExcept(name, type, id)) {
+                    request.setAttribute("errorMsg", "⛔ Name '" + name + "' với Type '" + type + "' đã tồn tại!");
+                    request.setAttribute("showEditModal", true);
+                    request.setAttribute("editId", id);
+                    request.setAttribute("formName", name);
+                    request.setAttribute("formType", type);
+                    request.setAttribute("formDescription", description);
+                    // 🔴 XÓA filter khi có lỗi
+                    request.setAttribute("filterType", "");
+                    doGet(request, response);
+                    return;
+                }
+                
                 Unit unit = new Unit();
                 unit.setUnitId(id);
                 unit.setName(name);
